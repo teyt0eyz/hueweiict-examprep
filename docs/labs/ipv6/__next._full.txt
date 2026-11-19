@@ -1,0 +1,38 @@
+1:"$Sreact.fragment"
+2:"/hueweiict-examprep/_next/static/chunks/0qah1efgoi42e.js"
+3:I[36852,["$2"],"default"]
+4:I[39756,["$2"],"default"]
+5:I[37457,["$2"],"default"]
+6:"/hueweiict-examprep/_next/static/chunks/0zkhxug0sc6zc.js"
+7:"/hueweiict-examprep/_next/static/chunks/1za6ovva811oe.js"
+8:I[22016,["$2","$6","$7"],""]
+e:I[97367,["$2"],"OutletBoundary"]
+f:"$Sreact.suspense"
+11:"ViewportBoundary"
+12:I[97367,["$2"],"$11"]
+14:"MetadataBoundary"
+15:I[97367,["$2"],"$14"]
+17:I[68027,["$2"],"default",1]
+:HL["/hueweiict-examprep/_next/static/chunks/26q-hdhkec_hx.css","style"]
+:HL["/hueweiict-examprep/_next/static/media/087894984ee2963f-s.p.2_z8r5dfkst21.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/098adb8bb3c21377-s.p.09e83-4vqkr8v.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/0b317410534a54bf-s.p.0xwse1x-bzy3s.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/16cfcc00aea7f216-s.p.0oqt8towxai-k.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/73c8302d2fdfe340-s.p.30xqm3yldpj47.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/7a3b98edb52b34e8-s.p.3_xwflgq9fbqb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/7c31128e26fc9cb0-s.p.2wx1mw4dt7_s5.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/81b01dcd824434dd-s.p.3u0t_c_yzgtgw.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/9f5be66613d9c872-s.p.27korwsf9c79u.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/hueweiict-examprep/_next/static/media/a86bc8e8711b62bb-s.p.2t1pwrt0o-zp3.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+a:X
+c:[["children",{"s":"__PAGE__","h":512,"d":{"r":["$","$1","c",{"children":["$Ld",[["$","script","script-0",{"src":"/hueweiict-examprep/_next/static/chunks/0zkhxug0sc6zc.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/hueweiict-examprep/_next/static/chunks/1za6ovva811oe.js","async":true,"nonce":"$undefined"}]],["$","$Le",null,{"children":["$","$f",null,{"name":"Next.MetadataOutlet","children":"$@10"}]}]]}],"p":false,"v":null}}]]
+b:[["children",{"s":{"n":"slug","t":"d","k":"ipv6","s":[]},"h":66048,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$a"},"c":"$Qc"}]]
+9:[["children",{"s":"labs","h":131584,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$a"},"c":"$Qb"}]]
+0:{"P":null,"c":["","labs","ipv6",""],"q":"","i":false,"t":{"t":{"s":"","h":131600,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/hueweiict-examprep/_next/static/chunks/26q-hdhkec_hx.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/hueweiict-examprep/_next/static/chunks/0qah1efgoi42e.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"th","className":"A3x5oG_variable GR0hqa_variable h-full antialiased","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"(function(){try{var t=localStorage.getItem('hcia:theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();"}}]}],["$","body",null,{"className":"flex min-h-full flex-col font-sans","children":[["$","a",null,{"href":"#main","className":"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2","children":"ข้ามไปเนื้อหา"}],["$","$L3",null,{}],["$","main",null,{"id":"main","className":"mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-10","children":["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"py-16 text-center","children":[["$","p",null,{"className":"font-mono text-sm text-muted","children":"404"}],["$","h1",null,{"className":"mt-2 text-2xl font-bold","children":"ไม่พบหน้านี้"}],["$","$L8",null,{"href":"/","className":"mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 text-accent-fg","children":"กลับหน้าแรก"}]]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],["$","footer",null,{"className":"border-t border-border py-6 text-center text-sm text-muted","children":["$","div",null,{"className":"mx-auto max-w-6xl px-4","children":["เว็บติวส่วนตัว ไม่ใช่เว็บไซต์ทางการของ Huawei · เนื้อหาเขียนใหม่ทั้งหมด อ้างอิงแหล่งที่มาในหน้า"," ",["$","$L8",null,{"className":"underline hover:text-fg","href":"/about/","children":"เกี่ยวกับ"}]]}]}]]}]]}]]}],"p":false,"v":null},"c":"$Q9"},"h":{"r":["$","$1","h",{"children":[null,["$","$L12",null,{"children":"$L13"}],["$","$L15",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$f",null,{"name":"Next.Metadata","children":"$L16"}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":false,"v":null}},"m":"$undefined","G":["$17",[["$","link","0",{"rel":"stylesheet","href":"/hueweiict-examprep/_next/static/chunks/26q-hdhkec_hx.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]]],"S":true,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"RKN48YiBN53vktl93tWk5"}
+18:I[58585,["$2","$6","$7"],"default"]
+a:C
+d:[["$","nav",null,{"className":"mb-4 text-sm text-muted","aria-label":"breadcrumb","children":[["$","$L8",null,{"href":"/labs/","className":"hover:text-fg","children":"Labs"}]," / Lab ",7]}],["$","header",null,{"className":"mb-6","children":[["$","h1",null,{"className":"text-2xl font-bold tracking-tight sm:text-3xl","children":["Lab ",7,": ","IPv6 Address Tool"]}],["$","p",null,{"className":"mt-1 text-muted","children":"ย่อ/ขยาย address, สร้าง EUI-64 และบอกชนิด address"}],["$","p",null,{"className":"mt-2 text-sm","children":["บทเรียนที่เกี่ยวข้อง:"," ",["$","$L8",null,{"href":"/lessons/ipv6/","className":"text-accent hover:underline","children":["M12"," ","IPv6"]}]]}]]}],["$","$L18",null,{"slug":"ipv6"}]]
+13:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#f7f8fa","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#0d1117","media":"(prefers-color-scheme: dark)"}]]
+19:I[27201,["$2"],"IconMark"]
+10:null
+16:[["$","title","0",{"children":"Lab 7: IPv6 Address Tool · HCIA-Datacom Prep"}],["$","meta","1",{"name":"description","content":"ย่อ/ขยาย address, สร้าง EUI-64 และบอกชนิด address"}],["$","link","2",{"rel":"icon","href":"/hueweiict-examprep/favicon.ico?favicon.117ezoe8m31dk.ico","sizes":"48x48","type":"image/x-icon"}],["$","$L19","3",{}]]

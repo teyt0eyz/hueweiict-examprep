@@ -1,0 +1,33 @@
+1:"$Sreact.fragment"
+2:"/hueweiict-examprep/_next/static/chunks/0qah1efgoi42e.js"
+3:I[36852,["$2"],"default"]
+4:I[39756,["$2"],"default"]
+5:I[37457,["$2"],"default"]
+6:"/hueweiict-examprep/_next/static/chunks/15vtqcua5y4k-.js"
+7:"/hueweiict-examprep/_next/static/chunks/0ttpnov8g3-g0.js"
+8:I[22016,["$2","$6","$7"],""]
+c:I[83781,["$2","$6","$7"],"default"]
+13:"ViewportBoundary"
+14:I[97367,["$2"],"$13"]
+15:"MetadataBoundary"
+16:I[97367,["$2"],"$15"]
+17:"$Sreact.suspense"
+18:I[27201,["$2"],"IconMark"]
+:HL["/hueweiict-examprep/_next/static/chunks/26q-hdhkec_hx.css","style"]
+a:X
+b:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[["$","div",null,{"className":"space-y-10","children":[["$","section",null,{"className":"rounded-2xl border border-border bg-surface p-6 sm:p-10","children":[["$","p",null,{"className":"text-sm font-medium text-accent","children":"Huawei ICT Competition · Network Track"}],["$","h1",null,{"className":"mt-2 text-3xl font-bold tracking-tight sm:text-4xl","children":"ติวสอบ HCIA-Datacom ให้พร้อมลงสนาม"}],["$","p",null,{"className":"mt-3 max-w-2xl text-muted","children":"ทบทวนเนื้อหาครบทุก module, ลองทำ lab แบบ interactive และฝึกทำ mock test จับเวลาพร้อมเฉลยละเอียด"}],["$","div",null,{"className":"mt-6 flex flex-wrap gap-3","children":[["$","$L8",null,{"href":"/mock/","className":"rounded-lg bg-accent px-5 py-2.5 font-medium text-accent-fg hover:opacity-90","children":"เริ่ม Mock Test"}],["$","$L8",null,{"href":"/lessons/","className":"rounded-lg border border-border px-5 py-2.5 font-medium hover:bg-surface-2","children":"ดูบทเรียน"}]]}]]}],["$","$Lc",null,{}],["$","section",null,{"className":"grid gap-4 sm:grid-cols-2","children":[["$","$L8","/lessons/",{"href":"/lessons/","className":"rounded-xl border border-border bg-surface p-5 transition hover:border-accent","children":[["$","h2",null,{"className":"font-semibold","children":"บทเรียน"}],["$","p",null,{"className":"mt-1 text-sm text-muted","children":"17 modules ครอบคลุม HCIA-Datacom"}]]}],["$","$L8","/labs/",{"href":"/labs/","className":"rounded-xl border border-border bg-surface p-5 transition hover:border-accent","children":[["$","h2",null,{"className":"font-semibold","children":"Interactive Labs"}],["$","p",null,{"className":"mt-1 text-sm text-muted","children":"Subnet drill, OSPF, STP, VLAN, ACL, NAT, IPv6"}]]}],["$","$L8","/cli/",{"href":"/cli/","className":"rounded-xl border border-border bg-surface p-5 transition hover:border-accent","children":[["$","h2",null,{"className":"font-semibold","children":"VRP CLI Cheatsheet"}],["$","p",null,{"className":"mt-1 text-sm text-muted","children":"คำสั่ง Huawei VRP ค้นหาและกรองตามหัวข้อได้"}]]}],["$","$L8","/review/",{"href":"/review/","className":"rounded-xl border border-border bg-surface p-5 transition hover:border-accent","children":["$Ld","$Le"]}]]}]]}],["$Lf","$L10"],"$L11"]}],"p":"$@12","v":null,"s":"$a"}}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/hueweiict-examprep/_next/static/chunks/26q-hdhkec_hx.css","precedence":"next"}],["$","script","script-0",{"src":"/hueweiict-examprep/_next/static/chunks/0qah1efgoi42e.js","async":true}]],["$","html",null,{"lang":"th","className":"A3x5oG_variable GR0hqa_variable h-full antialiased","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"(function(){try{var t=localStorage.getItem('hcia:theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();"}}]}],["$","body",null,{"className":"flex min-h-full flex-col font-sans","children":[["$","a",null,{"href":"#main","className":"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2","children":"ข้ามไปเนื้อหา"}],["$","$L3",null,{}],["$","main",null,{"id":"main","className":"mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-10","children":["$","$L4",null,{"parallelRouterKey":"children","template":["$","$L5",null,{}],"notFound":[["$","div",null,{"className":"py-16 text-center","children":[["$","p",null,{"className":"font-mono text-sm text-muted","children":"404"}],["$","h1",null,{"className":"mt-2 text-2xl font-bold","children":"ไม่พบหน้านี้"}],["$","$L8",null,{"href":"/","className":"mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 text-accent-fg","children":"กลับหน้าแรก"}]]}],[]]}]}],["$","footer",null,{"className":"border-t border-border py-6 text-center text-sm text-muted","children":["$","div",null,{"className":"mx-auto max-w-6xl px-4","children":["เว็บติวส่วนตัว ไม่ใช่เว็บไซต์ทางการของ Huawei · เนื้อหาเขียนใหม่ทั้งหมด อ้างอิงแหล่งที่มาในหน้า"," ",["$","$L8",null,{"className":"underline hover:text-fg","href":"/about/","children":"เกี่ยวกับ"}]]}]}]]}]]}]]}],"p":"$@9","v":null,"s":"$a"},"c":"$Qb"},"h":{"r":["$","$1","h",{"children":[null,["$","$L14",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#f7f8fa","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#0d1117","media":"(prefers-color-scheme: dark)"}]]}],["$","$L16",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$17",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"HCIA-Datacom Prep — ติวสอบ Huawei ICT Competition (Network Track)"}],["$","meta","1",{"name":"description","content":"เว็บติวสอบ Huawei ICT Competition สาย Network: บทเรียน HCIA-Datacom ภาษาไทย, interactive labs, VRP CLI cheatsheet และ mock test จับเวลา"}],["$","link","2",{"rel":"icon","href":"/hueweiict-examprep/favicon.ico?favicon.117ezoe8m31dk.ico","sizes":"48x48","type":"image/x-icon"}],["$","$L18","3",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@19","v":null,"s":"$a"}},"a":"$@1a","u":"$@1b","b":"RKN48YiBN53vktl93tWk5"}
+1c:I[97367,["$2"],"OutletBoundary"]
+d:["$","h2",null,{"className":"font-semibold","children":"ทบทวน"}]
+e:["$","p",null,{"className":"mt-1 text-sm text-muted","children":"ข้อที่เคยตอบผิดและข้อที่ bookmark ไว้"}]
+f:["$","script","script-0",{"src":"/hueweiict-examprep/_next/static/chunks/15vtqcua5y4k-.js","async":true}]
+10:["$","script","script-1",{"src":"/hueweiict-examprep/_next/static/chunks/0ttpnov8g3-g0.js","async":true}]
+11:["$","$L1c",null,{"children":["$","$17",null,{"name":"Next.MetadataOutlet","children":"$@1d"}]}]
+a:300
+1d:null
+1b:true
+a:C
+1a:0
+9:"$undefined"
+19:"$undefined"
+12:"$undefined"

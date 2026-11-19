@@ -3,7 +3,8 @@
 # Huawei ICT Competition (Network Track) Prep Site
 
 ## Project facts (decided in Phase 0)
-- Repo: `hueweiict-examprep` (remote `git@github.com:teyt0eyz/hueweiict-examprep.git`, push over SSH — the gh OAuth token lacks `workflow` scope) → deploys to `https://teyt0eyz.github.io/hueweiict-examprep/`
+- Repo: `hueweiict-examprep` (remote `git@github.com:teyt0eyz/hueweiict-examprep.git`, push over SSH) → `https://teyt0eyz.github.io/hueweiict-examprep/`
+- **Deploy = no CI/CD (user's decision, overrides the master prompt's GitHub Actions line).** `npm run deploy` validates, builds, and copies `out/` into `docs/` (committed). GitHub Pages serves `main` / `docs`. To publish: `npm run deploy`, commit `docs/`, plain `git push`. Do not re-add `.github/workflows`.
 - Next.js **16.4** (Turbopack, App Router), Tailwind **v4** (CSS-first config in `src/app/globals.css`, no tailwind.config). Read `node_modules/next/dist/docs/` before using unfamiliar APIs.
 - `next.config.ts`: `output: "export"`, `trailingSlash: true`, basePath `/hueweiict-examprep` **only in production** (dev runs at `/`). Cache Components are intentionally OFF (they need a Node server).
 - Dynamic routes need `generateStaticParams()` + `export const dynamicParams = false`.

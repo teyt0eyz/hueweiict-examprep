@@ -1,0 +1,34 @@
+1:"$Sreact.fragment"
+2:"/hueweiict-examprep/_next/static/chunks/0qah1efgoi42e.js"
+3:I[36852,["$2"],"default"]
+4:I[39756,["$2"],"default"]
+5:I[37457,["$2"],"default"]
+6:"/hueweiict-examprep/_next/static/chunks/0zkhxug0sc6zc.js"
+7:"/hueweiict-examprep/_next/static/chunks/1za6ovva811oe.js"
+8:I[22016,["$2","$6","$7"],""]
+11:I[58585,["$2","$6","$7"],"default"]
+12:I[97367,["$2"],"OutletBoundary"]
+13:"$Sreact.suspense"
+16:"ViewportBoundary"
+17:I[97367,["$2"],"$16"]
+18:"MetadataBoundary"
+19:I[97367,["$2"],"$18"]
+1a:I[27201,["$2"],"IconMark"]
+:HL["/hueweiict-examprep/_next/static/chunks/26q-hdhkec_hx.css","style"]
+a:X
+d:X
+d:C
+10:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[[["$","nav",null,{"className":"mb-4 text-sm text-muted","aria-label":"breadcrumb","children":[["$","$L8",null,{"href":"/labs/","className":"hover:text-fg","children":"Labs"}]," / Lab ",4]}],["$","header",null,{"className":"mb-6","children":[["$","h1",null,{"className":"text-2xl font-bold tracking-tight sm:text-3xl","children":["Lab ",4,": ","VLAN Frame Tracer"]}],["$","p",null,{"className":"mt-1 text-muted","children":"ติดตาม frame ผ่าน access/trunk/hybrid ว่า tag ถูกใส่หรือถอดที่ไหน"}],["$","p",null,{"className":"mt-2 text-sm","children":["บทเรียนที่เกี่ยวข้อง:"," ",["$","$L8",null,{"href":"/lessons/ethernet-vlan/","className":"text-accent hover:underline","children":["M6"," ","Ethernet Switching & VLAN"]}]]}]]}],["$","$L11",null,{"slug":"vlan"}]],[["$","script","script-0",{"src":"/hueweiict-examprep/_next/static/chunks/0zkhxug0sc6zc.js","async":true}],["$","script","script-1",{"src":"/hueweiict-examprep/_next/static/chunks/1za6ovva811oe.js","async":true}]],["$","$L12",null,{"children":["$","$13",null,{"name":"Next.MetadataOutlet","children":"$@14"}]}]]}],"p":"$@15","v":null,"s":"$a"}}]]
+e:[["children",{"s":{"n":"slug","t":"d","k":"vlan","s":[]},"h":65632,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","template":["$","$L5",null,{}]}]]}],"p":"$@f","v":"$d","s":"$a"},"c":"$Q10"}]]
+b:[["children",{"s":"labs","h":131168,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","template":["$","$L5",null,{}]}]]}],"p":"$@c","v":"$d","s":"$a"},"c":"$Qe"}]]
+0:{"t":{"t":{"s":"","h":131152,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/hueweiict-examprep/_next/static/chunks/26q-hdhkec_hx.css","precedence":"next"}],["$","script","script-0",{"src":"/hueweiict-examprep/_next/static/chunks/0qah1efgoi42e.js","async":true}]],["$","html",null,{"lang":"th","className":"A3x5oG_variable GR0hqa_variable h-full antialiased","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"(function(){try{var t=localStorage.getItem('hcia:theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();"}}]}],["$","body",null,{"className":"flex min-h-full flex-col font-sans","children":[["$","a",null,{"href":"#main","className":"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2","children":"ข้ามไปเนื้อหา"}],["$","$L3",null,{}],["$","main",null,{"id":"main","className":"mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-10","children":["$","$L4",null,{"parallelRouterKey":"children","template":["$","$L5",null,{}],"notFound":[["$","div",null,{"className":"py-16 text-center","children":[["$","p",null,{"className":"font-mono text-sm text-muted","children":"404"}],["$","h1",null,{"className":"mt-2 text-2xl font-bold","children":"ไม่พบหน้านี้"}],["$","$L8",null,{"href":"/","className":"mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 text-accent-fg","children":"กลับหน้าแรก"}]]}],[]]}]}],["$","footer",null,{"className":"border-t border-border py-6 text-center text-sm text-muted","children":["$","div",null,{"className":"mx-auto max-w-6xl px-4","children":["เว็บติวส่วนตัว ไม่ใช่เว็บไซต์ทางการของ Huawei · เนื้อหาเขียนใหม่ทั้งหมด อ้างอิงแหล่งที่มาในหน้า"," ",["$","$L8",null,{"className":"underline hover:text-fg","href":"/about/","children":"เกี่ยวกับ"}]]}]}]]}]]}]]}],"p":"$@9","v":null,"s":"$a"},"c":"$Qb"},"h":{"r":["$","$1","h",{"children":[null,["$","$L17",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#f7f8fa","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#0d1117","media":"(prefers-color-scheme: dark)"}]]}],["$","$L19",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$13",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Lab 4: VLAN Frame Tracer · HCIA-Datacom Prep"}],["$","meta","1",{"name":"description","content":"ติดตาม frame ผ่าน access/trunk/hybrid ว่า tag ถูกใส่หรือถอดที่ไหน"}],["$","link","2",{"rel":"icon","href":"/hueweiict-examprep/favicon.ico?favicon.117ezoe8m31dk.ico","sizes":"48x48","type":"image/x-icon"}],["$","$L1a","3",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@1b","v":null,"s":"$a"}},"a":"$@1c","u":"$@1d","b":"RKN48YiBN53vktl93tWk5"}
+14:null
+a:300
+1d:true
+a:C
+1c:0
+f:"$undefined"
+c:"$undefined"
+9:"$undefined"
+1b:"$undefined"
+15:"$undefined"
