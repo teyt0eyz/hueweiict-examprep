@@ -84,6 +84,7 @@ body {
   padding-left: 1.25rem;
 }
 .q-html code:not(pre code) {
+  overflow-wrap: anywhere;
   font-family: var(--font-mono);
   font-size: 0.88em;
   background: var(--surface-2);
@@ -158,6 +159,7 @@ html.dark .shiki {
 }
 .callout-body code,
 .prose code:not(pre code) {
+  overflow-wrap: anywhere;
   font-family: var(--font-mono);
   font-size: 0.86em;
   background: var(--surface-2);

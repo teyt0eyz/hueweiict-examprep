@@ -5,8 +5,6 @@ import type { QItem } from "./types";
 
 const ROOT = process.cwd();
 
-export const lessonExists = (slug: string) => fs.existsSync(path.join(ROOT, "content/lessons", `${slug}.mdx`));
-
 /** Reads the pre-rendered bank (public/data, produced by `npm run data`) at build time. */
 export function readModuleQuestions(moduleId: string): QItem[] {
   const f = path.join(ROOT, "public/data/q", `${moduleId.toLowerCase()}.json`);

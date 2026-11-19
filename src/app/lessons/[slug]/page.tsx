@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ComponentType } from "react";
-import ComingSoon from "@/components/ComingSoon";
 import LessonQuiz from "@/components/lesson/LessonQuiz";
 import { LessonDoneButton, LessonVisit } from "@/components/lesson/LessonTracker";
-import { lessonExists, pickLessonQuiz } from "@/lib/lessons";
+import { pickLessonQuiz } from "@/lib/lessons";
 import { getModuleBySlug, MODULES, WEIGHT_LABEL } from "@/lib/modules";
 
 export const dynamicParams = false;
@@ -28,10 +27,7 @@ export default async function LessonPage({ params }: PageProps<"/lessons/[slug]"
   const prev = MODULES[idx - 1];
   const next = MODULES[idx + 1];
 
-  let Content: ComponentType | null = null;
-  if (lessonExists(slug)) {
-    Content = (await import(`../../../../content/lessons/${slug}.mdx`)).default as ComponentType;
-  }
+  const Content = (await import(`../../../../content/lessons/${slug}.mdx`)).default as ComponentType;
   const quiz = pickLessonQuiz(m.id);
 
   return (
@@ -51,13 +47,9 @@ export default async function LessonPage({ params }: PageProps<"/lessons/[slug]"
         </div>
       </header>
 
-      {Content ? (
-        <div className="prose max-w-none prose-headings:scroll-mt-20 prose-h2:mt-12 prose-h2:border-b prose-h2:border-border prose-h2:pb-2 prose-h3:mt-8">
-          <Content />
-        </div>
-      ) : (
-        <ComingSoon phase={m.phase} />
-      )}
+      <div className="prose max-w-none prose-headings:scroll-mt-20 prose-h2:mt-12 prose-h2:border-b prose-h2:border-border prose-h2:pb-2 prose-h3:mt-8">
+        <Content />
+      </div>
 
       <LessonQuiz questions={quiz} mockId={m.id.toLowerCase()} />
 

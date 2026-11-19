@@ -190,7 +190,7 @@ export default function AclLab() {
         ))}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2 [&>*]:min-w-0">
         <Panel title="1. เขียน ACL">
           <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
             <label htmlFor="acl-no">acl number</label>

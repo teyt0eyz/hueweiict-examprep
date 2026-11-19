@@ -13,6 +13,8 @@
 - Module list (M1–M17) lives in `src/lib/modules.ts`.
 - Source PDFs live in `source/` (gitignored). Read them with `pdftotext -layout -f <start> -l <end>` one chapter at a time.
 - Commits are local only; the user pushes to GitHub themselves.
+- Question bank: `content/questions/m<N>.json` (350 questions). `npm run validate` / `validate:strict` (per-module targets). Fixed mock sets `content/mocks/full-{1,2,3}.json` come from `npm run mocks` (seeded, disjoint, follows FULL_QUOTA in `src/lib/mocks.ts` — keep the copy in `scripts/make-mocks.mjs` in sync). Re-run it after changing the bank, or mock ids may go stale (validate catches missing ids).
+- Labs live in `src/components/labs/*` and are registered in `LabHost.tsx`; lab metadata in `src/lib/labs.ts`. VRP cheatsheet data: `content/cli.json`.
 
 ---
 

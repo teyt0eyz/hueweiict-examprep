@@ -108,7 +108,7 @@ export default function NatLab() {
         ))}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_1.2fr]">
+      <div className="grid gap-5 lg:grid-cols-[1fr_1.2fr] [&>*]:min-w-0">
         <Panel title={m.label}>
           <p className="text-sm">{m.summary}</p>
           <pre className="mt-3 overflow-x-auto rounded-lg bg-surface-2 p-3 font-mono text-xs leading-5">{m.config}</pre>
