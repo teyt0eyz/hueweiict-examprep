@@ -747,5 +747,593 @@
     "la": "G0/0/3"
    }
   ]
+ },
+ "m7-stp-3sw": {
+  "w": 480,
+  "h": 250,
+  "title": "STP: 3 สวิตช์ต่อเป็นวง (ลิงก์ทั้งหมด GE, cost 20000 ตาม 802.1t)",
+  "nodes": [
+   {
+    "id": "SW1",
+    "type": "switch",
+    "x": 240,
+    "y": 45,
+    "label": "SW1",
+    "sub": "BID 32768.4c1f-0001"
+   },
+   {
+    "id": "SW2",
+    "type": "switch",
+    "x": 90,
+    "y": 195,
+    "label": "SW2",
+    "sub": "BID 32768.4c1f-0002"
+   },
+   {
+    "id": "SW3",
+    "type": "switch",
+    "x": 390,
+    "y": 195,
+    "label": "SW3",
+    "sub": "BID 32768.4c1f-0003"
+   }
+  ],
+  "links": [
+   {
+    "a": "SW1",
+    "b": "SW2",
+    "la": "G0/0/1",
+    "lb": "G0/0/1"
+   },
+   {
+    "a": "SW1",
+    "b": "SW3",
+    "la": "G0/0/2",
+    "lb": "G0/0/1"
+   },
+   {
+    "a": "SW2",
+    "b": "SW3",
+    "la": "G0/0/2",
+    "lb": "G0/0/2"
+   }
+  ]
+ },
+ "m7-stp-result": {
+  "w": 480,
+  "h": 250,
+  "title": "ผล STP: SW1 เป็น root, พอร์ต G0/0/2 ของ SW3 ถูก block",
+  "nodes": [
+   {
+    "id": "SW1",
+    "type": "switch",
+    "x": 240,
+    "y": 45,
+    "label": "SW1 (Root)",
+    "sub": "DP · DP"
+   },
+   {
+    "id": "SW2",
+    "type": "switch",
+    "x": 90,
+    "y": 195,
+    "label": "SW2",
+    "sub": "G0/0/1 RP · G0/0/2 DP"
+   },
+   {
+    "id": "SW3",
+    "type": "switch",
+    "x": 390,
+    "y": 195,
+    "label": "SW3",
+    "sub": "G0/0/1 RP · G0/0/2 Alternate"
+   }
+  ],
+  "links": [
+   {
+    "a": "SW1",
+    "b": "SW2",
+    "color": "accent"
+   },
+   {
+    "a": "SW1",
+    "b": "SW3",
+    "color": "accent"
+   },
+   {
+    "a": "SW2",
+    "b": "SW3",
+    "style": "blocked"
+   }
+  ]
+ },
+ "m7-eth-trunk": {
+  "w": 480,
+  "h": 170,
+  "title": "Eth-Trunk: รวม 3 ลิงก์เป็น logical link เดียว",
+  "nodes": [
+   {
+    "id": "SW1",
+    "type": "switch",
+    "x": 90,
+    "y": 85,
+    "label": "SW1"
+   },
+   {
+    "id": "SW2",
+    "type": "switch",
+    "x": 390,
+    "y": 85,
+    "label": "SW2"
+   }
+  ],
+  "links": [
+   {
+    "a": "SW1",
+    "b": "SW2",
+    "label": "GE0/0/1",
+    "offset": -26
+   },
+   {
+    "a": "SW1",
+    "b": "SW2",
+    "label": "GE0/0/2 · Eth-Trunk 1",
+    "style": "trunk"
+   },
+   {
+    "a": "SW1",
+    "b": "SW2",
+    "label": "GE0/0/3",
+    "offset": 26
+   }
+  ]
+ },
+ "m7-smartlink": {
+  "w": 520,
+  "h": 250,
+  "title": "Smart Link: S4 ต่อขึ้น 2 ทาง master ทำงาน slave สำรอง",
+  "nodes": [
+   {
+    "id": "S1",
+    "type": "switch",
+    "x": 260,
+    "y": 40,
+    "label": "S1 (core)"
+   },
+   {
+    "id": "S2",
+    "type": "switch",
+    "x": 120,
+    "y": 130,
+    "label": "S2"
+   },
+   {
+    "id": "S3",
+    "type": "switch",
+    "x": 400,
+    "y": 130,
+    "label": "S3"
+   },
+   {
+    "id": "S4",
+    "type": "switch",
+    "x": 260,
+    "y": 220,
+    "label": "S4",
+    "sub": "smart-link group 1"
+   }
+  ],
+  "links": [
+   {
+    "a": "S1",
+    "b": "S2"
+   },
+   {
+    "a": "S1",
+    "b": "S3"
+   },
+   {
+    "a": "S4",
+    "b": "S2",
+    "label": "master (active)",
+    "color": "accent",
+    "la": "G0/0/1"
+   },
+   {
+    "a": "S4",
+    "b": "S3",
+    "label": "slave (standby)",
+    "style": "dashed",
+    "la": "G0/0/2"
+   }
+  ]
+ },
+ "m8-acl": {
+  "w": 600,
+  "h": 230,
+  "title": "ควบคุมการเข้าถึง server ด้วย ACL บน R1",
+  "nodes": [
+   {
+    "id": "A",
+    "type": "pc",
+    "x": 60,
+    "y": 60,
+    "label": "แผนก A",
+    "sub": "10.1.10.0/24"
+   },
+   {
+    "id": "B",
+    "type": "pc",
+    "x": 60,
+    "y": 175,
+    "label": "แผนก B",
+    "sub": "10.1.20.0/24"
+   },
+   {
+    "id": "SW",
+    "type": "switch",
+    "x": 180,
+    "y": 118
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 320,
+    "y": 118,
+    "label": "R1"
+   },
+   {
+    "id": "SRV",
+    "type": "server",
+    "x": 520,
+    "y": 70,
+    "label": "Web server",
+    "sub": "10.1.100.10 (TCP 80/443)"
+   },
+   {
+    "id": "FTP",
+    "type": "server",
+    "x": 520,
+    "y": 175,
+    "label": "FTP server",
+    "sub": "10.1.100.20"
+   }
+  ],
+  "links": [
+   {
+    "a": "A",
+    "b": "SW"
+   },
+   {
+    "a": "B",
+    "b": "SW"
+   },
+   {
+    "a": "SW",
+    "b": "R1",
+    "lb": "G0/0/0 (inbound)"
+   },
+   {
+    "a": "R1",
+    "b": "SRV",
+    "la": "G0/0/1"
+   },
+   {
+    "a": "R1",
+    "b": "FTP"
+   }
+  ]
+ },
+ "m8-aaa": {
+  "w": 560,
+  "h": 170,
+  "title": "AAA: ผู้ใช้ → อุปกรณ์ (NAS) → AAA server",
+  "nodes": [
+   {
+    "id": "U",
+    "type": "pc",
+    "x": 60,
+    "y": 85,
+    "label": "ผู้ใช้"
+   },
+   {
+    "id": "NAS",
+    "type": "router",
+    "x": 270,
+    "y": 85,
+    "label": "NAS (R1)",
+    "sub": "RADIUS client"
+   },
+   {
+    "id": "AAA",
+    "type": "server",
+    "x": 490,
+    "y": 85,
+    "label": "RADIUS server"
+   }
+  ],
+  "links": [
+   {
+    "a": "U",
+    "b": "NAS",
+    "label": "Telnet/SSH/802.1X"
+   },
+   {
+    "a": "NAS",
+    "b": "AAA",
+    "label": "RADIUS UDP 1812/1813"
+   }
+  ]
+ },
+ "m9-nat": {
+  "w": 620,
+  "h": 220,
+  "title": "NAT ที่ router ขอบเครือข่าย",
+  "areas": [
+   {
+    "x": 10,
+    "y": 30,
+    "w": 250,
+    "h": 180,
+    "label": "Inside (private)"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "PC1",
+    "type": "pc",
+    "x": 60,
+    "y": 80,
+    "sub": "192.168.1.10"
+   },
+   {
+    "id": "PC2",
+    "type": "pc",
+    "x": 60,
+    "y": 170,
+    "sub": "192.168.1.11"
+   },
+   {
+    "id": "SW",
+    "type": "switch",
+    "x": 160,
+    "y": 125
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 300,
+    "y": 125,
+    "label": "R1",
+    "sub": "G0/0/1 = 202.1.1.1/24"
+   },
+   {
+    "id": "NET",
+    "type": "cloud",
+    "x": 440,
+    "y": 125,
+    "label": "Internet"
+   },
+   {
+    "id": "WEB",
+    "type": "server",
+    "x": 570,
+    "y": 125,
+    "label": "Web",
+    "sub": "8.8.8.8"
+   }
+  ],
+  "links": [
+   {
+    "a": "PC1",
+    "b": "SW"
+   },
+   {
+    "a": "PC2",
+    "b": "SW"
+   },
+   {
+    "a": "SW",
+    "b": "R1",
+    "lb": "G0/0/0"
+   },
+   {
+    "a": "R1",
+    "b": "NET",
+    "la": "G0/0/1"
+   },
+   {
+    "a": "NET",
+    "b": "WEB"
+   }
+  ]
+ },
+ "m10-dhcp-relay": {
+  "w": 560,
+  "h": 190,
+  "title": "DHCP relay: client กับ server อยู่คนละ subnet",
+  "nodes": [
+   {
+    "id": "PC",
+    "type": "pc",
+    "x": 60,
+    "y": 95,
+    "label": "DHCP client",
+    "sub": "VLAN 10"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 250,
+    "y": 95,
+    "label": "R1 (relay)",
+    "sub": "G0/0/0 192.168.10.1/24"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 420,
+    "y": 95,
+    "label": "R2"
+   },
+   {
+    "id": "DS",
+    "type": "server",
+    "x": 520,
+    "y": 95,
+    "label": "DHCP server",
+    "sub": "10.0.0.5"
+   }
+  ],
+  "links": [
+   {
+    "a": "PC",
+    "b": "R1",
+    "label": "broadcast DISCOVER"
+   },
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "unicast (giaddr = 192.168.10.1)"
+   },
+   {
+    "a": "R2",
+    "b": "DS"
+   }
+  ]
+ },
+ "m11-wlan": {
+  "w": 600,
+  "h": 260,
+  "title": "WLAN แบบ AC + Fit AP (AC ต่อแบบ off-path)",
+  "nodes": [
+   {
+    "id": "CORE",
+    "type": "l3switch",
+    "x": 300,
+    "y": 45,
+    "label": "Core / DHCP"
+   },
+   {
+    "id": "AC",
+    "type": "ac",
+    "x": 500,
+    "y": 45,
+    "label": "AC",
+    "sub": "Vlanif100 (CAPWAP)"
+   },
+   {
+    "id": "POE",
+    "type": "switch",
+    "x": 300,
+    "y": 140,
+    "label": "PoE switch"
+   },
+   {
+    "id": "AP1",
+    "type": "ap",
+    "x": 180,
+    "y": 215,
+    "label": "AP1"
+   },
+   {
+    "id": "AP2",
+    "type": "ap",
+    "x": 420,
+    "y": 215,
+    "label": "AP2"
+   },
+   {
+    "id": "STA",
+    "type": "pc",
+    "x": 70,
+    "y": 215,
+    "label": "STA"
+   }
+  ],
+  "links": [
+   {
+    "a": "CORE",
+    "b": "AC",
+    "label": "off-path"
+   },
+   {
+    "a": "CORE",
+    "b": "POE",
+    "style": "trunk"
+   },
+   {
+    "a": "POE",
+    "b": "AP1",
+    "label": "mgmt VLAN 100"
+   },
+   {
+    "a": "POE",
+    "b": "AP2"
+   },
+   {
+    "a": "STA",
+    "b": "AP1",
+    "style": "wireless",
+    "label": "SSID wlan-net"
+   }
+  ]
+ },
+ "m12-ipv6": {
+  "w": 600,
+  "h": 180,
+  "title": "IPv6: SLAAC บน LAN และ static route ระหว่าง router",
+  "nodes": [
+   {
+    "id": "PC",
+    "type": "pc",
+    "x": 50,
+    "y": 90,
+    "label": "PC",
+    "sub": "SLAAC"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 230,
+    "y": 90,
+    "label": "R1",
+    "sub": "G0/0/0 2001:db8:1::1/64"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 440,
+    "y": 90,
+    "label": "R2"
+   },
+   {
+    "id": "SRV",
+    "type": "server",
+    "x": 560,
+    "y": 90,
+    "label": "Server",
+    "sub": "2001:db8:3::10"
+   }
+  ],
+  "links": [
+   {
+    "a": "PC",
+    "b": "R1",
+    "label": "2001:db8:1::/64"
+   },
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "2001:db8:12::/64",
+    "la": "::1",
+    "lb": "::2"
+   },
+   {
+    "a": "R2",
+    "b": "SRV",
+    "label": "2001:db8:3::/64"
+   }
+  ]
  }
 }

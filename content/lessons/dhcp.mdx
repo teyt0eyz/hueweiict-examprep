@@ -1,0 +1,113 @@
+<Objectives items={[
+  "เปรียบเทียบการกำหนด IP แบบ static กับ dynamic และบทบาทของ DHCP",
+  "อธิบายกระบวนการ DORA, ชนิดของ DHCP message และการต่ออายุ lease (T1/T2)",
+  "ตั้งค่า DHCP server แบบ global pool และ interface pool บน VRP",
+  "อธิบายและตั้งค่า DHCP relay เมื่อ client กับ server อยู่ต่าง subnet",
+]} />
+
+## ทำไมต้องใช้ DHCP
+
+การตั้ง IP เองทีละเครื่องเสียเวลา ผิดพลาดง่าย (IP ซ้ำ, gateway ผิด) และไม่เหมาะกับอุปกรณ์ที่ย้ายที่บ่อย **DHCP (Dynamic Host Configuration Protocol)** แจก IP พร้อมพารามิเตอร์อื่น (mask, gateway, DNS, lease) ให้อัตโนมัติจาก **address pool**
+
+- ใช้ **UDP** — server port **67**, client port **68**
+- อุปกรณ์ที่ควรใช้ IP static: server, gateway, printer, อุปกรณ์เครือข่าย (หรือใช้ static binding ใน DHCP)
+
+## กระบวนการ DORA
+
+```text
+Client (0.0.0.0)                                  DHCP Server
+  | -- DHCP DISCOVER  (broadcast) ------------------> |   หา server
+  | <------------------- DHCP OFFER  -------------- |   เสนอ IP
+  | -- DHCP REQUEST   (broadcast) ------------------> |   ขอ IP ที่เลือก (แจ้ง server อื่นด้วย)
+  | <------------------- DHCP ACK  ---------------- |   ยืนยัน + lease
+```
+
+- REQUEST เป็น **broadcast** เพื่อบอก server ทุกตัวว่าเลือก offer ของใคร server ที่ไม่ถูกเลือกจะคืน IP ที่เสนอไว้
+- ก่อนใช้ IP client มักทำ gratuitous ARP ตรวจ IP ซ้ำ ถ้าซ้ำจะส่ง **DECLINE**
+
+| Message | ใช้เมื่อ |
+|---|---|
+| NAK | server ปฏิเสธ REQUEST (เช่น IP ไม่ถูกต้องแล้ว) client ต้องเริ่ม DISCOVER ใหม่ |
+| DECLINE | client พบว่า IP ที่ได้ซ้ำกับเครื่องอื่น |
+| RELEASE | client คืน IP ก่อนหมด lease |
+| INFORM | client มี IP แล้วแต่ขอพารามิเตอร์อื่น (เช่น DNS) |
+
+## Lease และการต่ออายุ
+
+| เวลา | การกระทำ |
+|---|---|
+| **T1 = 50%** ของ lease | ส่ง REQUEST แบบ **unicast** ไปยัง server เดิมเพื่อต่ออายุ (renew) |
+| **T2 = 87.5%** ของ lease | ถ้ายังไม่ได้ ACK ส่ง REQUEST แบบ **broadcast** ให้ server ใดก็ได้ (rebind) |
+| หมด lease | หยุดใช้ IP แล้วเริ่ม DISCOVER ใหม่ |
+
+lease default ของ pool บน Huawei คือ **1 วัน**
+
+## ตั้งค่า DHCP server
+
+### Global address pool (ใช้กับหลาย interface/relay ได้)
+
+<CliWalk device="R1" lines={[
+  ["[R1]dhcp enable", "เปิดฟังก์ชัน DHCP ระดับระบบ (จำเป็นเสมอ)"],
+  ["[R1]ip pool pool10", "สร้าง global pool"],
+  ["[R1-ip-pool-pool10]network 192.168.10.0 mask 24", "ช่วง address ที่จะแจก"],
+  ["[R1-ip-pool-pool10]gateway-list 192.168.10.1", "default gateway ที่ส่งให้ client"],
+  ["[R1-ip-pool-pool10]dns-list 8.8.8.8 1.1.1.1", "DNS server"],
+  ["[R1-ip-pool-pool10]excluded-ip-address 192.168.10.1 192.168.10.20", "ไม่แจก .1–.20 (สำรองไว้ใช้ static)"],
+  ["[R1-ip-pool-pool10]lease day 2", "lease 2 วัน (default 1 วัน)"],
+  ["[R1-ip-pool-pool10]static-bind ip-address 192.168.10.50 mac-address 5489-98aa-0050", "จองให้เครื่องนี้ได้ IP เดิมทุกครั้ง"],
+  ["[R1]interface GigabitEthernet 0/0/0", ""],
+  ["[R1-GigabitEthernet0/0/0]ip address 192.168.10.1 24", ""],
+  ["[R1-GigabitEthernet0/0/0]dhcp select global", "ให้ interface นี้ตอบ DHCP จาก global pool ที่ subnet ตรงกัน"],
+]} />
+
+### Interface address pool (subnet เดียวกับ interface)
+
+<CliWalk device="R1" lines={[
+  ["[R1-GigabitEthernet0/0/1]ip address 192.168.20.1 24", "pool จะใช้ subnet ของ IP นี้ และ IP นี้เป็น gateway อัตโนมัติ"],
+  ["[R1-GigabitEthernet0/0/1]dhcp select interface", "แจก IP จาก interface pool"],
+  ["[R1-GigabitEthernet0/0/1]dhcp server dns-list 8.8.8.8", "ตั้ง DNS ของ interface pool"],
+  ["[R1-GigabitEthernet0/0/1]dhcp server excluded-ip-address 192.168.20.2 192.168.20.10", ""],
+  ["<R1>display ip pool interface GigabitEthernet0/0/1", "ดูการใช้งาน interface pool"],
+  ["<R1>display ip pool name pool10", "ดู global pool: ใช้แล้ว/ว่าง/conflict"],
+]} />
+
+<Callout type="trap">
+ลืม `dhcp enable` ในระดับ system view = DHCP ไม่ทำงานแม้ตั้ง pool ครบ และถ้าใช้ global pool อย่าลืม `dhcp select global` บน interface ที่รับ request
+</Callout>
+
+## DHCP relay
+
+DISCOVER เป็น broadcast จึง **ข้าม router ไม่ได้** ถ้า server อยู่ต่าง subnet ต้องให้ router (gateway ของ client) เป็น **DHCP relay agent**
+
+<Topology name="m10-dhcp-relay" />
+
+1. relay รับ broadcast จาก client แล้วส่งต่อแบบ **unicast** ไปยัง server พร้อมใส่ **giaddr** = IP ของ interface ที่รับ request (192.168.10.1)
+2. server ใช้ giaddr เลือก pool ที่ subnet ตรงกัน แล้วตอบกลับไปที่ relay
+3. relay ส่งคำตอบให้ client
+
+<CliWalk device="R1 (relay)" lines={[
+  ["[R1]dhcp enable", ""],
+  ["[R1-GigabitEthernet0/0/0]dhcp select relay", "ให้ interface นี้ทำ relay"],
+  ["[R1-GigabitEthernet0/0/0]dhcp relay server-ip 10.0.0.5", "IP ของ DHCP server"],
+]} />
+
+<CliWalk device="DHCP server" lines={[
+  ["[DS]ip pool vlan10", "pool สำหรับ subnet ของ client"],
+  ["[DS-ip-pool-vlan10]network 192.168.10.0 mask 24", "ต้องตรงกับ giaddr ที่ relay ส่งมา"],
+  ["[DS-ip-pool-vlan10]gateway-list 192.168.10.1", ""],
+  ["[DS]ip route-static 192.168.10.0 24 10.0.0.1", "server ต้องมี route กลับไปยัง subnet ของ client/relay"],
+]} />
+
+<Callout type="exam">
+- DISCOVER/REQUEST = broadcast · T1 renew = unicast · T2 rebind = broadcast
+- UDP 67 (server) / 68 (client)
+- relay ใส่ **giaddr** และ server เลือก pool จาก giaddr
+- client ได้ 169.254.x.x = ติดต่อ DHCP ไม่ได้ (ดู M3)
+</Callout>
+
+## สรุปท้ายบท
+
+- DORA: Discover → Offer → Request → Ack
+- lease default 1 วัน, T1 50%, T2 87.5%
+- `dhcp enable` + (global pool + `dhcp select global`) หรือ `dhcp select interface`
+- ต่าง subnet ใช้ `dhcp select relay` + `dhcp relay server-ip`

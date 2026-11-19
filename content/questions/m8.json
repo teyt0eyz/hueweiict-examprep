@@ -1,0 +1,783 @@
+[
+ {
+  "id": "m8-aaa-016",
+  "module": "M8",
+  "topic": "AAA concepts",
+  "type": "ordering",
+  "difficulty": 1,
+  "question": "เรียงลำดับ AAA ตามขั้นตอนที่เกิดขึ้นเมื่อผู้ใช้เข้าใช้งาน",
+  "options": [
+   {
+    "id": "a",
+    "text": "Authentication — ยืนยันตัวตน"
+   },
+   {
+    "id": "b",
+    "text": "Authorization — กำหนดสิทธิ์ที่ทำได้"
+   },
+   {
+    "id": "c",
+    "text": "Accounting — บันทึกการใช้งาน"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "ต้องรู้ก่อนว่าเป็นใคร (Authentication) จึงจะให้สิทธิ์ได้ (Authorization) และบันทึกการใช้งานตลอดช่วงที่ใช้ (Accounting)",
+  "ref": "Book1 Ch9 §9.2.1"
+ },
+ {
+  "id": "m8-adv-010",
+  "module": "M8",
+  "topic": "Advanced ACL",
+  "type": "single",
+  "difficulty": 2,
+  "question": "rule ใดอนุญาตให้แผนก A (10.1.10.0/24) เข้า **HTTPS** ของ server 10.1.100.10 ได้ถูกต้อง",
+  "diagram": "m8-acl",
+  "options": [
+   {
+    "id": "a",
+    "text": "`rule permit tcp source 10.1.10.0 0.0.0.255 destination 10.1.100.10 0 destination-port eq 443`"
+   },
+   {
+    "id": "b",
+    "text": "`rule permit udp source 10.1.10.0 0.0.0.255 destination 10.1.100.10 0 destination-port eq 443`"
+   },
+   {
+    "id": "c",
+    "text": "`rule permit tcp source 10.1.10.0 0.0.0.255 destination 10.1.100.10 0 source-port eq 443`"
+   },
+   {
+    "id": "d",
+    "text": "`rule permit ip source 10.1.10.0 24 destination 10.1.100.10 32 port 443`"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "HTTPS = **TCP** 443 และเป็นพอร์ต **ปลายทาง** ของคำขอจาก client · `source-port 443` ผิดทิศ · VRP ใช้ wildcard ไม่ใช่ prefix length และ protocol `ip` ระบุพอร์ตไม่ได้",
+  "ref": "Book1 Ch9 §9.1.5"
+ },
+ {
+  "id": "m8-any-025",
+  "module": "M8",
+  "topic": "Wildcard mask",
+  "type": "single",
+  "difficulty": 1,
+  "question": "`source any` ใน ACL rule เทียบเท่ากับข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "`source 0.0.0.0 0.0.0.0`"
+   },
+   {
+    "id": "b",
+    "text": "`source 0.0.0.0 255.255.255.255`"
+   },
+   {
+    "id": "c",
+    "text": "`source 255.255.255.255 0.0.0.0`"
+   },
+   {
+    "id": "d",
+    "text": "`source 0.0.0.0 0`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "wildcard ทุก bit เป็น 1 = ไม่สนใจทุก bit → match ทุก address · `0.0.0.0 0` match เฉพาะ host 0.0.0.0",
+  "ref": "Book1 Ch9 §9.1.4"
+ },
+ {
+  "id": "m8-apply-013",
+  "module": "M8",
+  "topic": "ACL applications",
+  "type": "multiple",
+  "difficulty": 2,
+  "question": "ACL ของ Huawei สามารถนำไปใช้กับฟีเจอร์ใดได้ (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "traffic-filter บน interface"
+   },
+   {
+    "id": "b",
+    "text": "กำหนด traffic ที่จะทำ NAT"
+   },
+   {
+    "id": "c",
+    "text": "จำกัด IP ที่ login เข้า VTY"
+   },
+   {
+    "id": "d",
+    "text": "routing policy / route filtering"
+   },
+   {
+    "id": "e",
+    "text": "กำหนด VLAN ของพอร์ต access"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "explanation": "ACL เป็นเครื่องมือ **จำแนก traffic** ที่ฟีเจอร์ต่าง ๆ เรียกใช้ เช่น traffic-filter, NAT, user-interface, QoS, routing policy — การกำหนด VLAN ใช้ `port default vlan` ไม่เกี่ยวกับ ACL",
+  "ref": "Book1 Ch9 §9.1.1"
+ },
+ {
+  "id": "m8-basic-002",
+  "module": "M8",
+  "topic": "ACL types",
+  "type": "single",
+  "difficulty": 1,
+  "question": "Basic ACL ใช้ field ใดในการ match packet",
+  "options": [
+   {
+    "id": "a",
+    "text": "Source IP address"
+   },
+   {
+    "id": "b",
+    "text": "Destination IP address"
+   },
+   {
+    "id": "c",
+    "text": "Source และ destination port"
+   },
+   {
+    "id": "d",
+    "text": "Protocol number"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "Basic ACL match ได้แค่ **source IP** (รวมถึง fragment และ time-range) — ต้องการ destination/protocol/port ต้องใช้ Advanced ACL",
+  "ref": "Book1 Ch9 §9.1.2"
+ },
+ {
+  "id": "m8-default-007",
+  "module": "M8",
+  "topic": "Default action",
+  "type": "single",
+  "difficulty": 2,
+  "question": "บน Huawei AR router ใช้ `traffic-filter inbound acl 3000` และ packet หนึ่ง **ไม่ match rule ใดเลย** ใน ACL 3000 ผลคือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ถูก deny ตาม implicit deny"
+   },
+   {
+    "id": "b",
+    "text": "ถูก permit"
+   },
+   {
+    "id": "c",
+    "text": "ถูกส่งไป CPU"
+   },
+   {
+    "id": "d",
+    "text": "ขึ้นกับ rule สุดท้าย"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "สำหรับ traffic-filter บน AR/S series ของ Huawei ค่า default ของ packet ที่ไม่ match คือ **permit** — ต่างจาก Cisco ที่มี implicit deny ท้าย ACL ถ้าต้องการ \"อนุญาตเฉพาะ\" ต้องเพิ่ม `rule deny ip` ปิดท้ายเอง",
+  "ref": "Book1 Ch9 §9.1"
+ },
+ {
+  "id": "m8-display-014",
+  "module": "M8",
+  "topic": "Verification",
+  "type": "single",
+  "difficulty": 2,
+  "question": "จาก output ข้อสรุปใดถูกต้อง\n\n```vrp\n<R1>display acl 3000\nAdvanced ACL 3000, 2 rules\nAcl's step is 5\n rule 5 permit tcp source 10.1.10.0 0.0.0.255 destination-port eq www (120 matches)\n rule 10 deny ip source 10.1.10.0 0.0.0.255 (0 matches)\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "ACL นี้ยังไม่ได้ถูกนำไปใช้กับ interface ใด"
+   },
+   {
+    "id": "b",
+    "text": "มีการใช้ web ของแผนก A และยังไม่มี traffic อื่นของแผนก A ถูก deny"
+   },
+   {
+    "id": "c",
+    "text": "rule 10 ผิดเพราะ match 0 ครั้ง"
+   },
+   {
+    "id": "d",
+    "text": "step ถูกเปลี่ยนเป็น 10"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "rule 5 มี 120 matches แปลว่ามี traffic HTTP ไหลผ่านและ ACL ถูกใช้งานอยู่ · rule 10 match 0 ครั้งเพียงแปลว่ายังไม่มี traffic อื่นจากแผนก A ไม่ได้แปลว่าผิด · step ยังเป็น 5",
+  "ref": "Book1 Ch9 §9.1.6"
+ },
+ {
+  "id": "m8-domain-019",
+  "module": "M8",
+  "topic": "AAA domain",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ผู้ดูแล login ด้วย username `admin` (ไม่มี @domain) เพื่อจัดการอุปกรณ์ จะถูกจัดเข้า domain ใดโดย default",
+  "options": [
+   {
+    "id": "a",
+    "text": "default"
+   },
+   {
+    "id": "b",
+    "text": "default_admin"
+   },
+   {
+    "id": "c",
+    "text": "huawei"
+   },
+   {
+    "id": "d",
+    "text": "system"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "ผู้ใช้ที่ไม่ระบุ domain: ผู้ดูแลที่ login เข้าอุปกรณ์ (Telnet/SSH/console) ใช้ **default_admin** ส่วนผู้ใช้ access ทั่วไป (เช่น 802.1X, PPP) ใช้ **default**",
+  "ref": "Book1 Ch9 §9.2.3"
+ },
+ {
+  "id": "m8-hwtacacs-018",
+  "module": "M8",
+  "topic": "HWTACACS",
+  "type": "multiple",
+  "difficulty": 2,
+  "question": "ข้อใดเป็นจุดเด่นของ **HWTACACS** เมื่อเทียบกับ RADIUS (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "ใช้ TCP จึงเชื่อถือได้มากกว่า"
+   },
+   {
+    "id": "b",
+    "text": "เข้ารหัสทั้ง body ของ packet ไม่ใช่เฉพาะ password"
+   },
+   {
+    "id": "c",
+    "text": "แยก authentication, authorization, accounting ออกจากกัน"
+   },
+   {
+    "id": "d",
+    "text": "authorize ได้ละเอียดถึงระดับคำสั่ง (command authorization)"
+   },
+   {
+    "id": "e",
+    "text": "เป็นมาตรฐานเปิดที่ทุกผู้ผลิตรองรับ"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "explanation": "HWTACACS (TCP 49) เข้ารหัสทั้ง packet แยก A ทั้งสามได้และทำ command authorization เหมาะกับการจัดการผู้ดูแลอุปกรณ์ · RADIUS เป็นมาตรฐานเปิด (RFC) ที่ใช้กันแพร่หลายกว่า",
+  "ref": "Book1 Ch9 §9.2.2"
+ },
+ {
+  "id": "m8-icmp-012",
+  "module": "M8",
+  "topic": "Advanced ACL",
+  "type": "truefalse",
+  "difficulty": 2,
+  "question": "Advanced ACL สามารถเขียน rule เพื่อ match ICMP เช่น `rule deny icmp source any destination 10.1.100.10 0` ได้",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "T"
+  ],
+  "explanation": "Advanced ACL match ได้ทั้ง protocol (tcp/udp/icmp/ip/ospf/gre ฯลฯ หรือหมายเลข protocol) source/destination address และสำหรับ TCP/UDP ระบุ port ได้",
+  "ref": "Book1 Ch9 §9.1.5"
+ },
+ {
+  "id": "m8-inbound-024",
+  "module": "M8",
+  "topic": "Traffic filter",
+  "type": "truefalse",
+  "difficulty": 1,
+  "question": "บน interface เดียวกัน สามารถใช้ `traffic-filter inbound` และ `traffic-filter outbound` พร้อมกันได้ โดยแต่ละทิศมี ACL ของตัวเอง",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "T"
+  ],
+  "explanation": "traffic-filter ใช้ได้ทั้งสองทิศบน interface เดียว ทิศละหนึ่ง ACL — inbound กรอง packet ที่เข้าสู่ interface, outbound กรอง packet ที่จะออก",
+  "ref": "Book1 Ch9 §9.1"
+ },
+ {
+  "id": "m8-l2-015",
+  "module": "M8",
+  "topic": "ACL types",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ต้องการกรอง frame ตาม **source MAC address** ควรใช้ ACL หมายเลขใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "2500"
+   },
+   {
+    "id": "b",
+    "text": "3500"
+   },
+   {
+    "id": "c",
+    "text": "4000"
+   },
+   {
+    "id": "d",
+    "text": "6000"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "Layer 2 ACL (**4000–4999**) match ข้อมูลใน Ethernet header เช่น source/destination MAC, EtherType, VLAN ID",
+  "ref": "Book1 Ch9 §9.1.2"
+ },
+ {
+  "id": "m8-local-021",
+  "module": "M8",
+  "topic": "AAA configuration",
+  "type": "multiple",
+  "difficulty": 2,
+  "question": "ต้องการให้ local user `ops` ใช้ SSH ได้และมีสิทธิ์สูงสุด ต้องตั้งค่าใดบ้างใน AAA view (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "`local-user ops password irreversible-cipher <pwd>`"
+   },
+   {
+    "id": "b",
+    "text": "`local-user ops service-type ssh`"
+   },
+   {
+    "id": "c",
+    "text": "`local-user ops privilege level 15`"
+   },
+   {
+    "id": "d",
+    "text": "`local-user ops vlan 15`"
+   },
+   {
+    "id": "e",
+    "text": "`local-user ops protocol udp`"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "ต้องกำหนด password, service-type ที่อนุญาต และ privilege level (15 = สูงสุด) — ไม่มีพารามิเตอร์ vlan หรือ protocol สำหรับงานนี้",
+  "ref": "Book1 Ch9 §9.2.4"
+ },
+ {
+  "id": "m8-mode-020",
+  "module": "M8",
+  "topic": "AAA configuration",
+  "type": "single",
+  "difficulty": 2,
+  "question": "คำสั่ง `authentication-mode radius local` ใน authentication scheme หมายความว่าอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "ใช้ RADIUS ก่อน ถ้า RADIUS server ไม่ตอบ จึง fallback ไปใช้ local"
+   },
+   {
+    "id": "b",
+    "text": "ใช้ local ก่อน แล้วค่อยใช้ RADIUS"
+   },
+   {
+    "id": "c",
+    "text": "ต้องผ่านทั้ง RADIUS และ local"
+   },
+   {
+    "id": "d",
+    "text": "ถ้า RADIUS ปฏิเสธ password ให้ลองกับ local"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "โหมดถูกใช้ตามลำดับที่เขียน — local ใช้เป็นสำรองเมื่อ **RADIUS ไม่ตอบสนอง** เท่านั้น ถ้า RADIUS ตอบว่า reject ผู้ใช้จะถูกปฏิเสธทันที ไม่ไปลอง local",
+  "ref": "Book1 Ch9 §9.2.4"
+ },
+ {
+  "id": "m8-nas-023",
+  "module": "M8",
+  "topic": "AAA concepts",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ในระบบ AAA ที่ใช้ RADIUS อุปกรณ์เครือข่ายที่ผู้ใช้เชื่อมต่อเข้ามา (เช่น router หรือ switch) ทำหน้าที่ใด",
+  "diagram": "m8-aaa",
+  "options": [
+   {
+    "id": "a",
+    "text": "RADIUS server"
+   },
+   {
+    "id": "b",
+    "text": "RADIUS client / NAS"
+   },
+   {
+    "id": "c",
+    "text": "DHCP relay"
+   },
+   {
+    "id": "d",
+    "text": "Root bridge"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "อุปกรณ์เครือข่ายเป็น **NAS (Network Access Server)** ซึ่งเป็น RADIUS client ส่งข้อมูลผู้ใช้ไปถาม RADIUS server แล้วบังคับใช้ผลที่ได้",
+  "ref": "Book1 Ch9 §9.2.2"
+ },
+ {
+  "id": "m8-order-004",
+  "module": "M8",
+  "topic": "Match order",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ACL 2000 มี rule ดังนี้ packet จาก source **10.1.1.5** จะได้ผลอย่างไร\n\n```vrp\nrule 5 permit source 10.1.0.0 0.0.255.255\nrule 10 deny source 10.1.1.0 0.0.0.255\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "permit โดย rule 5"
+   },
+   {
+    "id": "b",
+    "text": "deny โดย rule 10"
+   },
+   {
+    "id": "c",
+    "text": "deny เพราะ rule ที่เจาะจงกว่าชนะ"
+   },
+   {
+    "id": "d",
+    "text": "ขึ้นกับ default action"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "การ match เรียงตาม rule ID (config order) และ **หยุดที่ rule แรกที่ match** — 10.1.1.5 อยู่ใน 10.1.0.0/16 จึง match rule 5 ก่อน rule 10 ไม่ถูกตรวจ\n\nVRP ไม่ได้เลือกตามความเจาะจงเหมือน routing table",
+  "ref": "Book1 Ch9 §9.1.3"
+ },
+ {
+  "id": "m8-place-009",
+  "module": "M8",
+  "topic": "ACL placement",
+  "type": "single",
+  "difficulty": 2,
+  "question": "จาก topology ต้องการห้าม **แผนก B** เข้าถึง FTP server เท่านั้น ด้วย **basic ACL** ควรวางที่ใด",
+  "diagram": "m8-acl",
+  "options": [
+   {
+    "id": "a",
+    "text": "R1 G0/0/0 inbound"
+   },
+   {
+    "id": "b",
+    "text": "R1 ขาที่ต่อ FTP server ทิศ outbound"
+   },
+   {
+    "id": "c",
+    "text": "SW พอร์ตของแผนก B"
+   },
+   {
+    "id": "d",
+    "text": "ที่ใดก็ได้ผลเหมือนกัน"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "basic ACL ดูได้แค่ source — ถ้าวางที่ G0/0/0 inbound แผนก B จะไปที่ใดผ่าน R1 ไม่ได้เลย จึงต้องวาง **ใกล้ปลายทาง** (ขาไป FTP server, outbound) เพื่อให้กระทบเฉพาะ FTP",
+  "ref": "Book1 Ch9 §9.1"
+ },
+ {
+  "id": "m8-radius-017",
+  "module": "M8",
+  "topic": "RADIUS",
+  "type": "single",
+  "difficulty": 1,
+  "question": "RADIUS ใช้ protocol และพอร์ตใดสำหรับ authentication/authorization และ accounting (ตามมาตรฐานปัจจุบัน)",
+  "options": [
+   {
+    "id": "a",
+    "text": "TCP 49"
+   },
+   {
+    "id": "b",
+    "text": "UDP 1812 และ UDP 1813"
+   },
+   {
+    "id": "c",
+    "text": "TCP 1812 และ TCP 1813"
+   },
+   {
+    "id": "d",
+    "text": "UDP 161 และ 162"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "RADIUS ใช้ **UDP 1812** (authen/author) และ **UDP 1813** (accounting) · TCP 49 เป็นของ HWTACACS/TACACS+ · UDP 161/162 เป็นของ SNMP",
+  "ref": "Book1 Ch9 §9.2.2"
+ },
+ {
+  "id": "m8-scheme-022",
+  "module": "M8",
+  "topic": "AAA configuration",
+  "type": "single",
+  "difficulty": 3,
+  "question": "ตั้ง authentication-scheme `auth1` ไว้แล้วแต่ผู้ใช้ `bob@corp` ยังถูกตรวจสอบด้วย scheme เดิม สาเหตุที่น่าเป็นไปได้มากที่สุดคือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ไม่ได้ผูก `authentication-scheme auth1` ภายใน `domain corp`"
+   },
+   {
+    "id": "b",
+    "text": "ไม่ได้ตั้ง `stp enable`"
+   },
+   {
+    "id": "c",
+    "text": "ต้อง reboot อุปกรณ์ก่อน"
+   },
+   {
+    "id": "d",
+    "text": "scheme ชื่อ auth1 ใช้ไม่ได้"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "scheme เป็นแค่นโยบาย จะมีผลต่อผู้ใช้ก็ต่อเมื่อ **ผูกเข้ากับ domain** ที่ผู้ใช้สังกัด (`domain corp` → `authentication-scheme auth1`)",
+  "ref": "Book1 Ch9 §9.2.4"
+ },
+ {
+  "id": "m8-step-003",
+  "module": "M8",
+  "topic": "Rule ID and step",
+  "type": "single",
+  "difficulty": 1,
+  "question": "สร้าง ACL ใหม่แล้วพิมพ์ `rule permit source 10.1.1.0 0.0.0.255` และ `rule deny source any` ตามลำดับโดยไม่ระบุ rule ID ทั้งสอง rule จะได้ ID เท่าใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "0 และ 1"
+   },
+   {
+    "id": "b",
+    "text": "1 และ 2"
+   },
+   {
+    "id": "c",
+    "text": "5 และ 10"
+   },
+   {
+    "id": "d",
+    "text": "10 และ 20"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "step default = **5** — rule แรกได้ 5 ถัดไปได้ 10 เว้นช่องไว้แทรก rule ภายหลัง",
+  "ref": "Book1 Ch9 §9.1.3"
+ },
+ {
+  "id": "m8-trap-011",
+  "module": "M8",
+  "topic": "Troubleshooting",
+  "type": "single",
+  "difficulty": 3,
+  "question": "ผู้ดูแลต้องการให้แผนก A ใช้ได้เฉพาะ web แต่เขียน ACL 3000 (ใช้ inbound ที่ G0/0/0) ดังนี้ แล้วพบว่าแผนก A ใช้ web ไม่ได้ ปัญหาคือข้อใด\n\n```vrp\nrule 5 deny ip source 10.1.10.0 0.0.0.255\nrule 10 permit tcp source 10.1.10.0 0.0.0.255 destination-port eq 80\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "ต้องใช้ outbound แทน inbound"
+   },
+   {
+    "id": "b",
+    "text": "rule 5 deny ทุก IP ของแผนก A ก่อนจะถึง rule 10 จึงต้องสลับลำดับ (permit ID ต่ำกว่า deny)"
+   },
+   {
+    "id": "c",
+    "text": "ต้องระบุ destination ใน rule 10"
+   },
+   {
+    "id": "d",
+    "text": "advanced ACL ใช้กับ traffic-filter ไม่ได้"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "ACL match จาก ID น้อยไปมากและหยุดที่ rule แรก → rule 5 จับทุก packet ของแผนก A ไปก่อน rule 10 ไม่เคยถูก match แก้โดยให้ permit มี ID ต่ำกว่า deny",
+  "ref": "Book1 Ch9 §9.1.3"
+ },
+ {
+  "id": "m8-type-001",
+  "module": "M8",
+  "topic": "ACL types",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ACL หมายเลข **3001** เป็น ACL ประเภทใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "Basic ACL"
+   },
+   {
+    "id": "b",
+    "text": "Advanced ACL"
+   },
+   {
+    "id": "c",
+    "text": "Layer 2 ACL"
+   },
+   {
+    "id": "d",
+    "text": "User-defined ACL"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "Basic 2000–2999, **Advanced 3000–3999**, Layer 2 4000–4999, User-defined 5000–5999",
+  "ref": "Book1 Ch9 §9.1.2"
+ },
+ {
+  "id": "m8-vty-008",
+  "module": "M8",
+  "topic": "Default action",
+  "type": "single",
+  "difficulty": 3,
+  "question": "ตั้ง ACL บน VTY ดังนี้ ผู้ดูแลที่มาจาก **10.1.20.8** จะ telnet เข้าอุปกรณ์ได้หรือไม่\n\n```vrp\n[R1]acl 2001\n[R1-acl-basic-2001]rule permit source 10.1.10.0 0.0.0.255\n[R1]user-interface vty 0 4\n[R1-ui-vty0-4]acl 2001 inbound\n```",
+  "diagram": "m8-acl",
+  "options": [
+   {
+    "id": "a",
+    "text": "ได้ เพราะ default คือ permit"
+   },
+   {
+    "id": "b",
+    "text": "ไม่ได้ เพราะเมื่อใช้กับ user-interface แล้วไม่ match rule ใด จะถูก deny"
+   },
+   {
+    "id": "c",
+    "text": "ได้ เพราะ basic ACL ใช้กับ VTY ไม่ได้"
+   },
+   {
+    "id": "d",
+    "text": "ไม่ได้ เพราะต้องใช้ advanced ACL"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "default action ขึ้นกับฟีเจอร์ที่เรียกใช้ — สำหรับ **user-interface** packet ที่ไม่ match ถูก **deny** ดังนั้นเฉพาะ 10.1.10.0/24 ที่ login ได้\n\n(ต่างจาก traffic-filter ที่ไม่ match = permit)",
+  "ref": "Book1 Ch9 §9.1"
+ },
+ {
+  "id": "m8-wild-005",
+  "module": "M8",
+  "topic": "Wildcard mask",
+  "type": "single",
+  "difficulty": 1,
+  "question": "wildcard mask ใดใช้ match ทั้ง subnet **172.16.32.0/20**",
+  "options": [
+   {
+    "id": "a",
+    "text": "0.0.15.255"
+   },
+   {
+    "id": "b",
+    "text": "0.0.31.255"
+   },
+   {
+    "id": "c",
+    "text": "255.255.240.0"
+   },
+   {
+    "id": "d",
+    "text": "0.0.0.255"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "/20 = mask 255.255.240.0 → wildcard = 255.255.255.255 − mask = **0.0.15.255**",
+  "ref": "Book1 Ch9 §9.1.4"
+ },
+ {
+  "id": "m8-wild-006",
+  "module": "M8",
+  "topic": "Wildcard mask",
+  "type": "single",
+  "difficulty": 3,
+  "question": "rule `rule permit source 192.168.1.0 0.0.0.254` match host ใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ทุก host ใน 192.168.1.0/24"
+   },
+   {
+    "id": "b",
+    "text": "เฉพาะ IP ที่ octet สุดท้ายเป็นเลข **คู่**"
+   },
+   {
+    "id": "c",
+    "text": "เฉพาะ IP ที่ octet สุดท้ายเป็นเลขคี่"
+   },
+   {
+    "id": "d",
+    "text": "เฉพาะ 192.168.1.0 และ .254"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "wildcard 254 = 1111 1110 — bit สุดท้าย (bit ค่า 1) ต้อง **ตรงกับ 0** ของ address 192.168.1.0 จึง match เฉพาะเลขคู่ (.0, .2, .4 …)\n\nถ้าต้องการเลขคี่ต้องใช้ `192.168.1.1 0.0.0.254`",
+  "ref": "Book1 Ch9 §9.1.4"
+ }
+]

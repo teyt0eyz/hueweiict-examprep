@@ -1,0 +1,145 @@
+<Objectives items={[
+  "อธิบายข้อดีของ IPv6 และโครงสร้าง base header",
+  "เขียน IPv6 address แบบย่อ/เต็มได้ถูกกฎ และจำแนกชนิด address ได้",
+  "สร้าง interface ID แบบ EUI-64 จาก MAC address ได้",
+  "อธิบาย NDP (RS/RA/NS/NA), DAD และวิธีกำหนด address: static, SLAAC, DHCPv6",
+  "ตั้งค่า IPv6 address, static route และ OSPFv3 เบื้องต้นบน VRP",
+]} />
+
+## ทำไมต้อง IPv6
+
+- address **128 bit** — แทบไม่มีวันหมด จึงไม่ต้องพึ่ง NAT
+- **header ขนาดคงที่ 40 byte** ตัด field ที่ไม่จำเป็น (ไม่มี checksum, ไม่มี fragmentation ที่ router) ประมวลผลเร็วขึ้น ส่วนเสริมย้ายไป **extension header**
+- รองรับ autoconfiguration (SLAAC), multicast แทน broadcast, ความปลอดภัย (IPsec) และ QoS ผ่าน flow label
+
+### IPv6 base header
+
+| Field | ความหมาย |
+|---|---|
+| Version (4 bit) | = 6 |
+| Traffic Class (8 bit) | คล้าย ToS/DSCP |
+| Flow Label (20 bit) | ระบุ flow สำหรับ QoS |
+| Payload Length (16 bit) | ความยาวข้อมูลที่ตามหลัง header |
+| **Next Header** (8 bit) | บอก extension header ถัดไป หรือโปรโตคอลชั้นบน (6 = TCP, 17 = UDP, 58 = ICMPv6) |
+| **Hop Limit** (8 bit) | ทำหน้าที่เหมือน TTL |
+| Source / Destination | 128 bit ต่อ address |
+
+## รูปแบบ address
+
+เขียนเป็น 8 กลุ่ม กลุ่มละ 16 bit (ฐานสิบหก 4 ตัว) คั่นด้วย `:`
+
+```text
+2001:0DB8:0000:0000:0008:0800:200C:417A
+```
+
+กฎการย่อ:
+1. ตัด **0 นำหน้า** ในแต่ละกลุ่มได้ → `2001:DB8:0:0:8:800:200C:417A`
+2. กลุ่มที่เป็น 0 **ติดกัน** แทนด้วย `::` ได้ **เพียงครั้งเดียว** → `2001:DB8::8:800:200C:417A`
+
+<Callout type="trap">
+- ตัด 0 **ท้าย** กลุ่มไม่ได้ (`0800` ย่อเป็น `800` ได้ แต่ไม่ใช่ `08`)
+- ใช้ `::` สองครั้งไม่ได้ เพราะจะไม่รู้ว่าแต่ละช่วงมี 0 กี่กลุ่ม เช่น `2001::25de::cade` ผิด
+- ถ้ามี 0 สองช่วงยาวเท่ากัน ควรย่อช่วงแรก (RFC 5952)
+</Callout>
+
+prefix ใช้ `/length` เหมือน CIDR — LAN ทั่วไปใช้ **/64** (64 bit แรก = network prefix, 64 bit หลัง = **interface ID**)
+
+## ชนิดของ address
+
+IPv6 **ไม่มี broadcast** — ใช้ multicast แทน
+
+| ชนิด | prefix | ใช้ทำอะไร |
+|---|---|---|
+| **Global Unicast (GUA)** | `2000::/3` | เทียบ public IPv4 ใช้บนอินเทอร์เน็ต (`2001:DB8::/32` สงวนไว้ใช้ในเอกสาร) |
+| **Unique Local (ULA)** | `FC00::/7` (ใช้จริง `FD00::/8`) | เทียบ private IPv4 |
+| **Link-Local (LLA)** | `FE80::/10` | ใช้ใน link เดียว ทุก interface ที่เปิด IPv6 มีเสมอ ใช้เป็น next hop ของ routing protocol |
+| Loopback | `::1/128` | เทียบ 127.0.0.1 |
+| Unspecified | `::/128` | ยังไม่มี address (เช่นตอนทำ DAD) |
+| **Multicast** | `FF00::/8` | `FF02::1` ทุก node, `FF02::2` ทุก router, `FF02::5/6` OSPFv3 |
+| Solicited-node multicast | `FF02::1:FFxx:xxxx` | 24 bit สุดท้ายมาจาก unicast address ใช้ใน NS แทน ARP broadcast |
+| **Anycast** | ใช้ช่วง unicast | หลาย node ใช้ address เดียว ส่งถึงตัวที่ใกล้สุด |
+
+<Callout type="tip">
+ฝึกย่อ/ขยายและจำแนกชนิด address ได้ใน [Lab 7: IPv6 Address Tool](/labs/ipv6/)
+</Callout>
+
+## EUI-64
+
+สร้าง interface ID 64 bit จาก MAC 48 bit:
+
+1. แบ่ง MAC ครึ่ง แล้วแทรก `FFFE` ตรงกลาง
+2. **กลับค่า bit ที่ 7** (U/L bit) ของ byte แรก
+
+ตัวอย่าง MAC `5489-98AB-CDEF`:
+```text
+54 89 98 | AB CD EF
+54 89 98 FF FE AB CD EF          ← แทรก FFFE
+0x54 = 0101 0100 → กลับ bit ที่ 7 → 0101 0110 = 0x56
+interface ID = 5689:98FF:FEAB:CDEF
+```
+
+## NDP — Neighbor Discovery Protocol
+
+NDP ใช้ **ICMPv6** และทำหน้าที่แทน ARP, router discovery, redirect
+
+| ICMPv6 Type | Message | หน้าที่ |
+|---|---|---|
+| 133 | **RS** (Router Solicitation) | host ขอ RA จาก router |
+| 134 | **RA** (Router Advertisement) | router ประกาศ prefix, gateway, flag M/O |
+| 135 | **NS** (Neighbor Solicitation) | หา MAC ของ neighbor (แทน ARP request) และใช้ทำ **DAD** |
+| 136 | **NA** (Neighbor Advertisement) | ตอบ NS (แทน ARP reply) |
+| 137 | Redirect | แนะนำ next hop ที่ดีกว่า |
+
+**DAD (Duplicate Address Detection)** — ก่อนใช้ address host ส่ง NS โดยใช้ source `::` ถามหา address ของตัวเอง ถ้ามีใครตอบ NA แปลว่าซ้ำ
+
+## วิธีกำหนด address
+
+| วิธี | flag ใน RA | ได้อะไรจากไหน |
+|---|---|---|
+| Static | — | ตั้งเอง |
+| **SLAAC** | M = 0, O = 0 | prefix จาก RA + interface ID ที่สร้างเอง (EUI-64 หรือสุ่ม) |
+| Stateless DHCPv6 | M = 0, O = 1 | address จาก SLAAC, ส่วนข้อมูลอื่น (DNS) จาก DHCPv6 |
+| Stateful DHCPv6 | M = 1 | address และข้อมูลอื่นจาก DHCPv6 server |
+
+## ตั้งค่าบน VRP
+
+<Topology name="m12-ipv6" />
+
+<CliWalk device="R1" lines={[
+  ["[R1]ipv6", "เปิดการประมวลผล IPv6 ระดับระบบ"],
+  ["[R1]interface GigabitEthernet 0/0/0", ""],
+  ["[R1-GigabitEthernet0/0/0]ipv6 enable", "เปิด IPv6 บน interface (ต้องทำทุก interface)"],
+  ["[R1-GigabitEthernet0/0/0]ipv6 address 2001:db8:1::1 64", "กำหนด GUA แบบ static"],
+  ["[R1-GigabitEthernet0/0/0]ipv6 address auto link-local", "สร้าง link-local อัตโนมัติ (EUI-64)"],
+  ["[R1-GigabitEthernet0/0/0]undo ipv6 nd ra halt", "ให้ router ส่ง RA (ค่า default บน AR คือไม่ส่ง) PC จึงทำ SLAAC ได้"],
+  ["[R1-GigabitEthernet0/0/1]ipv6 enable", ""],
+  ["[R1-GigabitEthernet0/0/1]ipv6 address 2001:db8:12::1 64", "ลิงก์ไป R2"],
+  ["[R1]ipv6 route-static 2001:db8:3:: 64 2001:db8:12::2", "static route IPv6"],
+  ["[R1]ipv6 route-static :: 0 2001:db8:12::2", "default route IPv6"],
+  ["<R1>display ipv6 interface brief", "สถานะ IPv6 ของ interface"],
+  ["<R1>display ipv6 neighbors", "ตาราง neighbor (เทียบ ARP table)"],
+  ["<R1>display ipv6 routing-table", ""],
+]} />
+
+<CliWalk device="R2" title="ปลายอีกฝั่งรับ address อัตโนมัติ / OSPFv3" lines={[
+  ["[R2-GigabitEthernet0/0/1]ipv6 address auto global", "รับ address ด้วย SLAAC จาก RA ของ router ฝั่งตรงข้าม"],
+  ["[R2]ospfv3 1", "OSPF สำหรับ IPv6"],
+  ["[R2-ospfv3-1]router-id 2.2.2.2", "OSPFv3 ยังใช้ router ID แบบ IPv4 32 bit และต้องตั้งเองถ้าไม่มี IPv4"],
+  ["[R2-GigabitEthernet0/0/1]ospfv3 1 area 0", "เปิด OSPFv3 ที่ interface (ไม่ใช้คำสั่ง network)"],
+  ["<R2>display ospfv3 peer", ""],
+]} />
+
+<Callout type="exam">
+- IPv6 header 40 byte คงที่, Hop Limit แทน TTL, ไม่มี checksum, ไม่มี broadcast
+- FE80::/10 link-local, 2000::/3 global, FC00::/7 ULA, FF00::/8 multicast
+- NDP: RS 133, RA 134, NS 135, NA 136 · DAD ใช้ NS ที่ source `::`
+- EUI-64: แทรก FFFE + กลับ bit ที่ 7
+- M=1 → stateful DHCPv6 · O=1 (M=0) → stateless DHCPv6
+</Callout>
+
+## สรุปท้ายบท
+
+- 128 bit, ย่อด้วยการตัด 0 นำหน้าและ `::` ครั้งเดียว
+- ชนิด: unicast (GUA/ULA/LLA), multicast, anycast — ไม่มี broadcast
+- NDP แทน ARP, SLAAC ใช้ prefix จาก RA
+- VRP: `ipv6` + `ipv6 enable` + `ipv6 address` + `ipv6 route-static`

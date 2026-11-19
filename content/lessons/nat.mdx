@@ -1,0 +1,112 @@
+<Objectives items={[
+  "อธิบายเหตุผลที่ต้องใช้ NAT และความหมายของ inside/outside, private/public",
+  "เปรียบเทียบ Static NAT, Dynamic NAT, NAPT, Easy IP และ NAT Server",
+  "ตั้งค่า NAT แต่ละแบบบน Huawei AR และใช้ ACL เลือก traffic ที่จะแปลงได้",
+  "อ่าน NAT session table และวิเคราะห์ปัญหา NAT ที่พบบ่อย",
+]} />
+
+## ทำไมต้องมี NAT
+
+IPv4 public address ไม่พอ องค์กรจึงใช้ **private address** (10/8, 172.16/12, 192.168/16) ภายใน ซึ่ง route บนอินเทอร์เน็ตไม่ได้ **NAT (Network Address Translation)** บน router ขอบเครือข่ายจะเปลี่ยน source IP (และอาจรวมถึง port) ของ packet ขาออกเป็น public address และแปลงกลับเมื่อ packet ตอบกลับมา
+
+ข้อดี: ประหยัด public IP, ซ่อนโครงสร้างภายใน · ข้อเสีย: ทำลาย end-to-end, บางโปรโตคอลที่ฝัง IP ใน payload ต้องใช้ ALG, เพิ่มภาระให้ router
+
+<Topology name="m9-nat" />
+
+## ชนิดของ NAT
+
+| ชนิด | การแปลง | Public IP ที่ใช้ | เริ่มการเชื่อมต่อจาก |
+|---|---|---|---|
+| **Static NAT** | 1 private ↔ 1 public คงที่ | 1 ต่อ host | ทั้งในและนอก |
+| **Dynamic NAT** (no-pat) | private → public ว่างใน pool (1:1 ชั่วคราว) | เท่าจำนวน host ที่ออกพร้อมกัน | ภายในเท่านั้น |
+| **NAPT** | หลาย private → public ใน pool โดยแยกด้วย **port** | น้อย (หลาย host ใช้ IP เดียวได้) | ภายในเท่านั้น |
+| **Easy IP** | NAPT ที่ใช้ **IP ของ interface ขาออก** ไม่ต้องมี pool | IP ของ interface (เหมาะกับ IP จาก DHCP/PPPoE) | ภายในเท่านั้น |
+| **NAT Server** | public IP:port → server ภายใน IP:port | ใช้ร่วมกับ IP อื่นได้ | **ภายนอก** เข้ามาหา server |
+
+<Callout type="tip">
+ดูตาราง translation ของแต่ละชนิดเทียบกันได้ใน [Lab 6: NAT Translation Table](/labs/nat/)
+</Callout>
+
+## Static NAT
+
+<CliWalk device="R1" lines={[
+  ["[R1]interface GigabitEthernet 0/0/1", "interface ฝั่ง ISP (outside)"],
+  ["[R1-GigabitEthernet0/0/1]nat static global 202.1.1.10 inside 192.168.1.10", "แปลง 192.168.1.10 ↔ 202.1.1.10 แบบถาวร ทั้งขาเข้าและขาออก"],
+  ["<R1>display nat static", "ดูรายการ static NAT"],
+]} />
+
+## Dynamic NAT และ NAPT
+
+ใช้ **ACL** เลือกว่า source ใดจะถูกแปลง และ **address-group** เป็น pool ของ public IP
+
+<CliWalk device="R1" lines={[
+  ["[R1]acl 2000", ""],
+  ["[R1-acl-basic-2000]rule 5 permit source 192.168.1.0 0.0.0.255", "traffic ที่ match permit เท่านั้นที่ถูกแปลง"],
+  ["[R1]nat address-group 1 202.1.1.11 202.1.1.20", "pool public 10 address"],
+  ["[R1-GigabitEthernet0/0/1]nat outbound 2000 address-group 1 no-pat", "Dynamic NAT: แปลงเฉพาะ IP (1 host : 1 public ต่อครั้ง)"],
+]} />
+
+ถ้าตัด `no-pat` ออกจะเป็น **NAPT** — ใช้ port แยก session ทำให้ทุก host แชร์ public IP ไม่กี่ตัวได้
+
+```vrp
+[R1-GigabitEthernet0/0/1]nat outbound 2000 address-group 1
+```
+
+<Callout type="trap">
+Dynamic NAT แบบ no-pat: ถ้ามี host อยากออกพร้อมกัน **มากกว่าจำนวน IP ใน pool** host ที่เกินจะออกไม่ได้จนกว่าจะมี IP ว่าง — นี่คือเหตุผลที่ NAPT นิยมกว่า
+</Callout>
+
+## Easy IP
+
+<CliWalk device="R1" lines={[
+  ["[R1-GigabitEthernet0/0/1]nat outbound 2000", "ไม่มี address-group = ใช้ IP ของ G0/0/1 เป็น public แบบ NAPT"],
+]} />
+
+เหมาะกับสาขาเล็กหรือบ้านที่ได้ public IP แบบ dynamic จาก ISP (DHCP/PPPoE) เพราะไม่ต้องรู้ IP ล่วงหน้า
+
+## NAT Server
+
+ให้ผู้ใช้อินเทอร์เน็ตเข้าถึง server ภายในผ่าน public IP/port
+
+<CliWalk device="R1" lines={[
+  ["[R1-GigabitEthernet0/0/1]nat server protocol tcp global 202.1.1.5 www inside 192.168.1.100 8080", "202.1.1.5:80 → 192.168.1.100:8080"],
+  ["[R1-GigabitEthernet0/0/1]nat server protocol tcp global current-interface 2222 inside 192.168.1.50 22", "ใช้ IP ของ interface เองรับ port 2222 แล้วส่งต่อไป SSH ภายใน"],
+  ["<R1>display nat server", "ตรวจรายการ NAT Server"],
+]} />
+
+## ตรวจสอบและแก้ปัญหา
+
+```vrp
+<R1>display nat session all
+  NAT Session Table Information:
+     Protocol          : ICMP(1)
+     SrcAddr   Vpn     : 192.168.1.10
+     DestAddr  Vpn     : 8.8.8.8
+     Type Code IcmpId  : 0   8   43981
+     NAT-Info
+       New SrcAddr     : 202.1.1.11
+       New DestAddr    : ----
+       New IcmpId      : 10250
+```
+
+ปัญหาที่พบบ่อย:
+
+1. **ACL ไม่ permit** subnet ที่ต้องการ (หรือ rule deny อยู่ก่อน)
+2. ใช้ `nat outbound` บน **interface ผิดฝั่ง** — ต้องเป็น interface ขาออกไป ISP
+3. router ไม่มี **default route** ไป ISP
+4. ISP ไม่มี route กลับมายัง **public pool** ที่ใช้ (กรณีใช้ IP คนละ subnet กับ interface)
+5. NAT Server ทำงานแต่ server ภายใน **ไม่มี default gateway** กลับมาที่ R1
+
+<Callout type="exam">
+- "หลาย host ใช้ public IP เดียว" = **NAPT / Easy IP** · "ให้คนข้างนอกเข้าถึง server ข้างใน" = **NAT Server** หรือ Static NAT
+- `no-pat` = Dynamic NAT (ไม่แปลง port)
+- `nat outbound <acl>` ไม่มี address-group = **Easy IP**
+- คำสั่ง NAT ของ AR ตั้งใน **interface view ของขาออก**
+</Callout>
+
+## สรุปท้ายบท
+
+- Static 1:1 · Dynamic NAT (pool, no-pat) · NAPT (pool + port) · Easy IP (IP ของ interface) · NAT Server (เข้าจากนอก)
+- ACL permit = traffic ที่จะถูกแปลง
+- ต้องมี default route และ route ขากลับสำหรับ pool
+- ตรวจด้วย `display nat session all`, `display nat static`, `display nat server`

@@ -1,0 +1,135 @@
+<Objectives items={[
+  "อธิบายองค์ประกอบของ ACL: หมายเลข, rule ID, step, action และเงื่อนไข",
+  "แยกประเภท ACL (basic / advanced / layer 2) และเลือกใช้ให้ถูกงาน",
+  "คำนวณ wildcard mask และอ่านลำดับการ match ของ rule ได้",
+  "ใช้ ACL กับ traffic-filter และรู้ default action ในบริบทต่าง ๆ",
+  "อธิบาย AAA (Authentication, Authorization, Accounting) และตั้งค่า local AAA บน VRP",
+]} />
+
+## ACL คืออะไร
+
+**ACL (Access Control List)** คือชุดกฎ (rule) สำหรับ **จำแนก (match) traffic** — ตัว ACL เองไม่ได้ทำอะไรกับ packet จนกว่าจะถูกนำไปใช้กับฟีเจอร์ เช่น traffic-filter (กรองข้อมูล), NAT (เลือก traffic ที่จะแปลง), user-interface (จำกัดผู้ login), QoS หรือ routing policy
+
+<Topology name="m8-acl" />
+
+## องค์ประกอบของ rule
+
+```vrp
+rule 5 permit source 10.1.10.0 0.0.0.255
+     │   │      └────────────── เงื่อนไข (match conditions)
+     │   └── action: permit / deny
+     └── rule ID
+```
+
+- **ACL number** บอกประเภท
+- **Rule ID** — ถ้าไม่ระบุ VRP กำหนดให้อัตโนมัติตาม **step = 5** (rule แรก 5, ถัดไป 10, 15 …) เว้นช่องไว้แทรก rule ภายหลัง
+- **Match order** — ค่า default คือ `config` (เรียงตาม rule ID จากน้อยไปมาก) และ **หยุดที่ rule แรกที่ match**
+
+| ประเภท | หมายเลข | match ด้วย |
+|---|---|---|
+| Basic | **2000–2999** | source IP เท่านั้น (และช่วงเวลา, fragment) |
+| Advanced | **3000–3999** | source/destination IP, protocol, source/destination port, ฯลฯ |
+| Layer 2 | 4000–4999 | MAC address, EtherType, VLAN, 802.1p |
+| User-defined | 5000–5999 | offset ใน header ที่กำหนดเอง |
+
+## Wildcard mask
+
+wildcard ทำงานกลับกับ subnet mask: bit **0 = ต้องตรงกัน**, bit **1 = ไม่สนใจ**
+
+| เป้าหมาย | address + wildcard |
+|---|---|
+| host 10.1.1.1 เดียว | `10.1.1.1 0.0.0.0` (หรือ `10.1.1.1 0`) |
+| ทั้ง subnet 192.168.1.0/24 | `192.168.1.0 0.0.0.255` |
+| 172.16.0.0/12 | `172.16.0.0 0.15.255.255` |
+| ทุก address | `any` (= `0.0.0.0 255.255.255.255`) |
+| IP คี่ใน 192.168.1.0/24 | `192.168.1.1 0.0.0.254` |
+
+<Callout type="trap">
+wildcard ไม่จำเป็นต้องต่อเนื่องแบบ subnet mask (เช่น `0.0.0.254`) และ VRP รับรูปแบบ prefix ไม่ได้ในที่ที่ต้องการ wildcard — `rule permit source 10.1.1.0 24` จะไม่ได้ความหมายของ /24
+</Callout>
+
+## Default action — ขึ้นกับว่าใครเรียกใช้ ACL
+
+| การใช้งาน | ไม่มี rule ใด match | ACL ไม่มี rule เลย / ยังไม่สร้าง |
+|---|---|---|
+| **traffic-filter** บน interface (AR/S series) | **permit** (ปล่อยผ่าน) | permit |
+| user-interface (`acl 2000 inbound` บน VTY) | deny | permit |
+| NAT (`nat outbound`) | ไม่แปลง address | — |
+
+ดังนั้นถ้าต้องการ "อนุญาตเฉพาะบางกลุ่ม" ด้วย traffic-filter ต้องเขียน **`rule deny`** ปิดท้ายเอง
+
+## ตัวอย่าง: basic ACL
+
+ข้อกำหนด: ห้ามแผนก B (10.1.20.0/24) เข้าถึงวงเซิร์ฟเวอร์ แต่แผนกอื่นผ่านได้
+
+<CliWalk device="R1" lines={[
+  ["[R1]acl 2000", "สร้าง basic ACL (เขียน acl number 2000 ก็ได้)"],
+  ["[R1-acl-basic-2000]rule deny source 10.1.20.0 0.0.0.255", "ได้ rule ID 5 อัตโนมัติ"],
+  ["[R1-acl-basic-2000]quit", "ไม่ต้องเขียน permit any เพราะ traffic-filter ปล่อยที่ไม่ match อยู่แล้ว"],
+  ["[R1]interface GigabitEthernet 0/0/1", "พอร์ตฝั่งเซิร์ฟเวอร์ (ใกล้ปลายทาง)"],
+  ["[R1-GigabitEthernet0/0/1]traffic-filter outbound acl 2000", "กรอง traffic ที่ออกจากพอร์ตนี้"],
+]} />
+
+<Callout type="exam" title="วาง ACL ที่ไหน">
+- **Basic ACL** ดูได้แค่ source → วาง **ใกล้ปลายทาง** ไม่งั้นจะบล็อกแผนก B ไปทุกที่
+- **Advanced ACL** ระบุได้ละเอียด → วาง **ใกล้ต้นทาง** เพื่อทิ้ง traffic ตั้งแต่เนิ่น ๆ
+</Callout>
+
+## ตัวอย่าง: advanced ACL
+
+ข้อกำหนด: แผนก A ใช้ web (80/443) ของ 10.1.100.10 ได้เท่านั้น ส่วนแผนก B ห้ามใช้ FTP ของ 10.1.100.20
+
+<CliWalk device="R1" lines={[
+  ["[R1]acl 3000", "advanced ACL"],
+  ["[R1-acl-adv-3000]rule 5 permit tcp source 10.1.10.0 0.0.0.255 destination 10.1.100.10 0 destination-port eq 80", "อนุญาต HTTP"],
+  ["[R1-acl-adv-3000]rule 10 permit tcp source 10.1.10.0 0.0.0.255 destination 10.1.100.10 0 destination-port eq 443", "อนุญาต HTTPS"],
+  ["[R1-acl-adv-3000]rule 15 deny ip source 10.1.10.0 0.0.0.255", "ที่เหลือของแผนก A ปิดหมด"],
+  ["[R1-acl-adv-3000]rule 20 deny tcp source 10.1.20.0 0.0.0.255 destination 10.1.100.20 0 destination-port eq ftp", "ห้ามแผนก B ใช้ FTP (port 21 เขียนเป็น ftp ได้)"],
+  ["[R1]interface GigabitEthernet 0/0/0", "พอร์ตฝั่งผู้ใช้ (ใกล้ต้นทาง)"],
+  ["[R1-GigabitEthernet0/0/0]traffic-filter inbound acl 3000", ""],
+  ["[R1-acl-adv-3000]rule 12 permit icmp source 10.1.10.0 0.0.0.255", "แทรก rule ภายหลังได้เพราะ step 5 เว้นช่องไว้"],
+  ["<R1>display acl 3000", "ดู rule และจำนวนครั้งที่ match (matched x times)"],
+]} />
+
+<Callout type="trap">
+ลำดับสำคัญมาก: ถ้า `rule 5 deny ip source 10.1.10.0 0.0.0.255` มาก่อน rule permit web ของแผนก A จะไม่มีวันถูก match เลย — ลองทดสอบใน [Lab 5: ACL Matcher](/labs/acl/)
+</Callout>
+
+## AAA
+
+**AAA** = **A**uthentication (คุณเป็นใคร) · **A**uthorization (ทำอะไรได้บ้าง) · **A**ccounting (บันทึกว่าทำอะไรไปเท่าไร)
+
+<Topology name="m8-aaa" />
+
+| วิธี | ลักษณะ |
+|---|---|
+| **Local** | เก็บ user ในอุปกรณ์เอง — ง่าย เหมาะกับเครือข่ายเล็ก/สำรอง |
+| **RADIUS** | มาตรฐานเปิด ใช้ **UDP 1812** (authentication/authorization) และ **1813** (accounting) เข้ารหัสเฉพาะ password, รวม authen+author ไว้ด้วยกัน |
+| **HWTACACS** | ของ Huawei (คล้าย TACACS+) ใช้ **TCP 49** เข้ารหัสทั้ง packet แยก A ทั้งสามออกจากกัน ละเอียดถึงระดับคำสั่ง |
+| None | ไม่ตรวจสอบ |
+
+ผู้ใช้ถูกจัดเข้า **domain** ตาม username (`user@domain`) ถ้าไม่ระบุจะใช้ domain `default` (ผู้ใช้ทั่วไป) หรือ `default_admin` (ผู้ดูแลที่ login เข้าอุปกรณ์)
+
+<CliWalk device="R1" title="Local AAA สำหรับผู้ดูแล" lines={[
+  ["[R1]aaa", ""],
+  ["[R1-aaa]authentication-scheme auth1", "สร้าง authentication scheme"],
+  ["[R1-aaa-authen-auth1]authentication-mode local", "ตรวจด้วย local database (ใส่ radius local = ลอง RADIUS ก่อน แล้ว fallback ไป local)"],
+  ["[R1-aaa]authorization-scheme author1", ""],
+  ["[R1-aaa-author-author1]authorization-mode local", ""],
+  ["[R1-aaa]domain huawei", "สร้าง domain"],
+  ["[R1-aaa-domain-huawei]authentication-scheme auth1", "ผูก scheme เข้า domain"],
+  ["[R1-aaa-domain-huawei]authorization-scheme author1", ""],
+  ["[R1-aaa]local-user admin@huawei password irreversible-cipher Huawei@123", "user ใน domain huawei"],
+  ["[R1-aaa]local-user admin@huawei service-type telnet ssh", ""],
+  ["[R1-aaa]local-user admin@huawei privilege level 15", ""],
+  ["<R1>display local-user", "ตรวจรายชื่อ user และสถานะ"],
+]} />
+
+## สรุปท้ายบท
+
+- basic 2000–2999 (source), advanced 3000–3999 (5-tuple), layer 2 4000–4999
+- step 5, match จาก rule ID น้อยไปมาก หยุดที่ rule แรก
+- wildcard: 0 = ต้องตรง, 1 = ไม่สน
+- traffic-filter บน Huawei: ไม่ match = **permit**
+- basic ใกล้ปลายทาง, advanced ใกล้ต้นทาง
+- AAA: local / RADIUS (UDP 1812/1813) / HWTACACS (TCP 49) · ผูก scheme เข้ากับ domain

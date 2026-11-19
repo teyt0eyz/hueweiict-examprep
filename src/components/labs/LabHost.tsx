@@ -2,9 +2,19 @@
 
 import type { ComponentType } from "react";
 import SubnetLab from "./SubnetLab";
+import OspfLab from "./OspfLab";
+import StpLab from "./StpLab";
+import VlanLab from "./VlanLab";
+import AclLab from "./AclLab";
+import NatLab from "./NatLab";
 
 const LAB_COMPONENTS: Record<string, ComponentType> = {
   subnet: SubnetLab,
+  ospf: OspfLab,
+  stp: StpLab,
+  vlan: VlanLab,
+  acl: AclLab,
+  nat: NatLab,
 };
 
 export const labReady = (slug: string) => slug in LAB_COMPONENTS;

@@ -1,0 +1,160 @@
+<Objectives items={[
+  "อธิบายปัญหาที่เกิดจาก loop ใน layer 2 และเหตุที่ต้องใช้ STP",
+  "เลือก root bridge, root port, designated port และ blocked port ได้ถูกต้องตามกติกาของ STP",
+  "อธิบาย port state, timer ของ STP และสิ่งที่ RSTP ปรับปรุง",
+  "ตั้งค่า Eth-Trunk แบบ manual และ LACP และเลือก load-balance mode ได้",
+  "อธิบายหลักการ Smart Link / Monitor Link และทางเลือกอื่นแทน STP",
+]} />
+
+## ปัญหา loop ใน layer 2
+
+การต่อสวิตช์ซ้ำซ้อนเพิ่มความทนทาน แต่ Ethernet frame **ไม่มี TTL** เมื่อเกิดวงจึงทำให้เกิด:
+
+- **Broadcast storm** — broadcast วนไม่รู้จบจนลิงก์และ CPU เต็ม
+- **MAC address flapping** — MAC เดียวถูกเรียนรู้สลับไปมาระหว่างพอร์ต
+- **Duplicate frame** — ปลายทางได้รับ frame เดิมหลายครั้ง
+
+**STP (IEEE 802.1D)** แก้โดย block พอร์ตบางพอร์ตเชิงตรรกะให้เหลือ topology แบบต้นไม้ (loop-free) และเปิดพอร์ตนั้นอัตโนมัติเมื่อเส้นหลักเสีย
+
+## คำศัพท์และค่าที่ต้องจำ
+
+- **Bridge ID (BID)** = bridge priority (default **32768**, ตั้งเป็นผลคูณของ **4096**, ช่วง 0–61440) + MAC address
+- **Root bridge** — BID ต่ำสุด
+- **Root path cost (RPC)** — ผลรวม cost ของพอร์ตขาเข้าระหว่างทางไป root
+- **Port ID** = port priority (default **128**, ช่วง 0–240 ทีละ 16) + port number
+- Huawei ใช้มาตรฐาน cost **802.1t (dot1t)** เป็นค่า default: 10 Mbit/s = 2,000,000 · 100 Mbit/s = 200,000 · **1 Gbit/s = 20,000** · 10 Gbit/s = 2,000
+- **STP mode default ของ Huawei = MSTP** (ใช้งานร่วมกับ STP/RSTP ได้)
+
+## ขั้นตอนการเลือก (Election)
+
+1. **เลือก root bridge** — BID ต่ำสุดทั้งเครือข่าย (priority ต่ำสุด ถ้าเท่ากันดู MAC ต่ำสุด) ทุกพอร์ตของ root เป็น designated port
+2. **เลือก root port (RP)** บน non-root bridge ทุกตัว (ตัวละ 1 พอร์ต) เทียบตามลำดับ:
+   1. RPC ต่ำสุด
+   2. BID ของสวิตช์ฝั่งตรงข้าม (sender BID) ต่ำสุด
+   3. Port ID ของฝั่งตรงข้าม (sender PID) ต่ำสุด
+   4. Port ID ของตัวเองต่ำสุด
+3. **เลือก designated port (DP)** บนทุก segment (segment ละ 1 พอร์ต) — พอร์ตที่ให้ RPC ต่ำสุดไปยัง root ถ้าเท่ากันเทียบ BID แล้ว PID ของสวิตช์ที่เป็นเจ้าของพอร์ต
+4. พอร์ตที่ไม่ใช่ RP หรือ DP → **block** (ใน RSTP เรียก **alternate** หรือ **backup**)
+
+<Topology name="m7-stp-3sw" />
+
+ทุกตัวใช้ priority 32768 → **SW1** มี MAC ต่ำสุดจึงเป็น root · SW2 และ SW3 มีลิงก์ตรงไป SW1 (cost 20000) จึงเลือก G0/0/1 เป็น RP · บนลิงก์ SW2–SW3 ทั้งสองฝั่งมี RPC เท่ากัน (20000) → เทียบ BID: SW2 ต่ำกว่า → พอร์ตของ SW2 เป็น DP และ **G0/0/2 ของ SW3 ถูก block**
+
+<Topology name="m7-stp-result" />
+
+<Callout type="tip" title="ลองฝึก">
+ทายบทบาทพอร์ตใน topology สุ่มได้ที่ [Lab 3: STP Simulator](/labs/stp/)
+</Callout>
+
+## BPDU, timer และ port state
+
+- **Configuration BPDU** — root ส่งทุก **Hello time = 2 วินาที** สวิตช์อื่นส่งต่อ
+- **TCN BPDU** — แจ้ง topology change ไปหา root → MAC aging ลดจาก 300 เหลือ Forward Delay (15 วินาที)
+- **Max Age = 20 วินาที** — ไม่ได้รับ BPDU นานเท่านี้ถือว่าเส้นทางไป root เสีย
+- **Forward Delay = 15 วินาที** — เวลาที่อยู่ใน Listening และ Learning อย่างละครั้ง
+
+| State (STP) | ส่ง/รับ BPDU | เรียนรู้ MAC | ส่งข้อมูล |
+|---|---|---|---|
+| Disabled | ✗ | ✗ | ✗ |
+| Blocking | รับอย่างเดียว | ✗ | ✗ |
+| Listening | ✓ | ✗ | ✗ |
+| Learning | ✓ | ✓ | ✗ |
+| Forwarding | ✓ | ✓ | ✓ |
+
+พอร์ตใหม่จาก Blocking → Forwarding ใช้เวลา **30 วินาที** (15 + 15) และถ้าเส้นทางเดิมเสียแบบอ้อมอาจถึง **50 วินาที** (20 + 15 + 15)
+
+## RSTP (802.1w) — converge เร็วขึ้น
+
+- รวม state เหลือ **Discarding, Learning, Forwarding**
+- เพิ่มบทบาท **Alternate port** (สำรองให้ root port) และ **Backup port** (สำรองให้ designated port บน segment เดียวกัน)
+- **Edge port** — พอร์ตต่อ host เข้า Forwarding ทันที ไม่ต้องรอ (ถ้าได้รับ BPDU จะกลับเป็นพอร์ตปกติ)
+- กลไก **Proposal/Agreement** ระหว่างสวิตช์บนลิงก์ P2P ทำให้ converge ในระดับไม่กี่วินาที
+- ทุกสวิตช์ส่ง BPDU เองทุก Hello time และตรวจพบเพื่อนบ้านหายเมื่อขาด BPDU 3 ครั้ง
+
+<CliWalk device="SW1" title="ตั้งค่า STP/RSTP" lines={[
+  ["[SW1]stp mode rstp", "เปลี่ยนจาก MSTP (default) เป็น RSTP"],
+  ["[SW1]stp root primary", "ทำให้เป็น root — กำหนด priority เป็น 0 (ใช้ stp root secondary = 4096 สำหรับตัวสำรอง)"],
+  ["[SW1]stp priority 4096", "หรือกำหนด priority เอง (ต้องเป็นผลคูณของ 4096)"],
+  ["[SW1-GigabitEthernet0/0/3]stp cost 2000", "ปรับ cost ของพอร์ตเพื่อบังคับเส้นทาง"],
+  ["[SW1-GigabitEthernet0/0/10]stp edged-port enable", "พอร์ตต่อ PC เป็น edge port เข้า forwarding ทันที"],
+  ["[SW1]stp bpdu-protection", "ถ้า edge port ได้รับ BPDU ให้ปิดพอร์ต (กันคนเอาสวิตช์มาต่อเอง)"],
+  ["<SW1>display stp brief", "ดู role (ROOT/DESI/ALTE/BACK) และ state (FORWARDING/DISCARDING) ของทุกพอร์ต"],
+  ["<SW1>display stp", "ดู bridge ID ของตัวเองและของ root, RPC, timer"],
+]} />
+
+<Callout type="exam">
+- priority ต้องเป็นผลคูณ 4096 — ค่าอย่าง 1000 จะใส่ไม่ได้
+- BID ต่ำ = ดี, cost ต่ำ = ดี — ทุกอย่างใน STP "ต่ำชนะ"
+- root bridge **ไม่มี** root port และทุกพอร์ตเป็น designated
+- จำ 2 / 20 / 15 วินาที และ 30–50 วินาทีของ STP แบบดั้งเดิม
+</Callout>
+
+## Link aggregation (Eth-Trunk)
+
+รวมพอร์ตกายภาพหลายพอร์ตเป็น **logical interface เดียว** ได้ bandwidth มากขึ้น มีความทนทาน (ลิงก์หนึ่งเสียที่เหลือยังทำงาน) และ STP มองเห็นเป็นลิงก์เดียวจึงไม่ block
+
+<Topology name="m7-eth-trunk" />
+
+| | Manual mode | LACP mode |
+|---|---|---|
+| การเจรจา | ไม่มี — ตั้งเองทั้งสองฝั่ง | แลก LACPDU ตามมาตรฐาน IEEE 802.3ad |
+| ตรวจจับต่อผิดเครื่อง/ลิงก์ผิดพลาด | ตรวจได้แค่ physical up/down | ตรวจได้ |
+| Active/backup link | ทุกลิงก์ active | กำหนด `max active-linknumber` ได้ ที่เหลือเป็น backup |
+| ตัดสินใจ active link | — | ฝั่งที่มี **system priority ต่ำกว่า** (default 32768) เป็น actor แล้วเลือกพอร์ตตาม **port priority** ต่ำกว่า (default 32768) |
+
+เงื่อนไขของพอร์ตสมาชิก: ความเร็วและ duplex เหมือนกัน, ชนิด/ค่า VLAN เหมือนกัน (ตั้งที่ Eth-Trunk ไม่ใช่ที่พอร์ตสมาชิก)
+
+<CliWalk device="SW1" title="Eth-Trunk แบบ manual" lines={[
+  ["[SW1]interface Eth-Trunk 1", "สร้าง logical interface (เลขต้องตรงกันทั้งสองฝั่งตามแนวปฏิบัติ)"],
+  ["[SW1-Eth-Trunk1]mode manual load-balance", "manual mode (เป็นค่า default)"],
+  ["[SW1-Eth-Trunk1]trunkport GigabitEthernet 0/0/1 to 0/0/3", "เพิ่มพอร์ต 1–3 เป็นสมาชิก"],
+  ["[SW1-Eth-Trunk1]load-balance src-dst-ip", "กระจายโหลดตาม source+destination IP"],
+  ["[SW1-Eth-Trunk1]port link-type trunk", "ตั้งค่า layer 2 ที่ Eth-Trunk"],
+  ["[SW1-Eth-Trunk1]port trunk allow-pass vlan all", ""],
+  ["<SW1>display eth-trunk 1", "WorkingMode: NORMAL = manual, LACP = LACP mode และสถานะพอร์ตสมาชิก"],
+]} />
+
+<CliWalk device="SW1" title="Eth-Trunk แบบ LACP" lines={[
+  ["[SW1]lacp priority 100", "system priority ต่ำกว่าอีกฝั่ง → SW1 เป็นผู้ตัดสินใจ (actor)"],
+  ["[SW1-Eth-Trunk1]mode lacp", "LACP mode (บนรุ่นเก่าใช้ mode lacp-static)"],
+  ["[SW1-Eth-Trunk1]max active-linknumber 2", "active สูงสุด 2 ลิงก์ ที่เหลือเป็น backup"],
+  ["[SW1-Eth-Trunk1]lacp preempt enable", "ให้พอร์ตที่ priority ดีกว่ากลับมา active เมื่อฟื้น"],
+  ["[SW1-GigabitEthernet0/0/1]lacp priority 100", "port priority ต่ำกว่า = ถูกเลือกเป็น active ก่อน"],
+]} />
+
+<Callout type="trap">
+load balancing ของ Eth-Trunk ทำแบบ **per-flow** (hash จาก MAC/IP) ไม่ใช่ per-packet เพื่อไม่ให้ลำดับ packet สลับ — ถ้า traffic ส่วนใหญ่มาจาก source เดียว การเลือก `src-ip` จะทำให้ทุกอย่างวิ่งลิงก์เดียว ต้องเลือกโหมดให้เข้ากับลักษณะ traffic
+</Callout>
+
+## Smart Link และ Monitor Link
+
+**Smart Link** ใช้กับสวิตช์ที่ต่อขึ้น 2 ทาง (dual-homing) โดยไม่ต้องใช้ STP — ในกลุ่มมี **master port** (active) และ **slave port** (standby) เมื่อ master เสีย slave จะขึ้นแทนภายในระดับมิลลิวินาที และส่ง **flush packet** ผ่าน **control VLAN** ให้สวิตช์ต้นทางล้าง MAC/ARP ที่ค้าง
+
+<Topology name="m7-smartlink" />
+
+<CliWalk device="S4" lines={[
+  ["[S4-GigabitEthernet0/0/1]stp disable", "พอร์ตใน Smart Link ต้องปิด STP"],
+  ["[S4]smart-link group 1", ""],
+  ["[S4-smlk-group1]port GigabitEthernet 0/0/1 master", ""],
+  ["[S4-smlk-group1]port GigabitEthernet 0/0/2 slave", ""],
+  ["[S4-smlk-group1]restore enable", "เปิด revertive: เมื่อ master ฟื้นให้กลับมาใช้ master"],
+  ["[S4-smlk-group1]timer wtr 30", "รอ 30 วินาที (WTR) ก่อนสลับกลับ เพื่อกันลิงก์กระพริบ"],
+  ["[S4-smlk-group1]flush send control-vlan 10 password simple huawei", "ส่ง flush packet ทาง VLAN 10"],
+  ["[S4-smlk-group1]smart-link enable", "เปิดใช้งานกลุ่ม"],
+  ["[S2-GigabitEthernet0/0/1]smart-link flush receive control-vlan 10 password simple huawei", "สวิตช์ upstream ต้องตั้งให้รับ flush packet"],
+]} />
+
+**Monitor Link** ผูกสถานะ **downlink** ให้ตาม **uplink** — ถ้า uplink ล่ม downlink จะถูกปิดตาม ทำให้อุปกรณ์ปลายทาง (เช่นสวิตช์ที่ใช้ Smart Link) รู้ตัวและสลับเส้นทางได้
+
+## ทางเลือกแทน STP ในเครือข่ายสมัยใหม่
+
+ใช้ **stacking (iStack/CSS)** รวมสวิตช์หลายตัวเป็นตัวเดียวเชิงตรรกะ แล้วต่อ **Eth-Trunk ข้ามตัวสวิตช์** — ได้ทั้ง redundancy และ bandwidth โดยไม่มีพอร์ตที่ถูก block
+
+## สรุปท้ายบท
+
+- BID = priority (32768, step 4096) + MAC · ต่ำชนะ
+- RP: RPC → sender BID → sender PID → local PID
+- Huawei: MSTP default, cost dot1t (GE = 20000)
+- RSTP: Discarding/Learning/Forwarding, alternate/backup, edge port, P/A
+- Eth-Trunk manual vs LACP (system priority ต่ำ = actor), load balance แบบ per-flow
+- Smart Link: master/slave + flush ผ่าน control VLAN · Monitor Link: downlink ตาม uplink

@@ -1,0 +1,119 @@
+<Objectives items={[
+  "บอกมาตรฐาน IEEE 802.11 และ Wi-Fi generation ที่สำคัญได้",
+  "เปรียบเทียบ Fat AP, Fit AP + AC, cloud AP และรูปแบบการวาง AC (in-path / off-path)",
+  "อธิบาย CAPWAP, ขั้นตอน AP online และการเชื่อมต่อของ STA",
+  "เข้าใจความแตกต่างของ direct forwarding กับ tunnel forwarding",
+  "ตั้งค่า WLAN พื้นฐานบน AC ด้วย profile ต่าง ๆ ได้",
+]} />
+
+## มาตรฐาน WLAN
+
+WLAN ใช้คลื่นวิทยุตามมาตรฐาน **IEEE 802.11** ส่วน **Wi-Fi** คือชื่อการรับรองของ Wi-Fi Alliance
+
+| มาตรฐาน | ชื่อ Wi-Fi | ย่านความถี่ | ความเร็วสูงสุด (ทฤษฎี) |
+|---|---|---|---|
+| 802.11b | — | 2.4 GHz | 11 Mbit/s |
+| 802.11a | — | 5 GHz | 54 Mbit/s |
+| 802.11g | — | 2.4 GHz | 54 Mbit/s |
+| 802.11n | **Wi-Fi 4** | 2.4 / 5 GHz | 600 Mbit/s |
+| 802.11ac | **Wi-Fi 5** | 5 GHz | 6.9 Gbit/s |
+| 802.11ax | **Wi-Fi 6** | 2.4 / 5 GHz | 9.6 Gbit/s |
+
+- ย่าน 2.4 GHz มีช่องที่ **ไม่ทับซ้อนกันเพียง 3 ช่อง: 1, 6, 11** — ทะลุสิ่งกีดขวางดีกว่าแต่สัญญาณรบกวนมาก
+- ย่าน 5 GHz มีช่องมากกว่า สัญญาณรบกวนน้อยกว่า แต่ระยะสั้นกว่า
+
+## อุปกรณ์และสถาปัตยกรรม
+
+| แบบ | ลักษณะ | เหมาะกับ |
+|---|---|---|
+| **Fat AP** | AP ทำงานเองทั้งหมด ตั้งค่าทีละตัว | บ้าน, ร้านเล็ก |
+| **AC + Fit AP** | AC (Access Controller) จัดการ config/ผู้ใช้/RF ส่วน Fit AP ทำแค่ส่งรับสัญญาณ | องค์กรขนาดกลาง–ใหญ่ |
+| **Cloud AP** | จัดการผ่านแพลตฟอร์มบนคลาวด์ | หลายสาขา ไม่มีผู้ดูแลประจำ |
+| **Agile distributed** | central AP + RU (remote unit) ในแต่ละห้อง | โรงแรม, หอพัก, ห้องเรียน |
+
+การวาง AC:
+- **In-path** — traffic ของผู้ใช้วิ่งผ่าน AC เสมอ (AC อยู่บนเส้นทางหลัก)
+- **Off-path (bypass)** — AC ต่อข้างสวิตช์ core จัดการเฉพาะ control ส่วนข้อมูลจะผ่าน AC หรือไม่ขึ้นกับ forwarding mode ✓ นิยมในเครือข่ายเดิมที่มีอยู่แล้ว
+
+<Topology name="m11-wlan" />
+
+## คำศัพท์
+
+- **STA** — อุปกรณ์ปลายทางไร้สาย
+- **SSID** — ชื่อเครือข่ายที่ผู้ใช้เห็น
+- **BSSID** — MAC ของ radio บน AP ที่ให้บริการ SSID นั้น
+- **BSS / ESS** — พื้นที่ของ AP เดียว / หลาย AP ที่ใช้ SSID เดียวกันให้ผู้ใช้ roaming ได้
+- **VAP** — AP เสมือน — radio เดียวให้บริการหลาย SSID ได้ (แต่ละ SSID คือ VAP หนึ่งตัว)
+
+## CAPWAP
+
+AC กับ Fit AP คุยกันด้วย **CAPWAP** ผ่าน UDP:
+
+- **Control tunnel** — UDP **5246** (ตั้งค่า, จัดการ, ตรวจสถานะ)
+- **Data tunnel** — UDP **5247** (ข้อมูลผู้ใช้ เมื่อใช้ tunnel forwarding)
+
+### ขั้นตอน AP online
+
+1. AP ได้ IP (มักจาก **DHCP**)
+2. AP ค้นหา AC — จาก IP ที่ตั้งไว้, **DHCP option 43**, หรือ broadcast discovery
+3. สร้าง CAPWAP tunnel
+4. AC ตรวจสิทธิ์ AP (**auth mode**: `mac-auth`, `sn-auth`, `no-auth`)
+5. อัปเกรดซอฟต์แวร์ AP ถ้าจำเป็น
+6. AC ส่ง configuration ลงไปที่ AP แล้ว AP ให้บริการ SSID
+
+### STA เชื่อมต่อ
+
+**Scanning** (passive: ฟัง Beacon / active: ส่ง Probe Request) → **Link authentication** → **Association** → **Access authentication** (เช่น WPA2-PSK หรือ 802.1X) → ขอ IP ด้วย DHCP
+
+## Direct vs Tunnel forwarding
+
+| | Direct forwarding | Tunnel forwarding |
+|---|---|---|
+| ข้อมูลผู้ใช้ | ออกจาก AP สู่สวิตช์ปลายทางโดยตรง | ห่อใน CAPWAP data tunnel ไปที่ AC ก่อน |
+| ภาระ AC | ต่ำ | สูง (AC เป็นคอขวดได้) |
+| ควบคุมจากศูนย์กลาง | น้อยกว่า | ง่ายกว่า (policy อยู่ที่ AC) |
+
+control packet วิ่งใน CAPWAP tunnel เสมอในทั้งสองโหมด
+
+## ตั้งค่า WLAN บน AC (ตัวอย่างแบบย่อ)
+
+<CliWalk device="AC" lines={[
+  ["[AC]capwap source interface Vlanif 100", "interface ที่ใช้สร้าง CAPWAP กับ AP (management VLAN)"],
+  ["[AC]wlan", "เข้า WLAN view"],
+  ["[AC-wlan-view]regulatory-domain-profile name default", "profile กำหนดประเทศ/ช่องสัญญาณที่ใช้ได้"],
+  ["[AC-wlan-regulate-domain-default]country-code TH", "ตั้ง country code ให้ถูกกฎหมาย"],
+  ["[AC-wlan-view]ap-group name office", "สร้าง AP group"],
+  ["[AC-wlan-ap-group-office]regulatory-domain-profile default", "ผูก regulatory domain"],
+  ["[AC-wlan-view]ap auth-mode mac-auth", "อนุญาต AP ด้วย MAC address"],
+  ["[AC-wlan-view]ap-id 0 ap-mac 00e0-fc12-3456", "เพิ่ม AP เข้าระบบ"],
+  ["[AC-wlan-ap-0]ap-name ap1", ""],
+  ["[AC-wlan-ap-0]ap-group office", "จัด AP เข้า group"],
+  ["[AC-wlan-view]ssid-profile name ssid-office", "SSID profile"],
+  ["[AC-wlan-ssid-prof-ssid-office]ssid Office-WiFi", "ชื่อ SSID"],
+  ["[AC-wlan-view]security-profile name sec-office", "security profile"],
+  ["[AC-wlan-sec-prof-sec-office]security wpa-wpa2 psk pass-phrase Huawei@123 aes", "WPA/WPA2-PSK เข้ารหัส AES"],
+  ["[AC-wlan-view]vap-profile name vap-office", "VAP profile รวมทุกอย่างของ SSID หนึ่ง"],
+  ["[AC-wlan-vap-prof-vap-office]forward-mode tunnel", "เลือก tunnel forwarding (หรือ direct-forward)"],
+  ["[AC-wlan-vap-prof-vap-office]service-vlan vlan-id 101", "VLAN ของผู้ใช้ที่ต่อ SSID นี้"],
+  ["[AC-wlan-vap-prof-vap-office]ssid-profile ssid-office", ""],
+  ["[AC-wlan-vap-prof-vap-office]security-profile sec-office", ""],
+  ["[AC-wlan-view]ap-group name office", ""],
+  ["[AC-wlan-ap-group-office]vap-profile vap-office wlan 1 radio all", "ใช้ VAP profile กับทุก radio ของ AP ใน group"],
+  ["<AC>display ap all", "สถานะ AP (State nor = normal/online)"],
+  ["<AC>display vap ssid Office-WiFi", "VAP ที่ให้บริการ SSID นี้"],
+  ["<AC>display station all", "ผู้ใช้ที่เชื่อมต่ออยู่"],
+]} />
+
+<Callout type="exam">
+- ลำดับ profile: **ssid-profile + security-profile → vap-profile → ap-group** (ผ่าน `vap-profile ... wlan <id> radio <n>`)
+- CAPWAP control 5246 / data 5247 · AP หา AC ผ่าน DHCP **option 43**
+- 2.4 GHz ช่องไม่ทับซ้อน 1/6/11 · Wi-Fi 6 = 802.11ax
+</Callout>
+
+## สรุปท้ายบท
+
+- 802.11n/ac/ax = Wi-Fi 4/5/6
+- Fit AP + AC ใช้ CAPWAP (UDP 5246/5247)
+- AP online: IP → discover AC → CAPWAP → auth → upgrade → config
+- direct forwarding ลดภาระ AC, tunnel forwarding ควบคุมที่ศูนย์กลาง
+- ตั้งค่าด้วย profile แล้วผูกเข้ากับ ap-group
