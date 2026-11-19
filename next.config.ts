@@ -2,9 +2,9 @@ import path from "node:path";
 import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
-// GitHub Pages serves the site at https://teyt0eyz.github.io/huewei-exam-prep/
+// GitHub Pages serves the site at https://teyt0eyz.github.io/hueweiict-examprep/
 // In dev we run at the root so `npm run dev` works at http://localhost:3000/
-const repo = "huewei-exam-prep";
+const repo = "hueweiict-examprep";
 const isProd = process.env.NODE_ENV === "production";
 const basePath = isProd ? `/${repo}` : "";
 
