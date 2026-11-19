@@ -1,0 +1,474 @@
+[
+ {
+  "id": "m1-arp-011",
+  "module": "M1",
+  "topic": "ARP",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ข้อใดอธิบายการส่ง ARP ได้ถูกต้อง",
+  "options": [
+   {
+    "id": "a",
+    "text": "ARP Request และ ARP Reply ส่งแบบ broadcast ทั้งคู่"
+   },
+   {
+    "id": "b",
+    "text": "ARP Request ส่งแบบ broadcast ส่วน ARP Reply ส่งแบบ unicast"
+   },
+   {
+    "id": "c",
+    "text": "ARP Request ส่งแบบ multicast ไปที่ 224.0.0.1"
+   },
+   {
+    "id": "d",
+    "text": "ARP ถูกห่อใน UDP port 68"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "ผู้ถามไม่รู้ MAC ปลายทางจึงส่ง Request ไปที่ `FFFF-FFFF-FFFF` (broadcast) เจ้าของ IP รู้ MAC ของผู้ถามจาก Request แล้ว จึงตอบกลับแบบ **unicast**\n\nARP อยู่ใน Ethernet frame โดยตรง (EtherType 0x0806) ไม่ได้ใช้ IP/UDP",
+  "ref": "Book1 Ch2 §2.4.4"
+ },
+ {
+  "id": "m1-arp-012",
+  "module": "M1",
+  "topic": "ARP",
+  "type": "single",
+  "difficulty": 2,
+  "question": "PC-A (192.168.1.10/24, gateway 192.168.1.1) ต้องการส่ง packet ไปยัง server 10.1.1.5 และยังไม่มีข้อมูลใน ARP cache PC-A จะส่ง ARP request เพื่อหา MAC ของใคร",
+  "options": [
+   {
+    "id": "a",
+    "text": "10.1.1.5"
+   },
+   {
+    "id": "b",
+    "text": "192.168.1.1"
+   },
+   {
+    "id": "c",
+    "text": "192.168.1.255"
+   },
+   {
+    "id": "d",
+    "text": "ไม่ต้องใช้ ARP เพราะปลายทางอยู่ต่าง subnet"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "PC-A เทียบ IP ปลายทางกับ subnet ของตัวเองแล้วพบว่าอยู่ **ต่าง subnet** จึงต้องส่งให้ default gateway โดย ARP หา MAC ของ **192.168.1.1**\n\nใน packet IP ปลายทางยังคงเป็น 10.1.1.5 แต่ใน frame MAC ปลายทางเป็นของ gateway",
+  "ref": "Book1 Ch2 §2.4.4"
+ },
+ {
+  "id": "m1-device-001",
+  "module": "M1",
+  "topic": "Network devices",
+  "type": "single",
+  "difficulty": 1,
+  "question": "อุปกรณ์ใดทำหน้าที่ **แบ่ง broadcast domain** ได้โดยไม่ต้องตั้งค่า VLAN เพิ่มเติม",
+  "options": [
+   {
+    "id": "a",
+    "text": "Hub"
+   },
+   {
+    "id": "b",
+    "text": "Layer 2 switch"
+   },
+   {
+    "id": "c",
+    "text": "Router"
+   },
+   {
+    "id": "d",
+    "text": "Repeater"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "router ไม่ส่งต่อ broadcast ข้าม interface แต่ละ interface ของ router จึงเป็น broadcast domain แยกกัน\n\n- hub/repeater ทำงาน layer 1 ไม่แยกทั้ง collision และ broadcast domain\n- layer 2 switch แยก collision domain ต่อพอร์ต แต่ทุกพอร์ตใน VLAN เดียวกันยังเป็น broadcast domain เดียวกัน (ต้องใช้ VLAN ช่วยแบ่ง)",
+  "ref": "Book1 Ch1 §1.2"
+ },
+ {
+  "id": "m1-encap-013",
+  "module": "M1",
+  "topic": "Encapsulation",
+  "type": "truefalse",
+  "difficulty": 2,
+  "question": "เมื่อ packet เดินทางผ่าน router 3 ตัว (ไม่มี NAT) **source/destination IP** จะคงเดิมตลอดทาง แต่ **source/destination MAC** จะเปลี่ยนทุกครั้งที่ผ่าน router",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "T"
+  ],
+  "explanation": "router ถอด frame เดิมออก (decapsulation) ตัดสินใจจาก IP ปลายทาง แล้วสร้าง frame ใหม่ด้วย MAC ของ interface ขาออกตัวเองเป็น source และ MAC ของ next hop เป็น destination — IP header ไม่เปลี่ยน (ยกเว้น TTL และ checksum)",
+  "ref": "Book1 Ch2 §2.1.3"
+ },
+ {
+  "id": "m1-ethertype-014",
+  "module": "M1",
+  "topic": "Encapsulation",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ใน Ethernet II frame ฟิลด์ **Type** มีค่า `0x0806` หมายถึง payload เป็นข้อมูลชนิดใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "IPv4"
+   },
+   {
+    "id": "b",
+    "text": "ARP"
+   },
+   {
+    "id": "c",
+    "text": "IPv6"
+   },
+   {
+    "id": "d",
+    "text": "802.1Q VLAN tag"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "EtherType ที่ควรจำ: `0x0800` IPv4, **`0x0806` ARP**, `0x86DD` IPv6, `0x8100` VLAN tag (TPID), `0x8863/0x8864` PPPoE",
+  "ref": "Book1 Ch2 §2.5"
+ },
+ {
+  "id": "m1-icmp-010",
+  "module": "M1",
+  "topic": "ICMP",
+  "type": "single",
+  "difficulty": 2,
+  "question": "คำสั่ง `tracert` บน VRP อาศัยกลไกใดในการค้นหา router ทีละ hop",
+  "options": [
+   {
+    "id": "a",
+    "text": "ส่ง ICMP Echo Request ที่ TTL คงที่ แล้วอ่าน Echo Reply"
+   },
+   {
+    "id": "b",
+    "text": "ส่ง packet โดยเพิ่ม TTL ทีละ 1 และอ่าน ICMP Time Exceeded ที่ router แต่ละตัวส่งกลับ"
+   },
+   {
+    "id": "c",
+    "text": "ส่ง ARP request ไปยังแต่ละ hop"
+   },
+   {
+    "id": "d",
+    "text": "ใช้ Record Route option ใน IP header เท่านั้น"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "tracert เริ่ม TTL = 1 → router ตัวแรกลด TTL เป็น 0 แล้วตอบ **ICMP Time Exceeded (type 11)** จึงรู้ที่อยู่ hop แรก จากนั้นเพิ่ม TTL เป็น 2, 3, … จนถึงปลายทาง (ซึ่งตอบด้วย port unreachable หรือ echo reply แล้วแต่การใช้งาน)",
+  "ref": "Book1 Ch2 §2.4.3"
+ },
+ {
+  "id": "m1-ip-008",
+  "module": "M1",
+  "topic": "IPv4 header",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ฟิลด์ใดใน IPv4 header ที่ป้องกันไม่ให้ packet วนลูปในเครือข่ายไปตลอด",
+  "options": [
+   {
+    "id": "a",
+    "text": "Identification"
+   },
+   {
+    "id": "b",
+    "text": "Protocol"
+   },
+   {
+    "id": "c",
+    "text": "TTL"
+   },
+   {
+    "id": "d",
+    "text": "Header checksum"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "**TTL** ถูกลดลง 1 ทุกครั้งที่ผ่าน router เมื่อเหลือ 0 router จะทิ้ง packet และส่ง ICMP Time Exceeded (type 11) กลับไปหาต้นทาง\n\n- Identification ใช้ร่วมกับ flags/offset ในการประกอบ fragment\n- Protocol บอกชั้นบน (6 = TCP, 17 = UDP)\n- Checksum ใช้ตรวจความถูกต้องของ header",
+  "ref": "Book1 Ch2 §2.4.2"
+ },
+ {
+  "id": "m1-ip-009",
+  "module": "M1",
+  "topic": "IPv4 header",
+  "type": "single",
+  "difficulty": 2,
+  "question": "เมื่อจับ packet ได้ว่า IPv4 header มีฟิลด์ **Protocol = 89** แสดงว่า payload คืออะไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "TCP"
+   },
+   {
+    "id": "b",
+    "text": "UDP"
+   },
+   {
+    "id": "c",
+    "text": "ICMP"
+   },
+   {
+    "id": "d",
+    "text": "OSPF"
+   }
+  ],
+  "answer": [
+   "d"
+  ],
+  "explanation": "ค่า Protocol ที่ควรจำ: 1 = ICMP, 6 = TCP, 17 = UDP, **89 = OSPF** (OSPF ทำงานบน IP โดยตรง ไม่ผ่าน TCP/UDP)",
+  "ref": "Book1 Ch2 §2.4.2"
+ },
+ {
+  "id": "m1-osi-003",
+  "module": "M1",
+  "topic": "OSI model",
+  "type": "ordering",
+  "difficulty": 1,
+  "question": "เรียงชื่อ **PDU** ตามลำดับ encapsulation จาก application ลงไปถึงสายสัญญาณ",
+  "options": [
+   {
+    "id": "a",
+    "text": "Data"
+   },
+   {
+    "id": "b",
+    "text": "Segment"
+   },
+   {
+    "id": "c",
+    "text": "Packet"
+   },
+   {
+    "id": "d",
+    "text": "Frame"
+   },
+   {
+    "id": "e",
+    "text": "Bit"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "d",
+   "e"
+  ],
+  "explanation": "ข้อมูลจากแอปฯ (Data) → transport ใส่ TCP header เป็น **Segment** → network ใส่ IP header เป็น **Packet** → data link ใส่ header และ FCS เป็น **Frame** → physical แปลงเป็น **Bit** ส่งออกสาย",
+  "ref": "Book1 Ch2 §2.1.3"
+ },
+ {
+  "id": "m1-osi-004",
+  "module": "M1",
+  "topic": "OSI model",
+  "type": "single",
+  "difficulty": 1,
+  "question": "หน้าที่ \"กำหนด logical address และเลือกเส้นทางส่งข้อมูลข้ามเครือข่าย\" อยู่ใน OSI layer ใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "Data link layer"
+   },
+   {
+    "id": "b",
+    "text": "Network layer"
+   },
+   {
+    "id": "c",
+    "text": "Transport layer"
+   },
+   {
+    "id": "d",
+    "text": "Session layer"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "network layer (layer 3) รับผิดชอบ logical addressing (IP) และ routing\n\n- data link ดูแล physical address (MAC) และการส่งภายใน link เดียว\n- transport ดูแลการส่งแบบ end-to-end ระหว่างโปรเซส (port, reliability)\n- session จัดการ session ระหว่างแอปพลิเคชัน",
+  "ref": "Book1 Ch2 §2.1.2"
+ },
+ {
+  "id": "m1-ports-007",
+  "module": "M1",
+  "topic": "Well-known ports",
+  "type": "single",
+  "difficulty": 1,
+  "question": "จับคู่ application กับ port ที่ใช้ตามค่า default ข้อใด **ผิด**",
+  "options": [
+   {
+    "id": "a",
+    "text": "SSH — TCP 22"
+   },
+   {
+    "id": "b",
+    "text": "DNS query — UDP 53"
+   },
+   {
+    "id": "c",
+    "text": "TFTP — TCP 69"
+   },
+   {
+    "id": "d",
+    "text": "SNMP agent — UDP 161"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "TFTP ใช้ **UDP** 69 (เป็นโปรโตคอลถ่ายไฟล์แบบเบาที่ไม่มี authentication) ไม่ใช่ TCP\n\nตัวเลือกอื่นถูกต้อง: SSH TCP 22, DNS query ปกติใช้ UDP 53 (zone transfer ใช้ TCP 53), SNMP agent รับ request ที่ UDP 161 และ trap ส่งไป UDP 162",
+  "ref": "Book1 Ch2 §2.2"
+ },
+ {
+  "id": "m1-tcp-005",
+  "module": "M1",
+  "topic": "TCP handshake",
+  "type": "single",
+  "difficulty": 2,
+  "question": "Client ส่ง SYN ที่มี **sequence number = 1000** ไปยัง server  server ตอบ SYN+ACK ที่มี sequence number = 5000 ข้อใดคือค่าใน segment **ACK สุดท้าย** ที่ client ส่ง",
+  "options": [
+   {
+    "id": "a",
+    "text": "seq = 1001, ack = 5001"
+   },
+   {
+    "id": "b",
+    "text": "seq = 1000, ack = 5000"
+   },
+   {
+    "id": "c",
+    "text": "seq = 5001, ack = 1001"
+   },
+   {
+    "id": "d",
+    "text": "seq = 1001, ack = 5000"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "SYN กิน sequence number 1 ค่า ดังนั้น\n\n- SYN+ACK ของ server มี ack = 1000 + 1 = 1001\n- ACK สุดท้ายของ client ใช้ seq = **1001** และ ack = 5000 + 1 = **5001** (byte ถัดไปที่คาดว่าจะได้จาก server)",
+  "ref": "Book1 Ch2 §2.3.4"
+ },
+ {
+  "id": "m1-tcp-006",
+  "module": "M1",
+  "topic": "TCP vs UDP",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "ข้อใดเป็นคุณสมบัติของ **TCP** (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "มี 3-way handshake ก่อนส่งข้อมูล"
+   },
+   {
+    "id": "b",
+    "text": "header ขนาดคงที่ 8 byte"
+   },
+   {
+    "id": "c",
+    "text": "ใช้ sequence และ acknowledgement เพื่อส่งซ้ำเมื่อข้อมูลหาย"
+   },
+   {
+    "id": "d",
+    "text": "ใช้ sliding window ทำ flow control"
+   },
+   {
+    "id": "e",
+    "text": "เหมาะกับงาน real-time อย่าง VoIP มากกว่า UDP"
+   }
+  ],
+  "answer": [
+   "a",
+   "c",
+   "d"
+  ],
+  "explanation": "TCP เป็น connection-oriented: มี handshake, sequence/ACK, retransmission และ window\n\n- header 8 byte คือ **UDP** (TCP ขั้นต่ำ 20 byte)\n- งาน real-time อย่าง VoIP นิยมใช้ UDP เพราะการรอส่งซ้ำทำให้เสียงหน่วง",
+  "ref": "Book1 Ch2 §2.3"
+ },
+ {
+  "id": "m1-topology-002",
+  "module": "M1",
+  "topic": "Topology",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ต้องการเชื่อม router 6 ตัวแบบ **full mesh** ต้องใช้ลิงก์ทั้งหมดกี่เส้น",
+  "options": [
+   {
+    "id": "a",
+    "text": "6"
+   },
+   {
+    "id": "b",
+    "text": "12"
+   },
+   {
+    "id": "c",
+    "text": "15"
+   },
+   {
+    "id": "d",
+    "text": "30"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "full mesh ของ n โหนดใช้ n(n−1)/2 ลิงก์ = 6×5/2 = **15**\n\n30 คือคำตอบถ้านับซ้ำทั้งสองทิศ (ลืมหาร 2)",
+  "ref": "Book1 Ch1 §1.1.2"
+ },
+ {
+  "id": "m1-wan-015",
+  "module": "M1",
+  "topic": "LAN vs WAN",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "ข้อใดเป็นลักษณะทั่วไปของ **WAN** เมื่อเทียบกับ LAN (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "ครอบคลุมพื้นที่ทางภูมิศาสตร์กว้าง เช่น ระหว่างเมือง"
+   },
+   {
+    "id": "b",
+    "text": "องค์กรมักเช่าบริการวงจรจากผู้ให้บริการ (carrier)"
+   },
+   {
+    "id": "c",
+    "text": "มักมีความเร็วสูงกว่าและความหน่วงต่ำกว่า LAN ภายในอาคาร"
+   },
+   {
+    "id": "d",
+    "text": "ใช้ hub เป็นอุปกรณ์หลักในการเชื่อมระหว่างสาขา"
+   }
+  ],
+  "answer": [
+   "a",
+   "b"
+  ],
+  "explanation": "WAN ครอบคลุมพื้นที่กว้างและมักเช่าวงจรจาก carrier ส่วน LAN ภายในอาคารมักเร็วกว่าและหน่วงน้อยกว่าเพราะระยะสั้นและองค์กรเป็นเจ้าของอุปกรณ์เอง\n\nอุปกรณ์เชื่อมสาขาคือ router/firewall ไม่ใช่ hub",
+  "ref": "Book1 Ch1 §1.1.3"
+ }
+]

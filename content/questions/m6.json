@@ -1,0 +1,943 @@
+[
+ {
+  "id": "m6-access-006",
+  "module": "M6",
+  "topic": "Port types",
+  "type": "single",
+  "difficulty": 2,
+  "question": "**access port** ที่มี PVID = 10 ได้รับ frame ที่ติด tag **VLAN 20** จะทำอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "รับและเปลี่ยน tag เป็น VLAN 10"
+   },
+   {
+    "id": "b",
+    "text": "รับและส่งต่อใน VLAN 20"
+   },
+   {
+    "id": "c",
+    "text": "ทิ้ง frame"
+   },
+   {
+    "id": "d",
+    "text": "ถอด tag แล้วส่งต่อใน VLAN 10"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "access port รับ tagged frame **เฉพาะเมื่อ VID เท่ากับ PVID** — VID 20 ≠ 10 จึงถูกทิ้ง\n\nถ้าได้รับ untagged frame จะใส่ tag VLAN 10 ให้",
+  "ref": "Book1 Ch7 §7.3.4"
+ },
+ {
+  "id": "m6-aging-004",
+  "module": "M6",
+  "topic": "MAC learning",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ค่า default ของ MAC address **aging time** บน Huawei switch คือเท่าใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "60 วินาที"
+   },
+   {
+    "id": "b",
+    "text": "180 วินาที"
+   },
+   {
+    "id": "c",
+    "text": "300 วินาที"
+   },
+   {
+    "id": "d",
+    "text": "3600 วินาที"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "dynamic MAC entry จะถูกลบเมื่อไม่ได้รับ frame จาก MAC นั้นภายใน **300 วินาที** (ปรับได้ด้วย `mac-address aging-time`)",
+  "ref": "Book1 Ch7 §7.2.1"
+ },
+ {
+  "id": "m6-allow-008",
+  "module": "M6",
+  "topic": "Trunk configuration",
+  "type": "truefalse",
+  "difficulty": 1,
+  "question": "บน Huawei switch เมื่อเปลี่ยนพอร์ตเป็น trunk ด้วย `port link-type trunk` พอร์ตจะอนุญาตทุก VLAN ให้ผ่านโดยอัตโนมัติ",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "F"
+  ],
+  "explanation": "trunk ของ Huawei อนุญาตเฉพาะ **VLAN 1** โดย default ต้องเพิ่ม VLAN ด้วย `port trunk allow-pass vlan <list>` หรือ `all` — ต่างจาก Cisco ที่อนุญาตทุก VLAN",
+  "ref": "Book1 Ch7 §7.3.6"
+ },
+ {
+  "id": "m6-batch-010",
+  "module": "M6",
+  "topic": "VLAN configuration",
+  "type": "single",
+  "difficulty": 1,
+  "question": "คำสั่ง `vlan batch 10 to 20` จะสร้าง VLAN กี่ VLAN",
+  "options": [
+   {
+    "id": "a",
+    "text": "2"
+   },
+   {
+    "id": "b",
+    "text": "10"
+   },
+   {
+    "id": "c",
+    "text": "11"
+   },
+   {
+    "id": "d",
+    "text": "20"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "`to` สร้างเป็นช่วงรวมปลายทั้งสองข้าง: 10, 11, …, 20 = **11 VLAN** (ถ้าเขียน `vlan batch 10 20` จะได้แค่ VLAN 10 และ 20)",
+  "ref": "Book1 Ch7 §7.3.6"
+ },
+ {
+  "id": "m6-benefit-028",
+  "module": "M6",
+  "topic": "VLAN concepts",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "ข้อใดเป็นประโยชน์ของการใช้ VLAN (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "ลดขนาด broadcast domain"
+   },
+   {
+    "id": "b",
+    "text": "แยกกลุ่มผู้ใช้เพื่อเพิ่มความปลอดภัย"
+   },
+   {
+    "id": "c",
+    "text": "จัดกลุ่มผู้ใช้ได้ยืดหยุ่นโดยไม่ขึ้นกับตำแหน่งทางกายภาพ"
+   },
+   {
+    "id": "d",
+    "text": "ทำให้เครื่องต่าง VLAN คุยกันได้โดยไม่ต้องมีอุปกรณ์ layer 3"
+   },
+   {
+    "id": "e",
+    "text": "เพิ่มขนาด collision domain"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "VLAN แบ่ง broadcast domain, แยกกลุ่มเพื่อความปลอดภัย และจัดกลุ่มได้ยืดหยุ่น — แต่เครื่องต่าง VLAN **ยังต้องผ่าน layer 3** จึงจะคุยกันได้",
+  "ref": "Book1 Ch7 §7.3.1"
+ },
+ {
+  "id": "m6-displayvlan-015",
+  "module": "M6",
+  "topic": "Verification",
+  "type": "single",
+  "difficulty": 2,
+  "question": "จาก output ข้อใดถูกต้อง\n\n```vrp\n<SW1>display vlan\nVID  Type    Ports\n--------------------------------------------------------------\n1    common  UT:GE0/0/3(U)   GE0/0/24(U)\n10   common  UT:GE0/0/1(U)\n             TG:GE0/0/24(U)\n20   common  UT:GE0/0/2(U)\n             TG:GE0/0/24(U)\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "GE0/0/24 เป็น access port ใน VLAN 1"
+   },
+   {
+    "id": "b",
+    "text": "GE0/0/24 ส่ง VLAN 10 และ 20 แบบติด tag และส่ง VLAN 1 แบบไม่ติด tag — ลักษณะของ trunk ที่ PVID เป็น 1"
+   },
+   {
+    "id": "c",
+    "text": "GE0/0/1 อยู่ใน VLAN 10 และ 20"
+   },
+   {
+    "id": "d",
+    "text": "VLAN 20 ไม่มีพอร์ตที่ up"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "**UT** = untagged, **TG** = tagged — GE0/0/24 อยู่ใน VLAN 1 แบบ untagged และ VLAN 10, 20 แบบ tagged ซึ่งเป็นลักษณะของ trunk ที่ PVID = 1 และ allow 1, 10, 20 ส่วน GE0/0/1 อยู่เฉพาะ VLAN 10 (access) และ `(U)` คือพอร์ต up",
+  "ref": "Book1 Ch7 §7.3.6"
+ },
+ {
+  "id": "m6-domains-023",
+  "module": "M6",
+  "topic": "Collision/broadcast domain",
+  "type": "single",
+  "difficulty": 2,
+  "question": "สวิตช์ layer 2 หนึ่งตัวมี 24 พอร์ต แบ่งเป็น 3 VLAN และทุกพอร์ตมีเครื่องต่ออยู่ (full-duplex) มีกี่ **broadcast domain**",
+  "options": [
+   {
+    "id": "a",
+    "text": "1"
+   },
+   {
+    "id": "b",
+    "text": "3"
+   },
+   {
+    "id": "c",
+    "text": "24"
+   },
+   {
+    "id": "d",
+    "text": "27"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "แต่ละ VLAN คือ broadcast domain หนึ่งวง → **3** (ส่วน collision domain แยกต่อพอร์ตคือ 24)",
+  "ref": "Book1 Ch7 §7.3.1"
+ },
+ {
+  "id": "m6-dot1q-025",
+  "module": "M6",
+  "topic": "Inter-VLAN routing",
+  "type": "single",
+  "difficulty": 2,
+  "question": "คำสั่ง `dot1q termination vid 20` บน sub-interface ของ router มีความหมายอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "ปิด VLAN 20"
+   },
+   {
+    "id": "b",
+    "text": "sub-interface จะรับ frame ที่ติด tag VLAN 20 (ถอด tag เพื่อ route) และติด tag VLAN 20 ให้ frame ที่ส่งออก"
+   },
+   {
+    "id": "c",
+    "text": "สร้าง VLAN 20 บน router"
+   },
+   {
+    "id": "d",
+    "text": "เปลี่ยนพอร์ตเป็น access VLAN 20"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "dot1q termination ผูก sub-interface กับ VLAN ID — ใช้ใน router-on-a-stick เพื่อให้ sub-interface แต่ละตัวทำหน้าที่ gateway ของ VLAN หนึ่ง",
+  "ref": "Book1 Ch7 §7.4.3"
+ },
+ {
+  "id": "m6-flood-003",
+  "module": "M6",
+  "topic": "Forwarding",
+  "type": "single",
+  "difficulty": 1,
+  "question": "สวิตช์ได้รับ unicast frame ที่ destination MAC **ไม่มีใน MAC address table** จะทำอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "ทิ้ง frame"
+   },
+   {
+    "id": "b",
+    "text": "flood ออกทุกพอร์ตใน VLAN เดียวกัน ยกเว้นพอร์ตที่รับเข้ามา"
+   },
+   {
+    "id": "c",
+    "text": "ส่งกลับพอร์ตที่รับเข้ามา"
+   },
+   {
+    "id": "d",
+    "text": "ส่ง ARP request แทน"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "unknown unicast ถูก **flood** ภายใน VLAN (ยกเว้นพอร์ตขาเข้า) เมื่อปลายทางตอบกลับ สวิตช์จะเรียนรู้ MAC นั้นและครั้งต่อไปจะ forward เฉพาะพอร์ต",
+  "ref": "Book1 Ch7 §7.2.2"
+ },
+ {
+  "id": "m6-frame-001",
+  "module": "M6",
+  "topic": "Ethernet frame",
+  "type": "single",
+  "difficulty": 1,
+  "question": "Ethernet frame (ไม่มี VLAN tag) มีขนาด **เล็กที่สุด** และ **ใหญ่ที่สุด** เท่าใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "46 และ 1500 byte"
+   },
+   {
+    "id": "b",
+    "text": "64 และ 1518 byte"
+   },
+   {
+    "id": "c",
+    "text": "60 และ 1514 byte"
+   },
+   {
+    "id": "d",
+    "text": "64 และ 1500 byte"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "frame = DMAC 6 + SMAC 6 + Type 2 + Data 46–1500 + FCS 4 → **64–1518 byte**\n\n46–1500 คือขนาดของส่วน data (MTU 1500)",
+  "ref": "Book1 Ch7 §7.1.3"
+ },
+ {
+  "id": "m6-hybrid-011",
+  "module": "M6",
+  "topic": "Hybrid port",
+  "type": "single",
+  "difficulty": 3,
+  "question": "พอร์ตหนึ่งต่อ IP phone (ส่ง voice แบบ tagged VLAN 100) และ PC ต่อพ่วงหลังโทรศัพท์ (ส่ง untagged อยู่ VLAN 10) ชุดคำสั่งใดเหมาะสมที่สุด",
+  "options": [
+   {
+    "id": "a",
+    "text": "`port link-type access` + `port default vlan 10`"
+   },
+   {
+    "id": "b",
+    "text": "`port link-type hybrid` + `port hybrid pvid vlan 10` + `port hybrid untagged vlan 10` + `port hybrid tagged vlan 100`"
+   },
+   {
+    "id": "c",
+    "text": "`port link-type trunk` + `port trunk allow-pass vlan 100`"
+   },
+   {
+    "id": "d",
+    "text": "`port link-type hybrid` + `port hybrid tagged vlan 10 100`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "hybrid กำหนด tagged/untagged รายตัว: frame untagged จาก PC เข้า VLAN 10 ด้วย PVID และถูกส่งกลับแบบ untagged ส่วน VLAN 100 ของโทรศัพท์ส่งแบบ tagged\n\n- access รองรับ VLAN เดียว\n- trunk ที่ allow แค่ 100 จะทำให้ PC (VLAN 10) ใช้ไม่ได้\n- ถ้า VLAN 10 เป็น tagged PC ทั่วไปจะอ่าน frame ไม่ได้",
+  "ref": "Book1 Ch7 §7.3.4"
+ },
+ {
+  "id": "m6-intervlan-019",
+  "module": "M6",
+  "topic": "Inter-VLAN routing",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ในแคมปัสขนาดกลางถึงใหญ่ วิธีทำ inter-VLAN routing ที่นิยมและให้ performance ดีที่สุดคือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "router หนึ่งพอร์ตต่อหนึ่ง VLAN"
+   },
+   {
+    "id": "b",
+    "text": "router-on-a-stick"
+   },
+   {
+    "id": "c",
+    "text": "layer 3 switch ที่ใช้ VLANIF"
+   },
+   {
+    "id": "d",
+    "text": "ใช้ hub เชื่อม VLAN"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "layer 3 switch route ระหว่าง VLAN ด้วยฮาร์ดแวร์ผ่าน **VLANIF** ไม่ต้องอ้อมไป router — router-on-a-stick ใช้ลิงก์เดียวจึงเป็นคอขวด ส่วนแบบหนึ่งพอร์ตต่อ VLAN เปลืองพอร์ต",
+  "ref": "Book1 Ch7 §7.4.4"
+ },
+ {
+  "id": "m6-learn-002",
+  "module": "M6",
+  "topic": "MAC learning",
+  "type": "single",
+  "difficulty": 1,
+  "question": "สวิตช์บันทึกข้อมูลใดลง MAC address table เมื่อได้รับ frame",
+  "options": [
+   {
+    "id": "a",
+    "text": "destination MAC กับพอร์ตที่จะส่งออก"
+   },
+   {
+    "id": "b",
+    "text": "source MAC กับพอร์ตที่รับ frame เข้ามา (และ VLAN)"
+   },
+   {
+    "id": "c",
+    "text": "IP address กับ MAC"
+   },
+   {
+    "id": "d",
+    "text": "source IP กับพอร์ต"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "สวิตช์เรียนรู้จาก **source MAC** ของ frame ที่เข้ามา จับคู่กับพอร์ตขาเข้าและ VLAN — destination MAC ใช้สำหรับค้นหาตอนส่งต่อเท่านั้น",
+  "ref": "Book1 Ch7 §7.2.1"
+ },
+ {
+  "id": "m6-linktype-022",
+  "module": "M6",
+  "topic": "VLAN configuration",
+  "type": "single",
+  "difficulty": 3,
+  "question": "พอร์ตที่ตั้ง `port link-type access` และ `port default vlan 10` ไว้แล้ว ผู้ดูแลสั่ง `port link-type trunk` แต่ได้ error ควรทำอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "รีบูตสวิตช์"
+   },
+   {
+    "id": "b",
+    "text": "ใช้ `undo port default vlan` เพื่อคืนค่า VLAN เดิมก่อน แล้วจึงเปลี่ยน link-type"
+   },
+   {
+    "id": "c",
+    "text": "ลบ VLAN 10 ทิ้ง"
+   },
+   {
+    "id": "d",
+    "text": "ต้องใช้ hybrid เท่านั้น"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "VRP ไม่ให้เปลี่ยน link-type ขณะที่พอร์ตยังมีการตั้งค่า VLAN ของชนิดเดิมอยู่ ต้องคืนค่า (เช่น `undo port default vlan`) ให้เป็นค่า default ก่อน",
+  "ref": "Book1 Ch7 §7.3.6"
+ },
+ {
+  "id": "m6-mactable-024",
+  "module": "M6",
+  "topic": "Verification",
+  "type": "single",
+  "difficulty": 2,
+  "question": "จาก MAC table ด้านล่าง ถ้า SW ได้รับ frame จาก GE0/0/1 ที่มี destination MAC `5489-98aa-0003` ใน VLAN 1 จะส่งออกพอร์ตใด\n\n```vrp\n<SW>display mac-address\nMAC Address    VLAN/VSI   Learned-From   Type\n5489-98aa-0001 1/-        GE0/0/1        dynamic\n5489-98aa-0002 1/-        GE0/0/2        dynamic\n5489-98aa-0003 1/-        GE0/0/3        dynamic\n```",
+  "diagram": "m6-mac-learn",
+  "options": [
+   {
+    "id": "a",
+    "text": "GE0/0/3 เท่านั้น"
+   },
+   {
+    "id": "b",
+    "text": "ทุกพอร์ตยกเว้น GE0/0/1"
+   },
+   {
+    "id": "c",
+    "text": "GE0/0/1"
+   },
+   {
+    "id": "d",
+    "text": "ทิ้ง frame"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "destination MAC มีอยู่ในตารางที่ GE0/0/3 ใน VLAN เดียวกัน → **forward** ออก GE0/0/3 พอร์ตเดียว",
+  "ref": "Book1 Ch7 §7.2.3"
+ },
+ {
+  "id": "m6-macvlan-017",
+  "module": "M6",
+  "topic": "VLAN types",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ข้อดีหลักของ **MAC-based VLAN** เมื่อเทียบกับ port-based VLAN คือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ไม่ต้องใช้ 802.1Q tag"
+   },
+   {
+    "id": "b",
+    "text": "ผู้ใช้ย้ายไปเสียบพอร์ตไหนก็ยังอยู่ VLAN เดิม เพราะ VLAN ผูกกับ MAC ของเครื่อง"
+   },
+   {
+    "id": "c",
+    "text": "ปลอดภัยเพราะ MAC ปลอมแปลงไม่ได้"
+   },
+   {
+    "id": "d",
+    "text": "ใช้ได้กับพอร์ต access เท่านั้น"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "MAC-based VLAN จัด VLAN ตาม source MAC จึงเหมาะกับผู้ใช้ที่ย้ายที่นั่งบ่อย แต่ MAC **ปลอมแปลงได้** และบน Huawei ต้องใช้กับพอร์ต hybrid ร่วมกับ `mac-vlan enable`",
+  "ref": "Book1 Ch7 §7.3.7"
+ },
+ {
+  "id": "m6-mcastmac-016",
+  "module": "M6",
+  "topic": "MAC address",
+  "type": "single",
+  "difficulty": 2,
+  "question": "MAC address ใดเป็น **multicast** MAC",
+  "options": [
+   {
+    "id": "a",
+    "text": "5489-98aa-0001"
+   },
+   {
+    "id": "b",
+    "text": "0100-5e00-0005"
+   },
+   {
+    "id": "c",
+    "text": "00e0-fc12-3456"
+   },
+   {
+    "id": "d",
+    "text": "5489-98ff-ffff"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "MAC เป็น multicast เมื่อ bit ต่ำสุดของ byte แรกเป็น 1 — byte แรก `01` = 0000 000**1** ✓ (`0100-5e..` คือ IPv4 multicast MAC)\n\nbyte แรก 54, 00 เป็นเลขคู่ จึงเป็น unicast ทั้งหมด",
+  "ref": "Book1 Ch7 §7.1.2"
+ },
+ {
+  "id": "m6-mtu-027",
+  "module": "M6",
+  "topic": "Ethernet frame",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ค่า MTU มาตรฐานของ Ethernet (ขนาด payload สูงสุดที่ใส่ IP packet ได้) คือเท่าใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "1492 byte"
+   },
+   {
+    "id": "b",
+    "text": "1500 byte"
+   },
+   {
+    "id": "c",
+    "text": "1518 byte"
+   },
+   {
+    "id": "d",
+    "text": "9000 byte"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "Ethernet payload สูงสุด **1500 byte** — 1518 คือขนาด frame ทั้งหมด, 1492 คือ MTU ของ PPPoE (ถูกหัก header 8 byte), 9000 คือ jumbo frame",
+  "ref": "Book1 Ch7 §7.1.3"
+ },
+ {
+  "id": "m6-portvlan-030",
+  "module": "M6",
+  "topic": "Verification",
+  "type": "single",
+  "difficulty": 1,
+  "question": "จาก output PC ที่ต่อกับ GE0/0/2 อยู่ใน VLAN ใด\n\n```vrp\n<SW1>display port vlan\nPort                    Link Type    PVID  Trunk VLAN List\n-------------------------------------------------------------\nGigabitEthernet0/0/1    access       10    -\nGigabitEthernet0/0/2    access       20    -\nGigabitEthernet0/0/24   trunk        1     1 10 20\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "VLAN 1"
+   },
+   {
+    "id": "b",
+    "text": "VLAN 10"
+   },
+   {
+    "id": "c",
+    "text": "VLAN 20"
+   },
+   {
+    "id": "d",
+    "text": "VLAN 1, 10 และ 20"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "GE0/0/2 เป็น access port ที่มี **PVID 20** จึงอยู่ VLAN 20 — ส่วน GE0/0/24 เป็น trunk ที่อนุญาต VLAN 1, 10, 20",
+  "ref": "Book1 Ch7 §7.3.6"
+ },
+ {
+  "id": "m6-process-014",
+  "module": "M6",
+  "topic": "Forwarding",
+  "type": "ordering",
+  "difficulty": 2,
+  "question": "เรียงขั้นตอนที่สวิตช์ทำเมื่อได้รับ unicast frame หนึ่ง",
+  "options": [
+   {
+    "id": "a",
+    "text": "รับ frame เข้าที่พอร์ตและระบุ VLAN"
+   },
+   {
+    "id": "b",
+    "text": "เรียนรู้/อัปเดต source MAC กับพอร์ตลง MAC table"
+   },
+   {
+    "id": "c",
+    "text": "ค้นหา destination MAC ใน MAC table ของ VLAN นั้น"
+   },
+   {
+    "id": "d",
+    "text": "forward ออกพอร์ตที่พบ หรือ flood ถ้าไม่พบ (หรือ discard ถ้าอยู่พอร์ตเดิม)"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "explanation": "สวิตช์เรียนรู้ก่อน (source) แล้วจึงตัดสินใจส่งต่อ (destination) — ลำดับนี้ทำให้แม้ frame แรกจะถูก flood แต่ frame ตอบกลับจะถูก forward ได้ตรงพอร์ต",
+  "ref": "Book1 Ch7 §7.2.2"
+ },
+ {
+  "id": "m6-pvid-029",
+  "module": "M6",
+  "topic": "Trunk configuration",
+  "type": "single",
+  "difficulty": 3,
+  "question": "SW1 ตั้ง trunk ด้วย `port trunk pvid vlan 10` แต่ SW2 ใช้ PVID ของ trunk เป็นค่า default (1) ผลที่อาจเกิดขึ้นคือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ไม่มีผลใด ๆ"
+   },
+   {
+    "id": "b",
+    "text": "frame ของ VLAN 10 จาก SW1 จะถูกส่งแบบ untagged และ SW2 จะจัดเข้า VLAN 1 ทำให้ traffic ข้ามไปผิด VLAN"
+   },
+   {
+    "id": "c",
+    "text": "trunk จะ down ทันที"
+   },
+   {
+    "id": "d",
+    "text": "SW2 จะเปลี่ยน PVID ตามอัตโนมัติ"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "SW1 ส่ง VLAN 10 (= PVID) แบบ **untagged** — SW2 รับ untagged frame แล้วจัดเข้า PVID ของตัวเองคือ VLAN 1 จึงเกิดการรั่วข้าม VLAN ต้องตั้ง PVID ของ trunk ให้ตรงกันทั้งสองฝั่ง",
+  "ref": "Book1 Ch7 §7.3.4"
+ },
+ {
+  "id": "m6-roas-012",
+  "module": "M6",
+  "topic": "Inter-VLAN routing",
+  "type": "single",
+  "difficulty": 3,
+  "question": "ตั้งค่า router-on-a-stick ดังนี้ แต่ PC-A ping gateway 192.168.10.254 ไม่ได้ ควรเพิ่มคำสั่งใด\n\n```vrp\ninterface GigabitEthernet0/0/1.10\n dot1q termination vid 10\n ip address 192.168.10.254 255.255.255.0\n```",
+  "diagram": "m6-roas",
+  "options": [
+   {
+    "id": "a",
+    "text": "`undo shutdown` บน G0/0/1.10"
+   },
+   {
+    "id": "b",
+    "text": "`arp broadcast enable` บน G0/0/1.10"
+   },
+   {
+    "id": "c",
+    "text": "`port link-type trunk` บน G0/0/1"
+   },
+   {
+    "id": "d",
+    "text": "`vlan batch 10` บน router"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "sub-interface ที่ทำ dot1q termination บน AR จะไม่ประมวลผล ARP broadcast จนกว่าจะเปิด **`arp broadcast enable`** — PC จึง resolve MAC ของ gateway ไม่ได้\n\n`port link-type` เป็นคำสั่งของพอร์ตสวิตช์ ไม่ใช่ router",
+  "ref": "Book1 Ch7 §7.4.2"
+ },
+ {
+  "id": "m6-tag-005",
+  "module": "M6",
+  "topic": "802.1Q",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "ข้อใดถูกต้องเกี่ยวกับ **IEEE 802.1Q tag** (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "tag มีขนาด 4 byte แทรกระหว่าง source MAC กับ Type"
+   },
+   {
+    "id": "b",
+    "text": "TPID มีค่า 0x8100"
+   },
+   {
+    "id": "c",
+    "text": "VID ยาว 12 bit ใช้งานจริงได้ VLAN 1–4094"
+   },
+   {
+    "id": "d",
+    "text": "tag มีขนาด 8 byte"
+   },
+   {
+    "id": "e",
+    "text": "ฟิลด์ PRI ยาว 3 bit ใช้บอก priority ของ frame"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "e"
+  ],
+  "explanation": "802.1Q tag = **4 byte**: TPID 16 bit (0x8100) + PRI 3 bit + CFI/DEI 1 bit + VID 12 bit — VID 0 และ 4095 สงวนไว้",
+  "ref": "Book1 Ch7 §7.3.3"
+ },
+ {
+  "id": "m6-trouble-009",
+  "module": "M6",
+  "topic": "Troubleshooting",
+  "type": "single",
+  "difficulty": 2,
+  "question": "PC-A คุยกับ PC-C (VLAN 10) ได้ แต่ PC-B คุยกับ PC-D (VLAN 20) ไม่ได้ ทั้งที่ตั้ง access port ถูกแล้ว config ของ uplink บนสวิตช์ทั้งสองเป็นดังนี้ สาเหตุคืออะไร\n\n```vrp\ninterface GigabitEthernet0/0/24\n port link-type trunk\n port trunk allow-pass vlan 10\n```",
+  "diagram": "m6-vlan-2sw",
+  "options": [
+   {
+    "id": "a",
+    "text": "ต้องใช้ hybrid port แทน trunk"
+   },
+   {
+    "id": "b",
+    "text": "trunk ไม่ได้อนุญาต VLAN 20"
+   },
+   {
+    "id": "c",
+    "text": "PC-B และ PC-D ต้องใช้ gateway"
+   },
+   {
+    "id": "d",
+    "text": "ต้องตั้ง PVID ของ trunk เป็น 20"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "trunk อนุญาตเฉพาะ VLAN 10 (และ VLAN 1 default) frame ของ VLAN 20 จึงถูกทิ้งที่ uplink — แก้ด้วย `port trunk allow-pass vlan 10 20` ทั้งสองฝั่ง\n\nPC ใน VLAN เดียวกันอยู่ subnet เดียวกัน ไม่ต้องผ่าน gateway",
+  "ref": "Book1 Ch7 §7.3.6"
+ },
+ {
+  "id": "m6-trunk-007",
+  "module": "M6",
+  "topic": "Port types",
+  "type": "single",
+  "difficulty": 2,
+  "question": "trunk port ที่ตั้ง `port trunk pvid vlan 1` และ `port trunk allow-pass vlan 1 10 20` กำลังส่ง frame ของ **VLAN 1** ออกไป frame จะเป็นแบบใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ติด tag VLAN 1"
+   },
+   {
+    "id": "b",
+    "text": "ไม่ติด tag (untagged)"
+   },
+   {
+    "id": "c",
+    "text": "ติด tag VLAN 10"
+   },
+   {
+    "id": "d",
+    "text": "ถูกทิ้ง"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "trunk ส่ง frame ที่ **VID = PVID** แบบ **untagged** (ถอด tag) ส่วน VLAN อื่นที่อยู่ใน allow-pass จะคง tag ไว้",
+  "ref": "Book1 Ch7 §7.3.4"
+ },
+ {
+  "id": "m6-trunkframe-020",
+  "module": "M6",
+  "topic": "802.1Q",
+  "type": "truefalse",
+  "difficulty": 2,
+  "question": "ใน topology ที่ trunk ระหว่าง SW1–SW2 ใช้ PVID 1 frame จาก PC-A (VLAN 10) ที่วิ่งบน trunk จะติด tag VLAN 10",
+  "diagram": "m6-vlan-2sw",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "T"
+  ],
+  "explanation": "VLAN 10 ≠ PVID ของ trunk (1) ดังนั้น frame จึงถูกส่งแบบ **tagged VID 10** เพื่อให้ SW2 รู้ว่าเป็นของ VLAN 10 และส่งต่อให้ PC-C ได้ถูกต้อง เมื่อออกจาก access port ของ SW2 tag จะถูกถอด",
+  "ref": "Book1 Ch7 §7.3.3"
+ },
+ {
+  "id": "m6-types-018",
+  "module": "M6",
+  "topic": "VLAN types",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "วิธีใดเป็นวิธีจัดสมาชิก VLAN ที่ Huawei switch รองรับ (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "ตามพอร์ต (port-based)"
+   },
+   {
+    "id": "b",
+    "text": "ตาม MAC address"
+   },
+   {
+    "id": "c",
+    "text": "ตาม IP subnet"
+   },
+   {
+    "id": "d",
+    "text": "ตามโปรโตคอล"
+   },
+   {
+    "id": "e",
+    "text": "ตามค่า TTL ของ packet"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "explanation": "VLAN แบ่งได้ตาม port, MAC, IP subnet, protocol และ policy (ผสมหลายเงื่อนไข) — TTL ไม่ใช่เกณฑ์ในการจัด VLAN",
+  "ref": "Book1 Ch7 §7.3.5"
+ },
+ {
+  "id": "m6-untag-021",
+  "module": "M6",
+  "topic": "Port types",
+  "type": "single",
+  "difficulty": 1,
+  "question": "access port ที่มี PVID = 20 ได้รับ **untagged frame** จาก PC จะทำอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "ทิ้ง frame"
+   },
+   {
+    "id": "b",
+    "text": "ติด tag VLAN 20 ให้ frame แล้วส่งต่อภายใน VLAN 20"
+   },
+   {
+    "id": "c",
+    "text": "ติด tag VLAN 1"
+   },
+   {
+    "id": "d",
+    "text": "ส่งต่อแบบ untagged ทุก VLAN"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "access port จัด untagged frame เข้า VLAN ตาม **PVID** (ภายในสวิตช์ frame จะถูกจัดการเหมือนมี tag VLAN 20)",
+  "ref": "Book1 Ch7 §7.3.4"
+ },
+ {
+  "id": "m6-vlanid-026",
+  "module": "M6",
+  "topic": "802.1Q",
+  "type": "single",
+  "difficulty": 1,
+  "question": "VLAN ID ใด **ไม่สามารถสร้างใช้งานได้** บน Huawei switch",
+  "options": [
+   {
+    "id": "a",
+    "text": "1"
+   },
+   {
+    "id": "b",
+    "text": "1002"
+   },
+   {
+    "id": "c",
+    "text": "4094"
+   },
+   {
+    "id": "d",
+    "text": "4095"
+   }
+  ],
+  "answer": [
+   "d"
+  ],
+  "explanation": "VID 12 bit มีค่า 0–4095 แต่ **0 และ 4095 สงวนไว้** ใช้ได้ 1–4094 (VLAN 1 มีอยู่แล้วเป็น default และลบไม่ได้)",
+  "ref": "Book1 Ch7 §7.3.3"
+ },
+ {
+  "id": "m6-vlanif-013",
+  "module": "M6",
+  "topic": "Inter-VLAN routing",
+  "type": "single",
+  "difficulty": 2,
+  "question": "บน layer 3 switch สร้าง `interface Vlanif 30` และตั้ง IP แล้ว แต่ `display ip interface brief` แสดง Vlanif30 เป็น down สาเหตุที่เป็นไปได้มากที่สุดคือ",
+  "options": [
+   {
+    "id": "a",
+    "text": "VLANIF ต้องใช้ IP /32"
+   },
+   {
+    "id": "b",
+    "text": "ไม่มีพอร์ตที่ up ใดเป็นสมาชิกของ VLAN 30 (หรือยังไม่ได้สร้าง VLAN 30)"
+   },
+   {
+    "id": "c",
+    "text": "ต้องเปิด OSPF ก่อน"
+   },
+   {
+    "id": "d",
+    "text": "ต้องใช้ router-on-a-stick แทน"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "VLANIF จะ up ก็ต่อเมื่อ VLAN นั้นมีอยู่และมี **พอร์ตอย่างน้อยหนึ่งพอร์ตใน VLAN ที่ up** (access หรือ trunk ที่อนุญาต VLAN นั้น)",
+  "ref": "Book1 Ch7 §7.4.4"
+ }
+]

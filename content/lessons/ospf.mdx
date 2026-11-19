@@ -1,0 +1,172 @@
+<Objectives items={[
+  "อธิบายความแตกต่างของ distance-vector กับ link-state และจุดเด่นของ OSPF",
+  "บอกการเลือก Router ID, ชนิด packet, neighbor state machine และ network type ของ OSPF ได้",
+  "อธิบายการเลือก DR/BDR และเหตุผลที่ต้องมี DR บน broadcast network",
+  "คำนวณ OSPF cost และเส้นทางที่ดีที่สุดด้วย SPF ได้",
+  "ตั้งค่า OSPF single-area และ multi-area บน VRP และอ่านผล display ได้",
+]} />
+
+## ทำไมต้อง dynamic routing
+
+static route ไม่ปรับตัวเมื่อ topology เปลี่ยน และดูแลยากเมื่อเครือข่ายใหญ่ dynamic routing protocol ให้ router แลกข้อมูลกันเองและคำนวณเส้นทางใหม่อัตโนมัติ
+
+| | Distance-vector (เช่น RIP) | Link-state (OSPF, IS-IS) |
+|---|---|---|
+| แลกอะไร | routing table ของตัวเองให้เพื่อนบ้าน | **LSA** — สถานะลิงก์ของตัวเอง กระจายทั้ง area |
+| มุมมอง | รู้แค่ "ไปทางไหน ไกลเท่าไร" | ทุก router ใน area มี **LSDB เหมือนกัน** = แผนที่ทั้ง area |
+| คำนวณ | Bellman-Ford | **SPF (Dijkstra)** |
+| convergence | ช้า มีปัญหา loop | เร็ว ไม่มี loop ภายใน area |
+
+OSPF (Open Shortest Path First) เป็น IGP มาตรฐานเปิด รุ่นที่ใช้กับ IPv4 คือ **OSPFv2** ทำงานบน IP โดยตรง **protocol number 89** ใช้ multicast `224.0.0.5` (ทุก OSPF router) และ `224.0.0.6` (DR/BDR)
+
+## คำศัพท์สำคัญ
+
+- **Router ID** — เลข 32 bit ที่ไม่ซ้ำกันใน OSPF domain ลำดับการเลือก: กำหนดเองใน process (`ospf 1 router-id x.x.x.x`) → `router id` ระดับระบบ → IP ของ loopback สูงสุด → IP ของ interface อื่นที่สูงสุด เมื่อเปลี่ยน router ID ต้อง `reset ospf process` จึงจะมีผล
+- **Area** — แบ่ง LSDB ให้เล็กลง **Area 0 คือ backbone** ทุก area ต้องต่อเข้ากับ area 0
+- **ABR** (Area Border Router) — มี interface อยู่ใน area 0 และ area อื่น
+- **ASBR** — นำ route จากภายนอก (เช่น static, default) เข้ามาใน OSPF
+- **Cost** — ค่า metric ของ interface = reference bandwidth / bandwidth ของ interface (Huawei default reference = **100 Mbit/s**, cost ต่ำสุด = 1)
+
+## ชนิดของ OSPF packet
+
+| Type | ชื่อ | หน้าที่ |
+|---|---|---|
+| 1 | **Hello** | ค้นหาและรักษา neighbor, เลือก DR/BDR |
+| 2 | **DD** (Database Description) | ส่งรายการสรุป LSA ใน LSDB |
+| 3 | **LSR** (Link State Request) | ขอ LSA ที่ตัวเองยังไม่มี |
+| 4 | **LSU** (Link State Update) | ส่ง LSA ตัวจริง |
+| 5 | **LSAck** | ยืนยันการได้รับ LSU |
+
+## Neighbor state machine
+
+```text
+Down → Init → 2-Way → ExStart → Exchange → Loading → Full
+```
+
+- **Down** — ยังไม่ได้ Hello จากอีกฝั่ง
+- **Init** — ได้รับ Hello แต่ยังไม่เห็น Router ID ของเราในนั้น
+- **2-Way** — เห็นตัวเองใน Hello แล้ว = เป็น **neighbor** (บน broadcast network จะเลือก DR/BDR ในช่วงนี้)
+- **ExStart** — ตกลง master/slave (Router ID สูงกว่าเป็น master) และ DD sequence
+- **Exchange** — แลก DD
+- **Loading** — ส่ง LSR / LSU เพื่อเติม LSA ที่ขาด
+- **Full** — LSDB ตรงกัน = **adjacency** สมบูรณ์
+
+<Callout type="exam">
+บน broadcast network **DROther กับ DROther จะค้างอยู่ที่ 2-Way** ตลอด (ไม่ใช่ปัญหา) และจะ Full กับ DR และ BDR เท่านั้น — โจทย์ชอบให้ดู `display ospf peer brief` แล้วถามว่าผิดปกติไหม
+</Callout>
+
+เงื่อนไขที่ต้องตรงกันจึงเป็น neighbor ได้: **Hello/Dead interval, Area ID, authentication, subnet mask (บน broadcast), stub flag** และ Router ID ต้อง **ไม่ซ้ำกัน** — ส่วน process ID ต่างกันได้เพราะมีผลเฉพาะในเครื่อง
+
+## Network type
+
+| Network type | ตัวอย่าง | DR/BDR | Hello / Dead (default) |
+|---|---|---|---|
+| Broadcast | Ethernet | มี | 10 / 40 s |
+| P2P | PPP, HDLC | ไม่มี | 10 / 40 s |
+| NBMA | Frame Relay (เดิม) | มี | 30 / 120 s |
+| P2MP | ต้องกำหนดเอง | ไม่มี | 30 / 120 s |
+
+## DR และ BDR
+
+ถ้ามี n router บน segment เดียวกันแล้วทุกตัว Full กันหมดจะได้ adjacency n(n−1)/2 คู่ OSPF จึงเลือก **DR** (Designated Router) เป็นศูนย์กลางรับ-ส่ง LSA และ **BDR** เป็นตัวสำรอง router อื่น (DROther) จะ Full กับ DR/BDR เท่านั้น
+
+กติกาการเลือก (ต่อ **interface/segment** ไม่ใช่ต่อ router):
+
+1. **DR priority** สูงสุดชนะ (default **1**, ช่วง 0–255) — priority **0 = ไม่มีสิทธิ์** เป็น DR/BDR
+2. ถ้าเท่ากัน **Router ID** สูงสุดชนะ
+3. การเลือกเป็นแบบ **non-preemptive** — ถ้า DR มีอยู่แล้ว router ใหม่ที่ priority สูงกว่าจะไม่แย่งตำแหน่ง จนกว่า DR/BDR จะล่มหรือ reset process
+
+<Topology name="ospf-bma-4r" />
+
+ในรูปถ้าทุกตัวเริ่มพร้อมกัน: R3 (priority 0) ตกรอบ R4 (RID สูงสุด) ได้ DR และ R2 ได้ BDR
+
+## Cost และ SPF
+
+cost ของเส้นทาง = ผลรวม cost ของ **interface ขาออก** ตลอดทาง (รวม cost ของ subnet ปลายทางเอง)
+
+<Topology name="m5-cost" />
+
+จาก R1 ไป `10.4.4.0/24`:
+- R1 → R2 → R4 = 10 + 10 + 1 = **21**
+- R1 → R3 → R4 = 1 + 30 + 1 = **32**
+- R1 → R3 → R2 → R4 = 1 + 5 + 10 + 1 = **17** ← ดีที่สุด
+
+<Callout type="trap">
+default reference 100 Mbit/s ทำให้ FE, GE และ 10GE มี cost = 1 เท่ากันหมด เครือข่ายจริงควรตั้ง `bandwidth-reference` ให้สูงขึ้น (เช่น 10000) **บนทุก router ให้เหมือนกัน** ไม่เช่นนั้นเส้นทางที่แต่ละตัวคำนวณจะไม่สอดคล้องกัน
+</Callout>
+
+## สามตารางของ OSPF
+
+1. **Neighbor table** — `display ospf peer [brief]`
+2. **LSDB** — `display ospf lsdb`
+3. **Routing table** — `display ospf routing` และ route ที่ชนะจะถูกติดตั้งใน IP routing table (`display ip routing-table protocol ospf`)
+
+LSA ที่ควรรู้: **Type 1 Router-LSA** (ทุก router สร้าง อยู่ใน area), **Type 2 Network-LSA** (DR สร้าง), **Type 3 Summary-LSA** (ABR สรุป route ข้าม area), Type 4 ASBR-summary, Type 5 AS-external (ASBR)
+
+## ตั้งค่า OSPF single-area
+
+<CliWalk device="R1" lines={[
+  ["[R1]ospf 1 router-id 1.1.1.1", "สร้าง OSPF process 1 และกำหนด Router ID เอง (แนะนำ)"],
+  ["[R1-ospf-1]area 0", "เข้า area 0 (เขียน 0.0.0.0 ก็ได้)"],
+  ["[R1-ospf-1-area-0.0.0.0]network 10.0.12.0 0.0.0.255", "เปิด OSPF บน interface ที่ IP อยู่ในช่วงนี้ — ใช้ wildcard mask ไม่ใช่ subnet mask"],
+  ["[R1-ospf-1-area-0.0.0.0]network 1.1.1.1 0.0.0.0", "ประกาศ loopback (wildcard 0 = ตรงตัว)"],
+  ["[R1-ospf-1]bandwidth-reference 10000", "ปรับ reference เป็น 10 Gbit/s (หน่วย Mbit/s)"],
+  ["[R1-ospf-1]silent-interface GigabitEthernet 0/0/2", "ไม่ส่ง Hello ออกพอร์ตที่ต่อ host แต่ยังประกาศ subnet นั้นอยู่"],
+  ["[R1]interface GigabitEthernet 0/0/1", ""],
+  ["[R1-GigabitEthernet0/0/1]ospf cost 20", "กำหนด cost ของ interface เอง (มีผลกับทิศขาออก)"],
+  ["[R1-GigabitEthernet0/0/1]ospf dr-priority 100", "เพิ่มโอกาสเป็น DR บน segment นี้"],
+  ["[R1-GigabitEthernet0/0/1]ospf timer hello 5", "เปลี่ยน Hello (Dead จะเป็น 4 เท่าอัตโนมัติ) ต้องตั้งให้ตรงกันทั้งสองฝั่ง"],
+]} />
+
+<Callout type="trap">
+คำสั่ง `network` ใน OSPF ของ VRP ใช้ **wildcard mask** (`0.0.0.255`) ถ้าใส่ `255.255.255.0` จะได้ความหมายต่างไปโดยสิ้นเชิง และคำสั่ง `network` ไม่ได้บอกว่าจะประกาศ subnet อะไร แต่บอกว่า **interface ไหนจะรัน OSPF**
+</Callout>
+
+## Multi-area
+
+<Topology name="m5-multiarea" />
+
+<CliWalk device="R2 (ABR)" lines={[
+  ["[R2]ospf 1 router-id 2.2.2.2", ""],
+  ["[R2-ospf-1]area 0", ""],
+  ["[R2-ospf-1-area-0.0.0.0]network 10.0.23.0 0.0.0.255", "ลิงก์ฝั่ง backbone"],
+  ["[R2-ospf-1]area 1", ""],
+  ["[R2-ospf-1-area-0.0.0.1]network 10.0.12.0 0.0.0.255", "ลิงก์ฝั่ง area 1 — R2 จึงเป็น ABR"],
+  ["[R2-ospf-1-area-0.0.0.1]abr-summary 172.16.0.0 255.255.252.0", "สรุป route ของ area 1 ก่อนส่งเข้า area 0 (ทำได้ที่ ABR เท่านั้น)"],
+]} />
+
+<CliWalk device="R5 (ขอบเครือข่าย)" lines={[
+  ["[R5]ip route-static 0.0.0.0 0 203.0.113.1", "default route ออก ISP"],
+  ["[R5-ospf-1]default-route-advertise", "ประกาศ default route เข้า OSPF (R5 กลายเป็น ASBR) — ต้องมี default ใน routing table ก่อน เว้นแต่ใช้ always"],
+]} />
+
+## คำสั่งตรวจสอบ
+
+```vrp
+<R1>display ospf peer brief
+
+         OSPF Process 1 with Router ID 1.1.1.1
+                  Peer Statistic Information
+ ----------------------------------------------------------------------------
+ Area Id          Interface                        Neighbor id      State
+ 0.0.0.0          GigabitEthernet0/0/1             2.2.2.2          Full
+ 0.0.0.0          GigabitEthernet0/0/2             3.3.3.3          2-Way
+ ----------------------------------------------------------------------------
+```
+
+| คำสั่ง | ใช้ดู |
+|---|---|
+| `display ospf peer brief` | neighbor และ state |
+| `display ospf peer` | รายละเอียด รวมถึง DR/BDR, priority, dead timer |
+| `display ospf interface` | network type, cost, DR/BDR, timers ของแต่ละ interface |
+| `display ospf lsdb` | LSA ทั้งหมด |
+| `display ip routing-table protocol ospf` | route ที่ได้จาก OSPF (preference 10 / ASE 150) |
+| `reset ospf process` | รีสตาร์ต process (ให้ router ID ใหม่มีผล / เลือก DR ใหม่) |
+
+## สรุปท้ายบท
+
+- OSPF = link-state, IP protocol 89, multicast 224.0.0.5 / 224.0.0.6, preference 10 (ASE 150)
+- 5 packet: Hello, DD, LSR, LSU, LSAck · 7 state: Down → … → Full
+- DR: priority สูงสุด → RID สูงสุด, priority 0 ไม่เข้าร่วม, non-preemptive
+- cost = 100 Mbit/s / BW (min 1) รวมตาม interface ขาออก
+- `network` ใช้ wildcard · area 0 เป็น backbone · ABR สรุปด้วย `abr-summary`

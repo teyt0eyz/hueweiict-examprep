@@ -1,0 +1,158 @@
+<Objectives items={[
+  "อธิบายโครงสร้าง Ethernet frame และชนิดของ MAC address",
+  "อธิบายการเรียนรู้ MAC และการตัดสินใจ flood / forward / discard ของสวิตช์",
+  "อธิบาย 802.1Q tag และกฎรับ-ส่ง frame ของพอร์ต access, trunk และ hybrid",
+  "ตั้งค่า VLAN แบบ port-based และ MAC-based บน Huawei switch",
+  "ทำ inter-VLAN routing ด้วย router-on-a-stick และ VLANIF ได้",
+]} />
+
+## Ethernet frame และ MAC address
+
+Ethernet II frame ที่ใช้กับ IP:
+
+| Destination MAC | Source MAC | Type | Data | FCS |
+|---|---|---|---|---|
+| 6 byte | 6 byte | 2 byte | 46–1500 byte | 4 byte |
+
+- frame เล็กสุด **64 byte** ใหญ่สุด **1518 byte** (ไม่นับ VLAN tag) — MTU ของ IP จึงเป็น 1500
+- **MAC address** ยาว 48 bit เขียนแบบ Huawei เป็น `5489-98aa-0001` — 24 bit แรกคือ **OUI** ของผู้ผลิต
+- bit ต่ำสุดของ byte แรก: 0 = **unicast**, 1 = **multicast** · `FFFF-FFFF-FFFF` = **broadcast**
+
+## สวิตช์ทำงานอย่างไร
+
+<Topology name="m6-mac-learn" />
+
+1. **เรียนรู้** — เมื่อ frame เข้ามาที่พอร์ตใด สวิตช์บันทึก **source MAC + พอร์ต + VLAN** ลง MAC address table (aging time default **300 วินาที**)
+2. **ตัดสินใจ** ตาม destination MAC
+   - ไม่รู้จัก (unknown unicast), broadcast หรือ multicast → **flood** ออกทุกพอร์ตใน VLAN เดียวกัน ยกเว้นพอร์ตที่รับเข้ามา
+   - รู้จักและอยู่พอร์ตอื่น → **forward** ออกพอร์ตนั้นพอร์ตเดียว
+   - รู้จักแต่อยู่พอร์ตเดียวกับที่รับเข้ามา → **discard**
+
+<Callout type="trap">
+สวิตช์เรียนรู้จาก **source** MAC เท่านั้น ไม่เคยเรียนรู้จาก destination และ broadcast frame ยังคงถูก flood แม้ MAC table จะเต็มแล้ว
+</Callout>
+
+## VLAN และ 802.1Q
+
+VLAN แบ่ง broadcast domain ในทางตรรกะบนสวิตช์ตัวเดียวกัน — ลด broadcast, เพิ่มความปลอดภัย, จัดกลุ่มผู้ใช้ยืดหยุ่น
+
+**802.1Q tag** ยาว **4 byte** แทรกระหว่าง Source MAC กับ Type:
+
+| TPID | PRI | CFI/DEI | VID |
+|---|---|---|---|
+| 16 bit = `0x8100` | 3 bit (802.1p ใช้ทำ QoS) | 1 bit | **12 bit** |
+
+VID มี 4096 ค่า แต่ 0 และ 4095 สงวนไว้ ใช้จริงได้ **1–4094** · VLAN 1 คือ default VLAN
+
+## ชนิดของพอร์ตบน Huawei switch
+
+| | Access | Trunk | Hybrid |
+|---|---|---|---|
+| ต่อกับ | host (PC, printer) | สวิตช์/router | ได้ทั้งสองแบบ (Huawei proprietary) |
+| VLAN ที่ผ่านได้ | 1 VLAN (= PVID) | หลาย VLAN ตาม allow-pass | หลาย VLAN แยก tagged/untagged ได้รายตัว |
+| **รับ untagged** | ใส่ tag = PVID | ใส่ tag = PVID (ถ้า PVID อยู่ใน allow-pass) | ใส่ tag = PVID (ถ้าอนุญาต) |
+| **รับ tagged** | รับเฉพาะ VID = PVID | รับถ้า VID อยู่ใน allow-pass | รับถ้า VID อยู่ในรายการ tagged/untagged |
+| **ส่งออก** | ถอด tag เสมอ | VID = PVID → ถอด tag · VID อื่นที่อนุญาต → คง tag | ตามที่ตั้ง: `untagged` ถอด, `tagged` คง |
+
+<Callout type="exam">
+- trunk ของ Huawei **อนุญาตแค่ VLAN 1** เป็นค่า default ต้องสั่ง `port trunk allow-pass vlan` เพิ่มเอง
+- PVID ของ trunk สองฝั่งไม่ตรงกัน → frame ของ native VLAN ข้ามไปผิด VLAN ได้
+- โจทย์ "PC ใน VLAN เดียวกันข้ามสวิตช์คุยกันไม่ได้" มักเกิดจาก VLAN นั้นไม่ได้อยู่ใน allow-pass ของ trunk หรือไม่ได้สร้าง VLAN บนสวิตช์ตรงกลาง
+</Callout>
+
+## ตั้งค่า port-based VLAN
+
+<Topology name="m6-vlan-2sw" />
+
+<CliWalk device="SW1" lines={[
+  ["[SW1]vlan batch 10 20", "สร้าง VLAN 10 และ 20 พร้อมกัน (vlan batch 10 to 20 = สร้างเป็นช่วง)"],
+  ["[SW1]interface GigabitEthernet 0/0/1", ""],
+  ["[SW1-GigabitEthernet0/0/1]port link-type access", "กำหนดชนิดพอร์ต"],
+  ["[SW1-GigabitEthernet0/0/1]port default vlan 10", "กำหนด PVID = 10 (พอร์ตนี้อยู่ VLAN 10)"],
+  ["[SW1]port-group group-member GigabitEthernet 0/0/2 to GigabitEthernet 0/0/5", "ตั้งค่าหลายพอร์ตพร้อมกันด้วย port-group"],
+  ["[SW1-port-group]port link-type access", ""],
+  ["[SW1-port-group]port default vlan 20", ""],
+  ["[SW1]interface GigabitEthernet 0/0/24", "uplink ไป SW2"],
+  ["[SW1-GigabitEthernet0/0/24]port link-type trunk", ""],
+  ["[SW1-GigabitEthernet0/0/24]port trunk allow-pass vlan 10 20", "อนุญาต VLAN 10, 20 (ใช้ all ได้)"],
+  ["[SW1-GigabitEthernet0/0/24]undo port trunk allow-pass vlan 1", "เอา VLAN 1 ออกถ้าไม่ต้องการ"],
+]} />
+
+<Callout type="trap">
+ก่อนเปลี่ยน link-type ของพอร์ตที่ตั้งค่าไว้แล้ว ต้องคืนค่า VLAN เดิมก่อน (เช่น `undo port default vlan`) มิฉะนั้น VRP จะแจ้ง error — และค่า default link-type ต่างกันไปตามรุ่น จึงควรระบุ `port link-type` เองทุกครั้ง
+</Callout>
+
+### Hybrid port
+
+<CliWalk device="SW1" title="พอร์ตต่อ IP phone + PC" lines={[
+  ["[SW1-GigabitEthernet0/0/3]port link-type hybrid", ""],
+  ["[SW1-GigabitEthernet0/0/3]port hybrid pvid vlan 10", "frame untagged จาก PC ถูกจัดเข้า VLAN 10"],
+  ["[SW1-GigabitEthernet0/0/3]port hybrid untagged vlan 10", "ส่ง VLAN 10 ออกแบบไม่มี tag ให้ PC"],
+  ["[SW1-GigabitEthernet0/0/3]port hybrid tagged vlan 100", "ส่ง VLAN 100 (voice) แบบคง tag ให้โทรศัพท์"],
+]} />
+
+### VLAN แบบอื่น
+
+- **MAC-based** — จัด VLAN ตาม source MAC (ย้ายเครื่องไปพอร์ตไหนก็อยู่ VLAN เดิม) ใช้กับพอร์ต hybrid
+- **IP subnet-based**, **protocol-based**, **policy-based** (ผสมหลายเงื่อนไข)
+
+<CliWalk device="SW1" title="MAC-based VLAN" lines={[
+  ["[SW1]vlan 10", ""],
+  ["[SW1-vlan10]mac-vlan mac-address 5489-98aa-0001", "ผูก MAC นี้กับ VLAN 10"],
+  ["[SW1-GigabitEthernet0/0/4]port link-type hybrid", ""],
+  ["[SW1-GigabitEthernet0/0/4]port hybrid untagged vlan 10", ""],
+  ["[SW1-GigabitEthernet0/0/4]mac-vlan enable", "เปิดใช้ MAC-based VLAN บนพอร์ต"],
+]} />
+
+## Inter-VLAN routing
+
+host ต่าง VLAN อยู่ต่าง subnet จึงต้องผ่านอุปกรณ์ layer 3 มี 3 แบบ:
+
+1. **Router ต่อหนึ่งพอร์ตต่อหนึ่ง VLAN** — ง่ายแต่เปลืองพอร์ต
+2. **Router-on-a-stick** — trunk เส้นเดียวไป router แล้วแบ่ง sub-interface
+3. **Layer 3 switch + VLANIF** — เร็วและนิยมที่สุดในแคมปัส
+
+<Topology name="m6-roas" />
+
+<CliWalk device="R1" title="Router-on-a-stick" lines={[
+  ["[R1]interface GigabitEthernet 0/0/1.10", "สร้าง sub-interface"],
+  ["[R1-GigabitEthernet0/0/1.10]dot1q termination vid 10", "รับ/ส่ง frame ที่มี tag VLAN 10"],
+  ["[R1-GigabitEthernet0/0/1.10]ip address 192.168.10.254 24", "เป็น gateway ของ VLAN 10"],
+  ["[R1-GigabitEthernet0/0/1.10]arp broadcast enable", "ให้ sub-interface ส่ง/รับ ARP broadcast ได้ — ลืมแล้ว ping ไม่ผ่าน"],
+  ["[R1]interface GigabitEthernet 0/0/1.20", ""],
+  ["[R1-GigabitEthernet0/0/1.20]dot1q termination vid 20", ""],
+  ["[R1-GigabitEthernet0/0/1.20]ip address 192.168.20.254 24", ""],
+  ["[R1-GigabitEthernet0/0/1.20]arp broadcast enable", ""],
+]} />
+
+พอร์ตสวิตช์ที่ต่อ router ต้องเป็น **trunk** ที่อนุญาต VLAN 10 และ 20
+
+<CliWalk device="L3SW" title="VLANIF บน layer 3 switch" lines={[
+  ["[L3SW]vlan batch 10 20", "VLAN ต้องมีอยู่ก่อน VLANIF จึงจะ up"],
+  ["[L3SW]interface Vlanif 10", "interface layer 3 เสมือนของ VLAN 10"],
+  ["[L3SW-Vlanif10]ip address 192.168.10.254 24", ""],
+  ["[L3SW]interface Vlanif 20", ""],
+  ["[L3SW-Vlanif20]ip address 192.168.20.254 24", ""],
+]} />
+
+<Callout type="note">
+VLANIF จะ **up** ก็ต่อเมื่อมีพอร์ตอย่างน้อยหนึ่งพอร์ตใน VLAN นั้นที่ up อยู่ ถ้าไม่มีพอร์ตใดเป็นสมาชิก VLANIF จะ down แม้ตั้ง IP แล้ว
+</Callout>
+
+## คำสั่งตรวจสอบ
+
+| คำสั่ง | ใช้ดู |
+|---|---|
+| `display vlan` | VLAN และพอร์ตที่เป็นสมาชิก (UT = untagged, TG = tagged) |
+| `display port vlan` | link-type, PVID และ VLAN ที่อนุญาตของแต่ละพอร์ต |
+| `display mac-address` | MAC address table (MAC, VLAN, พอร์ต, ชนิด dynamic/static) |
+| `display interface brief` | สถานะพอร์ต |
+| `display ip interface brief` | สถานะ VLANIF / sub-interface |
+
+## สรุปท้ายบท
+
+- สวิตช์เรียนรู้ source MAC, flood unknown/broadcast, aging 300 s
+- 802.1Q tag 4 byte, TPID 0x8100, VID 12 bit (1–4094)
+- access ถอด tag · trunk ถอด tag เฉพาะ VLAN = PVID · hybrid เลือก tagged/untagged รายตัว
+- trunk Huawei allow แค่ VLAN 1 โดย default
+- router-on-a-stick ต้อง `dot1q termination vid` + `arp broadcast enable`

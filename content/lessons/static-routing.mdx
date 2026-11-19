@@ -1,0 +1,140 @@
+<Objectives items={[
+  "อ่าน routing table ของ VRP และบอกความหมายของแต่ละคอลัมน์ได้",
+  "อธิบายลำดับการเลือก route: longest prefix match → preference → cost",
+  "ตั้งค่า static route, default route, floating static route และ summary route ได้",
+  "วิเคราะห์ปัญหา routing loop / black hole ที่เกิดจาก static และ default route",
+]} />
+
+## Route มาจากไหน
+
+Router ส่ง packet ตาม **routing table** ซึ่ง route มาจาก 3 แหล่ง
+
+| แหล่ง | Proto ใน table | Preference default |
+|---|---|---|
+| Direct (subnet ที่ต่ออยู่และ interface up) | `Direct` | **0** |
+| Static (ผู้ดูแลกำหนดเอง) | `Static` | **60** |
+| Dynamic routing protocol | `OSPF` / `RIP` / `ISIS` / `BGP` | OSPF 10, IS-IS 15, RIP 100, OSPF ASE 150, BGP 255 |
+
+<Callout type="trap">
+บน Huawei **preference ยิ่งน้อยยิ่งดี** และใช้เปรียบเทียบ route ปลายทางเดียวกันที่มาจาก **ต่างโปรโตคอล** ส่วน **cost (metric)** ใช้เปรียบเทียบ route ภายในโปรโตคอลเดียวกัน — ค่า default ต่างจาก Cisco (static ของ Cisco คือ AD 1) อย่าจำสลับ
+</Callout>
+
+## ลำดับการเลือก route
+
+1. **Longest prefix match** — ดู route ที่ match IP ปลายทางและมี mask **ยาวที่สุด** ก่อนเสมอ
+2. ถ้ามีหลาย route ที่ prefix เดียวกันจากหลายแหล่ง → เลือก **preference** ต่ำสุด
+3. ถ้ามาจากโปรโตคอลเดียวกัน → เลือก **cost** ต่ำสุด ถ้าเท่ากันจะทำ **ECMP** (load balancing)
+
+ตัวอย่าง: packet ไป `10.1.1.5` ขณะที่ table มี `10.0.0.0/8` (OSPF), `10.1.0.0/16` (Static) และ `10.1.1.0/24` (RIP) → เลือก **`10.1.1.0/24`** ทั้งที่ RIP มี preference แย่ที่สุด เพราะ prefix ยาวที่สุดชนะก่อน
+
+## อ่าน `display ip routing-table`
+
+```vrp
+<R1>display ip routing-table
+Route Flags: R - relay, D - download to fib
+------------------------------------------------------------------------------
+Routing Tables: Public
+         Destinations : 7        Routes : 7
+
+Destination/Mask    Proto   Pre  Cost      Flags NextHop         Interface
+
+       10.0.12.0/24  Direct  0    0           D   10.0.12.1       GigabitEthernet0/0/1
+       10.0.12.1/32  Direct  0    0           D   127.0.0.1       GigabitEthernet0/0/1
+       10.0.23.0/24  Static  60   0          RD   10.0.12.2       GigabitEthernet0/0/1
+      192.168.3.0/24  Static  60   0          RD   10.0.12.2       GigabitEthernet0/0/1
+        127.0.0.0/8   Direct  0    0           D   127.0.0.1       InLoopBack0
+```
+
+- **Pre** = preference, **Cost** = metric
+- Flag **D** = ถูกติดตั้งลง FIB (ใช้ส่งจริง), **R** = relay — next hop ต้องหาเส้นทางต่อ (recursive lookup)
+- interface IP ของตัวเองจะปรากฏเป็น host route `/32` ชี้ไปที่ `127.0.0.1`
+
+## Static route
+
+<Topology name="m4-static-3r" />
+
+รูปแบบคำสั่ง:
+
+```vrp
+ip route-static <ปลายทาง> <mask หรือ prefix> { <next-hop> | <interface> [next-hop] } [preference <ค่า>]
+```
+
+<CliWalk device="R1" title="ให้ PC1 คุยกับ PC2 ได้" lines={[
+  ["[R1]ip route-static 192.168.3.0 24 10.0.12.2", "ไป LAN ของ R3 ให้ส่งต่อที่ R2"],
+  ["[R1]ip route-static 10.0.23.0 255.255.255.0 10.0.12.2", "mask ใส่แบบ dotted ก็ได้"],
+]} />
+
+<CliWalk device="R3" title="อย่าลืมเส้นทางขากลับ" lines={[
+  ["[R3]ip route-static 192.168.1.0 24 10.0.23.2", "R3 ต้องรู้ทางกลับไป LAN ของ R1 ด้วย"],
+  ["[R3]ip route-static 10.0.12.0 24 10.0.23.2", ""],
+]} />
+
+<CliWalk device="R2" lines={[
+  ["[R2]ip route-static 192.168.1.0 24 10.0.12.1", "R2 อยู่ตรงกลาง ต้องรู้ทั้งสองฝั่ง"],
+  ["[R2]ip route-static 192.168.3.0 24 10.0.23.3", ""],
+]} />
+
+<Callout type="exam">
+การสื่อสารสำเร็จต้องมีทั้ง **ขาไปและขากลับ** โจทย์ "ping ไม่ผ่าน" ที่พบบ่อยที่สุดคือ router ปลายทางไม่มี route กลับมาหา subnet ต้นทาง
+</Callout>
+
+### ระบุ next hop หรือ outbound interface?
+
+- **Point-to-point** (เช่น serial ที่ใช้ PPP) — ระบุแค่ outbound interface ได้ เพราะปลายอีกด้านมีตัวเดียว
+- **Broadcast** (Ethernet) — **ต้องระบุ next hop** ถ้าระบุแค่ interface router จะไม่รู้ว่าจะ ARP หาใคร
+
+## Default route
+
+`0.0.0.0/0` match ทุกปลายทาง แต่เพราะ prefix สั้นที่สุดจึงถูกใช้เป็นตัวเลือกสุดท้าย — นิยมใช้ที่ router ขอบเครือข่ายชี้ออก ISP
+
+<CliWalk device="R1" lines={[
+  ["[R1]ip route-static 0.0.0.0 0 10.0.12.2", "default route ชี้ไป R2"],
+]} />
+
+<Callout type="trap" title="Routing loop จาก default route">
+ถ้า R1 ชี้ default ไป R2 และ R2 ชี้ default กลับมา R1 แล้วมี packet ไปยัง subnet ที่ไม่มีใครรู้จัก packet จะวิ่งไปมาจน TTL หมด วิธีแก้คือใส่ **summary route ชี้ไป `NULL0`** บน router ที่เป็นเจ้าของ address block เพื่อทิ้ง packet ที่ไม่มีปลายทางจริง
+
+```vrp
+[R2]ip route-static 172.16.0.0 16 NULL0
+```
+</Callout>
+
+## Floating static route
+
+static สำรองที่ตั้ง preference **สูงกว่า** เส้นหลัก จึงยังไม่ถูกใช้จนกว่าเส้นหลักจะหายไปจาก table
+
+<Topology name="m4-floating" />
+
+<CliWalk device="R1" lines={[
+  ["[R1]ip route-static 172.16.0.0 16 10.1.1.2", "เส้นหลัก preference default 60"],
+  ["[R1]ip route-static 172.16.0.0 16 10.2.2.2 preference 100", "เส้นสำรอง preference 100 — ไม่โผล่ใน routing table ตอนเส้นหลักยังดี"],
+  ["<R1>display ip routing-table protocol static", "ดูทั้ง Active และ Inactive static routes"],
+]} />
+
+ถ้าตั้ง preference ของสองเส้นให้ **เท่ากัน** จะได้ **load balancing** (ECMP) แทน
+
+<Callout type="note">
+floating route จะทำงานเมื่อ **interface ของเส้นหลัก down** (route หายจาก table) แต่ถ้าปัญหาเกิดไกลออกไปขณะที่พอร์ตยัง up static route หลักจะยังค้างอยู่ — ในงานจริงจึงใช้คู่กับ BFD/NQA ตรวจปลายทาง
+</Callout>
+
+## Route summarization
+
+รวมหลาย route เป็นเส้นเดียวเมื่อ next hop เดียวกัน เช่น `192.168.0.0/24`–`192.168.3.0/24` → `ip route-static 192.168.0.0 22 10.0.12.2` (วิธีหา prefix ดู M3)
+
+## คำสั่งตรวจสอบ
+
+| คำสั่ง | ใช้ดู |
+|---|---|
+| `display ip routing-table` | ทั้งตาราง |
+| `display ip routing-table 192.168.3.10` | route ที่ใช้จริงสำหรับปลายทางนี้ (longest match) |
+| `display ip routing-table protocol static` | เฉพาะ static (แยก active/inactive) |
+| `display ip routing-table verbose` | รายละเอียด เช่น state, age, relay next hop |
+| `tracert 192.168.3.10` | ดูเส้นทางที่ packet วิ่งจริง |
+
+## สรุปท้ายบท
+
+- Longest prefix match มาก่อน preference และ cost เสมอ
+- Huawei: Direct 0, OSPF 10, Static 60, RIP 100, OSPF ASE 150, BGP 255
+- Ethernet ต้องระบุ next hop · ต้องมี route ขากลับ
+- Floating = preference สูงกว่า, ECMP = preference/cost เท่ากัน
+- กัน loop ด้วย summary route ไป `NULL0`

@@ -1,0 +1,164 @@
+<Objectives items={[
+  "รู้จัก Huawei VRP และ view ต่าง ๆ ของ command line (user / system / interface / protocol view)",
+  "ใช้ help, Tab, คำสั่งย่อ, undo และอ่านข้อความ error ของ VRP ได้",
+  "เข้าใจ command level กับ user privilege level",
+  "ตั้งค่า login ผ่าน Console, Telnet, SSH (STelnet) และ Web ได้",
+  "จัดการ configuration file (save, startup, compare) และ file system ของอุปกรณ์ได้",
+]} />
+
+## VRP คืออะไร
+
+**VRP (Versatile Routing Platform)** คือระบบปฏิบัติการเครือข่ายของ Huawei ที่ใช้ร่วมกันใน router (AR, NE), switch (S series, CE) และ firewall บางรุ่น ทำให้คำสั่งพื้นฐานเหมือนกันทั้งตระกูล รุ่นที่พบในการสอบคือ **VRP5** (เช่น AR และ S5700 ใน eNSP) และ **VRP8** ในอุปกรณ์ระดับ carrier
+
+<Topology name="m2-mgmt" />
+
+## View ของ command line
+
+VRP แบ่งคำสั่งตาม **view** — prompt บอกว่าเราอยู่ view ไหน
+
+| View | Prompt | เข้าอย่างไร | ใช้ทำอะไร |
+|---|---|---|---|
+| User view | `<Huawei>` | หลัง login | ดูสถานะ (`display`), `ping`, `save`, จัดการไฟล์ |
+| System view | `[Huawei]` | `system-view` | ตั้งค่าระดับอุปกรณ์ |
+| Interface view | `[Huawei-GigabitEthernet0/0/1]` | `interface GigabitEthernet 0/0/1` | ตั้งค่าพอร์ต |
+| Protocol view | `[Huawei-ospf-1]` | `ospf 1` | ตั้งค่าโปรโตคอล |
+
+- `quit` — ถอยกลับไป view ก่อนหน้า 1 ระดับ
+- `return` หรือ **Ctrl+Z** — กลับ user view ทันที
+
+<CliWalk device="Huawei" title="เดินระหว่าง view" lines={[
+  ["<Huawei>system-view", "เข้า system view (พิมพ์ย่อ sys ก็ได้)"],
+  ["[Huawei]sysname R1", "ตั้งชื่ออุปกรณ์ prompt จะเปลี่ยนเป็น R1 ทันที"],
+  ["[R1]interface GigabitEthernet 0/0/1", "เข้า interface view (ย่อเป็น int g0/0/1 ได้)"],
+  ["[R1-GigabitEthernet0/0/1]ip address 10.0.12.1 24", "กำหนด IP ใส่ mask ได้ทั้งแบบ prefix length (24) หรือ dotted (255.255.255.0)"],
+  ["[R1-GigabitEthernet0/0/1]display this", "ดู config ของ view ปัจจุบันเท่านั้น"],
+  ["[R1-GigabitEthernet0/0/1]quit", "กลับขึ้นไป system view"],
+  ["[R1]return", "กลับ user view (เทียบเท่า Ctrl+Z)"],
+]} />
+
+## เครื่องมือช่วยพิมพ์คำสั่ง
+
+- **`?`** — full help (`display ?` แสดงคำที่ตามได้) และ partial help (`dis?` แสดงคำที่ขึ้นต้นด้วย dis)
+- **Tab** — เติมคำสั่งให้ครบ ถ้ามีหลายคำที่เข้าเงื่อนไขจะวนให้เลือก
+- **พิมพ์ย่อ** — พิมพ์แค่พอไม่กำกวมก็ได้ เช่น `sys`, `int g0/0/0`, `dis ip int br`
+- **`undo`** — ยกเลิก/คืนค่า default ของคำสั่ง เช่น `undo shutdown`, `undo ip address`, `undo sysname`
+- **ประวัติคำสั่ง** — ↑/↓ หรือ Ctrl+P / Ctrl+N; ดูทั้งหมดด้วย `display history-command` (เก็บ 10 คำสั่งล่าสุดเป็นค่า default)
+- **กรอง output** — `display current-configuration | include ospf`, `| begin interface`, `| exclude undo`
+
+ข้อความ error ที่ควรอ่านออก:
+
+| ข้อความ | ความหมาย |
+|---|---|
+| `Error: Unrecognized command found at '^' position.` | พิมพ์ผิด/คำสั่งไม่มีใน view นี้ ดูตำแหน่ง `^` |
+| `Error: Incomplete command found at '^' position.` | ใส่พารามิเตอร์ไม่ครบ |
+| `Error: Ambiguous command found at '^' position.` | ย่อสั้นเกินจนกำกวม |
+| `Error: Too many parameters found at '^' position.` | ใส่พารามิเตอร์เกิน |
+| `Error: Wrong parameter found at '^' position.` | ค่าพารามิเตอร์ไม่ถูกต้อง |
+
+## Command level และ user level
+
+คำสั่งถูกแบ่งเป็น 4 ระดับ ส่วนผู้ใช้มี privilege level **0–15**
+
+| Command level | ชื่อ | ตัวอย่างคำสั่ง | User level ที่ใช้ได้ |
+|---|---|---|---|
+| 0 | Visit | `ping`, `tracert`, `telnet` | 0–15 |
+| 1 | Monitoring | `display ...` | 1–15 |
+| 2 | Configuration | คำสั่งตั้งค่าบริการ เช่น routing | 2–15 |
+| 3 | Management | file system, FTP/TFTP, `user-interface`, debugging | 3–15 |
+
+<Callout type="exam">
+User level **3–15** ใช้ได้ทุกคำสั่ง (level 0–3) โจทย์มักถามว่า "user ที่ privilege level 1 ใช้คำสั่งใดได้" → ใช้ได้แค่ level 0 และ 1 คือ ping/tracert และ display
+</Callout>
+
+## การ login เข้าอุปกรณ์
+
+### User interface
+
+- **Console** (`user-interface console 0`) — out-of-band ผ่านสาย console ค่า default **9600 bps, 8 data bits, no parity, 1 stop bit, no flow control**
+- **VTY** (`user-interface vty 0 4`) — ใช้กับ Telnet/SSH ค่า default เปิด 5 ช่อง (0–4) ขยายได้ถึง 15 ช่องขึ้นกับรุ่น
+
+วิธียืนยันตัวตน (`authentication-mode`):
+- `password` — รหัสผ่านอย่างเดียว ตั้งที่ user-interface
+- `aaa` — ใช้ username/password จาก AAA (ดู M8) **แนะนำ**
+- `none` — ไม่ต้องยืนยัน (ไม่ปลอดภัย)
+
+<CliWalk device="R1" title="เปิด Telnet แบบ AAA" lines={[
+  ["[R1]telnet server enable", "เปิดบริการ Telnet (บางรุ่นเปิดไว้แล้ว)"],
+  ["[R1]user-interface vty 0 4", "เข้าตั้งค่า VTY 5 ช่อง"],
+  ["[R1-ui-vty0-4]authentication-mode aaa", "ให้ยืนยันตัวตนด้วย username/password ใน AAA"],
+  ["[R1-ui-vty0-4]protocol inbound telnet", "อนุญาตเฉพาะ Telnet (เลือก ssh หรือ all ได้)"],
+  ["[R1-ui-vty0-4]idle-timeout 5 0", "ตัดการเชื่อมต่อเมื่อไม่ใช้งาน 5 นาที (default 10 นาที)"],
+  ["[R1]aaa", "เข้า AAA view"],
+  ["[R1-aaa]local-user admin password irreversible-cipher Huawei@123", "สร้าง local user เก็บรหัสแบบ hash ย้อนกลับไม่ได้"],
+  ["[R1-aaa]local-user admin service-type telnet", "อนุญาตให้ user นี้ใช้บริการ telnet"],
+  ["[R1-aaa]local-user admin privilege level 15", "ให้สิทธิ์สูงสุด"],
+]} />
+
+### SSH (STelnet)
+
+Telnet ส่งทุกอย่างเป็น **plaintext** (TCP 23) ส่วน SSH เข้ารหัส (TCP 22) — ใน VRP เรียกฝั่ง server ว่า **STelnet**
+
+<CliWalk device="R1" title="เปิด SSH server" lines={[
+  ["[R1]stelnet server enable", "เปิดบริการ SSH server"],
+  ["[R1]rsa local-key-pair create", "สร้างคู่กุญแจ RSA ของอุปกรณ์ (จำเป็นสำหรับ SSH)"],
+  ["[R1]user-interface vty 0 4", ""],
+  ["[R1-ui-vty0-4]authentication-mode aaa", "SSH ต้องใช้ AAA"],
+  ["[R1-ui-vty0-4]protocol inbound ssh", "อนุญาตเฉพาะ SSH"],
+  ["[R1]aaa", ""],
+  ["[R1-aaa]local-user admin service-type ssh", "อนุญาต user ใช้ SSH"],
+  ["[R1]ssh user admin authentication-type password", "กำหนดวิธียืนยันของ SSH user"],
+  ["[R1]ssh user admin service-type stelnet", "ให้ใช้บริการ STelnet"],
+]} />
+
+Web login ใช้ `http secure-server enable` (HTTPS) ร่วมกับ local user ที่มี `service-type http`
+
+## ตั้งค่าพื้นฐาน
+
+<CliWalk device="R1" lines={[
+  ["<R1>clock timezone BKK add 07:00:00", "ตั้ง time zone (อยู่ใน user view)"],
+  ["<R1>clock datetime 09:30:00 2026-11-19", "ตั้งวันเวลา"],
+  ["[R1]header login information \"Authorized access only\"", "ข้อความแสดงก่อน login"],
+  ["[R1]interface LoopBack 0", "loopback เป็น interface เสมือนที่ up ตลอด นิยมใช้เป็น router ID/management IP"],
+  ["[R1-LoopBack0]ip address 1.1.1.1 32", ""],
+  ["<R1>display ip interface brief", "สรุปสถานะ IP ของทุก interface (Physical / Protocol)"],
+  ["<R1>display version", "รุ่นอุปกรณ์ เวอร์ชัน VRP และ uptime"],
+]} />
+
+## Configuration file
+
+| สถานะ | อยู่ที่ไหน | ดูด้วย |
+|---|---|---|
+| **Current configuration** | RAM — ค่าที่กำลังทำงาน มีผลทันที หายเมื่อรีบูต | `display current-configuration` |
+| **Saved configuration** | flash/SD (ค่า default ชื่อ `vrpcfg.zip`) — โหลดตอนบูต | `display saved-configuration` |
+
+<CliWalk device="R1" title="บันทึกและจัดการ config" lines={[
+  ["<R1>save", "บันทึก current config ลงไฟล์ startup (ถามยืนยัน Y/N)"],
+  ["<R1>save backup.zip", "บันทึกเป็นไฟล์ชื่ออื่น"],
+  ["<R1>compare configuration", "เทียบ current กับ saved ว่าต่างกันตรงไหน"],
+  ["<R1>startup saved-configuration backup.zip", "กำหนดไฟล์ที่จะใช้ตอนบูตครั้งถัดไป"],
+  ["<R1>display startup", "ดูไฟล์ config / system software ของรอบปัจจุบันและรอบถัดไป"],
+  ["<R1>reset saved-configuration", "ล้าง config ที่จะใช้ตอนบูต (current ยังอยู่จนกว่าจะ reboot)"],
+  ["<R1>reboot", "รีสตาร์ตอุปกรณ์ (ถามว่าจะ save ก่อนหรือไม่)"],
+]} />
+
+### File system
+
+`dir` (ดูไฟล์), `pwd`, `cd`, `mkdir`, `more` (อ่านไฟล์ข้อความ), `copy`, `move`, `rename`
+
+<Callout type="trap">
+`delete file.cfg` บน VRP5 **ย้ายไฟล์ไป recycle bin** เท่านั้น (กู้คืนได้ด้วย `undo delete`) — พื้นที่ยังไม่คืนจนกว่าจะ `reset recycle-bin` หรือใช้ `delete /unreserved` ที่ลบถาวรทันที
+</Callout>
+
+<Callout type="exam">
+- ต้อง `save` ไม่งั้น config หายเมื่อรีบูต — โจทย์แนว "แก้ config แล้วรีบูต ทำไมค่าหาย"
+- คำสั่ง `display` ใช้ได้ทุก view แต่คำสั่งตั้งค่าต้องอยู่ใน view ที่ถูกต้อง
+- `undo` คือคำตอบเมื่อถาม "ลบ/ยกเลิกการตั้งค่า" ใน VRP (ไม่ใช่ `no` แบบ Cisco)
+</Callout>
+
+## สรุปท้ายบท
+
+- `<>` = user view, `[]` = system view และ view ย่อย
+- `?`, Tab, ย่อคำสั่ง, `undo`, `display this`
+- Command level 0 visit / 1 monitoring / 2 configuration / 3 management
+- Console 9600 bps, VTY 0–4, Telnet TCP 23 (plaintext) vs SSH TCP 22 (STelnet)
+- current (RAM) vs saved (flash) → `save`, `startup saved-configuration`, `compare configuration`

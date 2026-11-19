@@ -1,0 +1,472 @@
+[
+ {
+  "id": "m2-compare-011",
+  "module": "M2",
+  "topic": "Configuration files",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ต้องการดูว่า config ที่กำลังทำงานอยู่ **แตกต่าง** จาก config ที่บันทึกไว้ตรงไหน ก่อนตัดสินใจ save ควรใช้คำสั่งใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "`display saved-configuration`"
+   },
+   {
+    "id": "b",
+    "text": "`compare configuration`"
+   },
+   {
+    "id": "c",
+    "text": "`display diff`"
+   },
+   {
+    "id": "d",
+    "text": "`display current-configuration | include diff`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "`compare configuration` เทียบ current กับ saved และแสดงจุดแรกที่ต่างกัน\n\n`display saved-configuration` แสดงเฉพาะไฟล์ที่บันทึกไว้ ต้องเทียบเองด้วยตา",
+  "ref": "Book1 Ch3 §3.5.4"
+ },
+ {
+  "id": "m2-console-005",
+  "module": "M2",
+  "topic": "Console login",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ค่า default ของ console port บนอุปกรณ์ Huawei ที่ใช้ตั้งค่าโปรแกรม terminal คือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "9600 bps, 8 data bits, no parity, 1 stop bit, no flow control"
+   },
+   {
+    "id": "b",
+    "text": "115200 bps, 8 data bits, even parity, 1 stop bit"
+   },
+   {
+    "id": "c",
+    "text": "9600 bps, 7 data bits, odd parity, 2 stop bits"
+   },
+   {
+    "id": "d",
+    "text": "19200 bps, 8 data bits, no parity, 1 stop bit, hardware flow control"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "console default คือ **9600 bps, 8-N-1, no flow control** เหมือนผู้ผลิตส่วนใหญ่ ถ้าตั้ง baud rate ผิดจะเห็นตัวอักษรขยะบนหน้าจอ",
+  "ref": "Book1 Ch3 §3.3.2"
+ },
+ {
+  "id": "m2-delete-012",
+  "module": "M2",
+  "topic": "File system",
+  "type": "single",
+  "difficulty": 2,
+  "question": "บน VRP5 ผู้ดูแลใช้คำสั่ง `delete flash:/old.cfg` แล้วพบว่าพื้นที่ใน flash ยังไม่เพิ่มขึ้น เพราะเหตุใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "คำสั่ง delete ต้องรันใน system view"
+   },
+   {
+    "id": "b",
+    "text": "ไฟล์ถูกย้ายไป recycle bin ต้อง `reset recycle-bin` หรือใช้ `delete /unreserved`"
+   },
+   {
+    "id": "c",
+    "text": "ต้อง reboot ก่อนพื้นที่จึงจะคืน"
+   },
+   {
+    "id": "d",
+    "text": "คำสั่งนี้ลบเฉพาะชื่อไฟล์ ไม่ลบข้อมูล"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "บน VRP5 `delete` ย้ายไฟล์ไป **recycle bin** (กู้คืนได้ด้วย `undo delete`) พื้นที่จะคืนเมื่อ `reset recycle-bin` หรือใช้ `delete /unreserved` ที่ลบถาวรทันที",
+  "ref": "Book1 Ch3 §3.5.5"
+ },
+ {
+  "id": "m2-error-013",
+  "module": "M2",
+  "topic": "CLI help",
+  "type": "single",
+  "difficulty": 1,
+  "question": "หลังพิมพ์คำสั่ง VRP แสดงข้อความ `Error: Incomplete command found at '^' position.` หมายความว่าอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "พิมพ์ชื่อคำสั่งผิด"
+   },
+   {
+    "id": "b",
+    "text": "คำสั่งยังขาดพารามิเตอร์ที่จำเป็น"
+   },
+   {
+    "id": "c",
+    "text": "คำสั่งย่อสั้นเกินจนกำกวม"
+   },
+   {
+    "id": "d",
+    "text": "ไม่มีสิทธิ์ใช้คำสั่งนี้"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "**Incomplete** = ขาดพารามิเตอร์ เช่น พิมพ์ `ip address 10.1.1.1` โดยไม่ใส่ mask\n\n- พิมพ์ผิด → Unrecognized command\n- ย่อสั้นเกิน → Ambiguous command",
+  "ref": "Book1 Ch3 §3.2.2"
+ },
+ {
+  "id": "m2-levels-003",
+  "module": "M2",
+  "topic": "Command levels",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ผู้ใช้ที่มี **user privilege level 1** สามารถใช้คำสั่งระดับใดได้บ้าง",
+  "options": [
+   {
+    "id": "a",
+    "text": "เฉพาะ level 0 (visit)"
+   },
+   {
+    "id": "b",
+    "text": "level 0 และ 1 (visit, monitoring)"
+   },
+   {
+    "id": "c",
+    "text": "level 0–2"
+   },
+   {
+    "id": "d",
+    "text": "ทุก level (0–3)"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "user level n ใช้คำสั่งที่ command level ≤ n ได้ — level 1 จึงใช้ visit (`ping`, `tracert`) และ monitoring (`display`) ได้\n\nuser level 3–15 จึงใช้ได้ครบทุก command level (0–3)",
+  "ref": "Book1 Ch3 §3.3.1"
+ },
+ {
+  "id": "m2-levels-004",
+  "module": "M2",
+  "topic": "Command levels",
+  "type": "multiple",
+  "difficulty": 2,
+  "question": "ข้อใดเป็นคำสั่งในระดับ **management (level 3)** ตามการจัดระดับของ VRP (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "คำสั่งจัดการ file system เช่น copy/delete"
+   },
+   {
+    "id": "b",
+    "text": "`ping`"
+   },
+   {
+    "id": "c",
+    "text": "คำสั่ง FTP/TFTP"
+   },
+   {
+    "id": "d",
+    "text": "`display ip routing-table`"
+   },
+   {
+    "id": "e",
+    "text": "คำสั่งตั้งค่า user-interface"
+   }
+  ],
+  "answer": [
+   "a",
+   "c",
+   "e"
+  ],
+  "explanation": "level 3 (management) ครอบคลุมงานที่กระทบระบบโดยรวม: file system, FTP/TFTP, user-interface, debugging\n\n- `ping` อยู่ level 0 (visit)\n- `display` อยู่ level 1 (monitoring)",
+  "ref": "Book1 Ch3 §3.3.1"
+ },
+ {
+  "id": "m2-loopback-014",
+  "module": "M2",
+  "topic": "Basic configuration",
+  "type": "single",
+  "difficulty": 2,
+  "question": "เหตุใดจึงนิยมใช้ **loopback interface** เป็น router ID หรือ IP สำหรับจัดการอุปกรณ์",
+  "options": [
+   {
+    "id": "a",
+    "text": "เพราะ loopback ส่งข้อมูลได้เร็วกว่า interface จริง"
+   },
+   {
+    "id": "b",
+    "text": "เพราะ loopback เป็น interface เสมือนที่ up ตลอดตราบที่อุปกรณ์ทำงาน ไม่ขึ้นกับสถานะพอร์ตใดพอร์ตหนึ่ง"
+   },
+   {
+    "id": "c",
+    "text": "เพราะ loopback ไม่ต้องใช้ IP address"
+   },
+   {
+    "id": "d",
+    "text": "เพราะ loopback ถูกเข้ารหัสโดยอัตโนมัติ"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "loopback ไม่ผูกกับพอร์ตกายภาพจึงไม่ down เมื่อสายหลุด ถ้ามีหลายเส้นทางไปถึงอุปกรณ์ IP ของ loopback จะยังเข้าถึงได้เสมอ จึงเหมาะเป็นตัวระบุอุปกรณ์ (router ID, management, source ของ BGP/SNMP)",
+  "ref": "Book1 Ch3 §3.4.3"
+ },
+ {
+  "id": "m2-save-009",
+  "module": "M2",
+  "topic": "Configuration files",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ผู้ดูแลตั้งค่า OSPF บน router เสร็จและทุกอย่างทำงานปกติ แต่หลัง **reboot** config ใหม่หายไปทั้งหมด สาเหตุที่เป็นไปได้มากที่สุดคือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ไม่ได้รันคำสั่ง `save` ก่อน reboot"
+   },
+   {
+    "id": "b",
+    "text": "ใช้ `display current-configuration` แทน `display this`"
+   },
+   {
+    "id": "c",
+    "text": "OSPF ไม่รองรับการ reboot"
+   },
+   {
+    "id": "d",
+    "text": "ไม่ได้ใช้คำสั่ง `commit`"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "config ที่พิมพ์มีผลทันทีใน **current configuration (RAM)** แต่จะถูกโหลดกลับหลังบูตก็ต่อเมื่อบันทึกลง saved configuration ด้วย `save`\n\nVRP5 บน AR/S series ไม่มีขั้นตอน `commit` (two-stage commit มีในบางแพลตฟอร์ม VRP8)",
+  "ref": "Book1 Ch3 §3.5.2"
+ },
+ {
+  "id": "m2-ssh-007",
+  "module": "M2",
+  "topic": "Telnet/SSH",
+  "type": "multiple",
+  "difficulty": 2,
+  "question": "ขั้นตอนใด **จำเป็น** สำหรับการเปิดให้ผู้ดูแล login ผ่าน SSH (STelnet) ด้วย username/password บน VRP (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "`stelnet server enable`"
+   },
+   {
+    "id": "b",
+    "text": "สร้างคู่กุญแจด้วย `rsa local-key-pair create`"
+   },
+   {
+    "id": "c",
+    "text": "ตั้ง `authentication-mode aaa` บน VTY"
+   },
+   {
+    "id": "d",
+    "text": "ปิด Telnet server ก่อนเสมอ"
+   },
+   {
+    "id": "e",
+    "text": "กำหนด `ssh user ... service-type stelnet` และ local user ที่ใช้ service-type ssh"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "e"
+  ],
+  "explanation": "SSH ต้องมี: เปิด STelnet server, มี RSA key ของอุปกรณ์, VTY ใช้ AAA (และอนุญาต inbound ssh), และสร้าง user ที่มีสิทธิ์ใช้ SSH\n\nการปิด Telnet เป็น best practice ด้านความปลอดภัย แต่ไม่ใช่เงื่อนไขที่ทำให้ SSH ใช้งานได้",
+  "ref": "Book1 Ch3 §3.3.4"
+ },
+ {
+  "id": "m2-startup-010",
+  "module": "M2",
+  "topic": "Configuration files",
+  "type": "single",
+  "difficulty": 2,
+  "question": "คำสั่งใดใช้ **กำหนดไฟล์ configuration ที่จะใช้ในการบูตครั้งถัดไป**",
+  "options": [
+   {
+    "id": "a",
+    "text": "`save next-startup backup.zip`"
+   },
+   {
+    "id": "b",
+    "text": "`startup saved-configuration backup.zip`"
+   },
+   {
+    "id": "c",
+    "text": "`boot config backup.zip`"
+   },
+   {
+    "id": "d",
+    "text": "`copy backup.zip startup-config`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "บน VRP ใช้ `startup saved-configuration <ไฟล์>` (user view) แล้วตรวจด้วย `display startup` ซึ่งแสดงทั้งไฟล์ของรอบนี้และรอบถัดไป\n\nตัวเลือกอื่นไม่ใช่ syntax ของ VRP (`copy ... startup-config` เป็นแนวทางของ Cisco)",
+  "ref": "Book1 Ch3 §3.5.3"
+ },
+ {
+  "id": "m2-telnet-008",
+  "module": "M2",
+  "topic": "Telnet/SSH",
+  "type": "truefalse",
+  "difficulty": 1,
+  "question": "Telnet เข้ารหัส username และ password ระหว่างทาง จึงปลอดภัยพอ ๆ กับ SSH",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "F"
+  ],
+  "explanation": "Telnet (TCP 23) ส่งข้อมูลทั้งหมดเป็น **plaintext** ใครดักจับ packet ก็อ่านรหัสผ่านได้ SSH (TCP 22) เข้ารหัสทั้ง session จึงควรใช้ SSH ในการจัดการอุปกรณ์จริง",
+  "ref": "Book1 Ch3 §3.3.4"
+ },
+ {
+  "id": "m2-undo-002",
+  "module": "M2",
+  "topic": "undo",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ต้องการลบ IP address ที่ตั้งไว้บน GigabitEthernet0/0/1 ของอุปกรณ์ Huawei ควรใช้คำสั่งใดใน interface view",
+  "options": [
+   {
+    "id": "a",
+    "text": "`no ip address`"
+   },
+   {
+    "id": "b",
+    "text": "`undo ip address`"
+   },
+   {
+    "id": "c",
+    "text": "`delete ip address`"
+   },
+   {
+    "id": "d",
+    "text": "`reset ip address`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "VRP ใช้คำนำหน้า **`undo`** เพื่อยกเลิกคำสั่งหรือคืนค่า default เช่น `undo shutdown`, `undo ip address`\n\n`no` เป็นรูปแบบของ Cisco IOS — ใช้ไม่ได้บน VRP",
+  "ref": "Book1 Ch3 §3.2.2"
+ },
+ {
+  "id": "m2-views-001",
+  "module": "M2",
+  "topic": "Command views",
+  "type": "single",
+  "difficulty": 1,
+  "question": "prompt `[R1-GigabitEthernet0/0/1]` แสดงว่าผู้ดูแลอยู่ใน view ใด และคำสั่งใดใช้กลับไป **user view** ได้ทันที",
+  "options": [
+   {
+    "id": "a",
+    "text": "System view — ใช้ quit"
+   },
+   {
+    "id": "b",
+    "text": "Interface view — ใช้ return"
+   },
+   {
+    "id": "c",
+    "text": "Interface view — ใช้ quit"
+   },
+   {
+    "id": "d",
+    "text": "User view — ไม่ต้องทำอะไร"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "prompt ที่มีชื่อ interface ต่อท้ายอยู่ในวงเล็บเหลี่ยมคือ **interface view** คำสั่ง `return` (หรือ Ctrl+Z) กลับ user view `<R1>` ทันที\n\n`quit` ถอยกลับเพียงหนึ่งระดับ คือไปที่ system view `[R1]`",
+  "ref": "Book1 Ch3 §3.2.1"
+ },
+ {
+  "id": "m2-vty-006",
+  "module": "M2",
+  "topic": "Telnet/SSH",
+  "type": "single",
+  "difficulty": 2,
+  "question": "หลังตั้งค่าดังนี้ ผู้ดูแลยัง **Telnet** เข้า R1 ไม่ได้ สาเหตุที่น่าจะเป็นที่สุดคือข้อใด\n\n```vrp\n[R1]telnet server enable\n[R1]user-interface vty 0 4\n[R1-ui-vty0-4]authentication-mode aaa\n[R1-ui-vty0-4]protocol inbound ssh\n[R1]aaa\n[R1-aaa]local-user admin password irreversible-cipher Huawei@123\n[R1-aaa]local-user admin service-type telnet\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "ยังไม่ได้สร้าง RSA key"
+   },
+   {
+    "id": "b",
+    "text": "VTY อนุญาตเฉพาะ SSH (`protocol inbound ssh`)"
+   },
+   {
+    "id": "c",
+    "text": "local user ยังไม่ได้ตั้ง privilege level"
+   },
+   {
+    "id": "d",
+    "text": "authentication-mode aaa ใช้กับ telnet ไม่ได้"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "`protocol inbound ssh` ทำให้ VTY รับเฉพาะ SSH จึงปฏิเสธ Telnet ต้องเปลี่ยนเป็น `protocol inbound telnet` หรือ `all`\n\n- RSA key จำเป็นสำหรับ SSH ไม่ใช่ Telnet\n- ไม่ตั้ง privilege level ยัง login ได้ (แค่สิทธิ์ต่ำ)\n- AAA ใช้กับ Telnet ได้ตามปกติ",
+  "ref": "Book1 Ch3 §3.3.3"
+ },
+ {
+  "id": "m2-vty-015",
+  "module": "M2",
+  "topic": "User interface",
+  "type": "single",
+  "difficulty": 1,
+  "question": "บนอุปกรณ์ Huawei ทั่วไป คำสั่ง `user-interface vty 0 4` หมายถึงอะไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "พอร์ต console 5 พอร์ต"
+   },
+   {
+    "id": "b",
+    "text": "ช่องเชื่อมต่อเสมือน 5 ช่องสำหรับ Telnet/SSH"
+   },
+   {
+    "id": "c",
+    "text": "สายแลน 5 เส้น"
+   },
+   {
+    "id": "d",
+    "text": "ผู้ใช้ privilege level 0 ถึง 4"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "VTY (Virtual Type Terminal) คือช่องสำหรับ login ทางเครือข่าย (Telnet/SSH) — `vty 0 4` คือช่องหมายเลข 0–4 รวม 5 ช่อง จึงรองรับผู้ใช้พร้อมกันได้ 5 คนตามค่าตั้งต้น",
+  "ref": "Book1 Ch3 §3.3.1"
+ }
+]

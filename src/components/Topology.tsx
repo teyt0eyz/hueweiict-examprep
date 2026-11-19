@@ -1,7 +1,7 @@
 import diagrams from "../../content/diagrams.json";
 
 type Node = { id: string; type: "router" | "switch" | "l3switch" | "pc" | "server" | "cloud" | "ap" | "ac" | "firewall"; x: number; y: number; label?: string; sub?: string };
-type Link = { a: string; b: string; label?: string; la?: string; lb?: string; style?: "solid" | "dashed" | "blocked" | "trunk" | "wireless"; color?: "accent" | "danger" | "muted" };
+type Link = { a: string; b: string; label?: string; la?: string; lb?: string; style?: "solid" | "dashed" | "blocked" | "trunk" | "wireless"; color?: "accent" | "danger" | "muted"; offset?: number };
 type Area = { x: number; y: number; w: number; h: number; label: string };
 export type TopologyData = { w: number; h: number; title?: string; nodes: Node[]; links: Link[]; areas?: Area[]; notes?: { x: number; y: number; text: string }[] };
 
@@ -80,9 +80,15 @@ export function TopologySvg({ data, label }: { data: TopologyData; label?: strin
         </g>
       ))}
       {data.links.map((l, i) => {
-        const A = byId.get(l.a);
-        const B = byId.get(l.b);
-        if (!A || !B) return null;
+        const A0 = byId.get(l.a);
+        const B0 = byId.get(l.b);
+        if (!A0 || !B0) return null;
+        // optional perpendicular offset for parallel links
+        const len = Math.hypot(B0.x - A0.x, B0.y - A0.y) || 1;
+        const ox = l.offset ? (-(B0.y - A0.y) / len) * l.offset : 0;
+        const oy = l.offset ? ((B0.x - A0.x) / len) * l.offset : 0;
+        const A = { x: A0.x + ox, y: A0.y + oy };
+        const B = { x: B0.x + ox, y: B0.y + oy };
         const color = l.color === "danger" || l.style === "blocked" ? "var(--danger)" : l.color === "accent" ? "var(--accent)" : "var(--muted)";
         const dash = l.style === "dashed" || l.style === "wireless" ? "6 5" : undefined;
         const mx = (A.x + B.x) / 2;

@@ -1,0 +1,128 @@
+<Objectives items={[
+  "แปลงเลขฐานสองและฐานสิบได้คล่อง",
+  "แยก network part / host part ด้วย subnet mask และบอก class, address พิเศษ, private address ได้",
+  "คำนวณ network, broadcast, ช่วง host และจำนวน host ของ subnet ใด ๆ ได้ภายในไม่กี่วินาที",
+  "ออกแบบ FLSM และ VLSM จาก address block ที่กำหนดได้",
+  "รวม subnet (route summarization / supernetting) และหาว่า IP อยู่ subnet ไหนได้",
+]} />
+
+<Callout type="tip" title="ฝึกจริงใน Lab">
+บทนี้คือหัวใจของการสอบ ให้ฝึกต่อใน [Lab 1: Subnet Drill](/labs/subnet/) ที่สุ่มโจทย์และจับเวลาให้
+</Callout>
+
+## ฐานสองที่ต้องจำ
+
+octet หนึ่งมี 8 bit ค่าประจำหลักคือ `128 64 32 16 8 4 2 1`
+
+| mask bits ใน octet | ค่า | block size (256 − ค่า) |
+|---|---|---|
+| 1 | 128 | 128 |
+| 2 | 192 | 64 |
+| 3 | 224 | 32 |
+| 4 | 240 | 16 |
+| 5 | 248 | 8 |
+| 6 | 252 | 4 |
+| 7 | 254 | 2 |
+| 8 | 255 | 1 |
+
+ตารางนี้ใช้ได้ทุกโจทย์: รู้ prefix → รู้ mask ใน octet ที่ "ไม่ใช่ 0 หรือ 255" → รู้ block size → ไล่หา subnet
+
+## โครงสร้าง IPv4 address
+
+IPv4 ยาว **32 bit** เขียนเป็น dotted decimal 4 octet แบ่งเป็น **network part** (ดูจาก mask ที่เป็น 1) และ **host part** (mask ที่เป็น 0)
+
+- **Network address** — host bits เป็น 0 ทั้งหมด ใช้แทนตัว subnet ใช้เป็น IP ของเครื่องไม่ได้
+- **Broadcast address** — host bits เป็น 1 ทั้งหมด ส่งถึงทุกเครื่องใน subnet
+- **จำนวน host ที่ใช้ได้** = 2<sup>h</sup> − 2 (h = จำนวน host bits)
+- **Gateway** — IP ของ router ใน subnet เดียวกับ host ใช้ส่ง packet ออกนอก subnet
+
+### Classful (ใช้ประกอบความรู้)
+
+| Class | octet แรก | default mask | หมายเหตุ |
+|---|---|---|---|
+| A | 1–126 | /8 | 127 สงวนเป็น loopback |
+| B | 128–191 | /16 | |
+| C | 192–223 | /24 | |
+| D | 224–239 | — | multicast |
+| E | 240–255 | — | สงวนไว้ทดลอง |
+
+### Address พิเศษ
+
+| Address | ความหมาย |
+|---|---|
+| `0.0.0.0` | "ทุก network" ใช้ใน default route / host ที่ยังไม่มี IP |
+| `255.255.255.255` | limited broadcast (ไม่ข้าม router) |
+| `127.0.0.0/8` | loopback ของเครื่องตัวเอง |
+| `169.254.0.0/16` | link-local / APIPA เมื่อขอ DHCP ไม่สำเร็จ |
+| `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16` | **private** (RFC 1918) ใช้ภายในองค์กร ต้องทำ NAT ออกอินเทอร์เน็ต |
+
+## วิธีคำนวณ subnet แบบเร็ว
+
+ตัวอย่าง: `10.20.77.200/21`
+
+1. /21 → octet ที่ "น่าสนใจ" คือ octet ที่ 3 (16 < 21 ≤ 24) มี mask bit ใน octet นั้น 5 bit → mask `255.255.248.0`
+2. block size = 256 − 248 = **8** → subnet ใน octet 3 คือ 0, 8, 16, … 72, **80**, …
+3. 77 อยู่ในช่วง 72–79 → network = `10.20.72.0`
+4. broadcast = network ถัดไป − 1 = `10.20.79.255`
+5. host ใช้ได้ `10.20.72.1` – `10.20.79.254` จำนวน 2<sup>11</sup> − 2 = **2046**
+
+<Callout type="trap">
+host range ข้าม octet ได้ — `10.20.72.255` เป็น **host ที่ใช้ได้** ใน /21 นี้ ไม่ใช่ broadcast เพราะ broadcast คือ `10.20.79.255`
+</Callout>
+
+## FLSM และ VLSM
+
+- **FLSM** (Fixed-Length) — แบ่งทุก subnet ขนาดเท่ากัน ยืม n bit ได้ 2<sup>n</sup> subnet
+- **VLSM** (Variable-Length) — แต่ละ subnet ใช้ mask ไม่เท่ากันตามจำนวน host จริง ประหยัด address กว่า
+
+<Topology name="m3-vlsm" />
+
+ตัวอย่าง VLSM จาก `192.168.10.0/24` (จัดสรรจากใหญ่ไปเล็กเสมอ):
+
+| ความต้องการ | host bits | prefix | subnet ที่ได้ | ช่วง host |
+|---|---|---|---|---|
+| LAN A 100 host | 7 (126) | /25 | `192.168.10.0/25` | .1 – .126 |
+| LAN B 50 host | 6 (62) | /26 | `192.168.10.128/26` | .129 – .190 |
+| LAN C 20 host | 5 (30) | /27 | `192.168.10.192/27` | .193 – .222 |
+| R1–R2 | 2 (2) | /30 | `192.168.10.224/30` | .225 – .226 |
+| R1–R3 | 2 (2) | /30 | `192.168.10.228/30` | .229 – .230 |
+
+เหลือ `192.168.10.232` – `.255` สำรองไว้ขยายต่อ
+
+<CliWalk device="R1" title="กำหนด IP ตามแผน VLSM" lines={[
+  ["[R1]interface GigabitEthernet 0/0/0", "พอร์ตฝั่ง LAN A"],
+  ["[R1-GigabitEthernet0/0/0]ip address 192.168.10.1 25", "ใช้ IP แรกของ subnet เป็น gateway"],
+  ["[R1]interface GigabitEthernet 0/0/1", "ลิงก์ไป R2"],
+  ["[R1-GigabitEthernet0/0/1]ip address 192.168.10.225 30", "/30 มี host ได้ 2 ตัวพอดีสำหรับลิงก์ P2P"],
+  ["[R1-GigabitEthernet0/0/1]ip address 172.16.1.1 24 sub", "เพิ่ม IP รอง (secondary) บนพอร์ตเดียวกัน ใช้คีย์เวิร์ด sub"],
+  ["<R1>display ip interface brief", "ตรวจ IP และสถานะ Physical/Protocol ของทุก interface"],
+]} />
+
+<Callout type="trap">
+VRP ไม่ยอมให้ IP ของสอง interface บน router เดียวกัน **อยู่ subnet ที่ทับซ้อนกัน** จะขึ้น error ว่า address conflicts — ถ้าโจทย์ให้ config แบบนี้ แสดงว่าเป็น config ที่ผิด
+</Callout>
+
+## รวม subnet (Summarization / Supernetting)
+
+ใช้ลดขนาด routing table:
+
+1. เขียน octet ที่ต่างกันเป็น binary
+2. นับ bit ที่ **เหมือนกันจากซ้ายต่อเนื่อง** → นั่นคือ prefix ใหม่
+3. ตั้ง bit ที่เหลือเป็น 0 ได้ network ที่รวมแล้ว
+
+ตัวอย่าง `172.16.12.0/24` – `172.16.15.0/24`: 12 = `000011 00`, 15 = `000011 11` เหมือนกัน 6 bit → `172.16.12.0/22`
+
+<Callout type="exam">
+- โจทย์ "subnet ไหนมี host ได้อย่างน้อย N เครื่อง" → หา h ที่เล็กที่สุดซึ่ง 2<sup>h</sup> − 2 ≥ N
+- โจทย์ "IP ใดเป็น host ที่ใช้ได้" → ตรวจว่าไม่ใช่ network หรือ broadcast ของ subnet นั้น
+- /31 ใช้ได้กับลิงก์ P2P ตาม RFC 3021 แต่ในข้อสอบ HCIA ส่วนใหญ่คาดว่า P2P ใช้ **/30**
+- จำนวน subnet จากการยืม n bit คือ 2<sup>n</sup> (VRP ใช้ subnet zero ได้ปกติ)
+</Callout>
+
+## สรุปท้ายบท
+
+- block size = 256 − ค่า mask ใน octet ที่น่าสนใจ
+- network = ตัวคูณของ block size ที่ไม่เกินค่า, broadcast = network ถัดไป − 1
+- host = 2<sup>h</sup> − 2, subnet = 2<sup>n</sup>
+- VLSM: เรียงจากใหญ่ไปเล็ก จัดต่อกันไม่ให้ทับซ้อน
+- private: 10/8, 172.16/12, 192.168/16 · APIPA 169.254/16 · loopback 127/8

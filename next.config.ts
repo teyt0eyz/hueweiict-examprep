@@ -1,4 +1,5 @@
 import path from "node:path";
+import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 // GitHub Pages serves the site at https://teyt0eyz.github.io/hueweiict-examprep/
@@ -13,6 +14,7 @@ const nextConfig: NextConfig = {
   assetPrefix: isProd ? `/${repo}/` : undefined,
   trailingSlash: true,
   images: { unoptimized: true },
+  pageExtensions: ["ts", "tsx", "md", "mdx"],
   env: { NEXT_PUBLIC_BASE_PATH: basePath, NEXT_PUBLIC_DATA_VERSION: Date.now().toString(36) },
   turbopack: {
     root: path.resolve(__dirname),
@@ -25,4 +27,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: ["remark-gfm"],
+  },
+});
+
+export default withMDX(nextConfig);

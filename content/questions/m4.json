@@ -1,0 +1,763 @@
+[
+ {
+  "id": "m4-config-014",
+  "module": "M4",
+  "topic": "Static route configuration",
+  "type": "single",
+  "difficulty": 1,
+  "question": "คำสั่งใดตั้ง static route ไป `10.0.0.0/8` ผ่าน next hop 1.1.1.2 พร้อมกำหนด **preference = 120**",
+  "options": [
+   {
+    "id": "a",
+    "text": "`ip route-static 10.0.0.0 8 1.1.1.2 preference 120`"
+   },
+   {
+    "id": "b",
+    "text": "`ip route-static 10.0.0.0 8 1.1.1.2 120`"
+   },
+   {
+    "id": "c",
+    "text": "`ip route-static 10.0.0.0 8 1.1.1.2 cost 120`"
+   },
+   {
+    "id": "d",
+    "text": "`ip route-static preference 120 10.0.0.0 8 1.1.1.2`"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "syntax คือ `ip route-static <dest> <mask> <next-hop> preference <ค่า>` — ต้องมีคีย์เวิร์ด `preference`\n\nการใส่ตัวเลขเปล่าต่อท้ายแบบ Cisco (AD) ใช้ไม่ได้บน VRP",
+  "ref": "Book1 Ch5 §5.2.4"
+ },
+ {
+  "id": "m4-cost-021",
+  "module": "M4",
+  "topic": "Route selection",
+  "type": "single",
+  "difficulty": 1,
+  "question": "router ได้ route ไป 10.8.0.0/16 จาก OSPF สองเส้น cost 20 และ cost 30 (prefix เท่ากัน) จะเลือกเส้นใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "เส้น cost 20"
+   },
+   {
+    "id": "b",
+    "text": "เส้น cost 30"
+   },
+   {
+    "id": "c",
+    "text": "ทั้งสองเส้นแบบ ECMP"
+   },
+   {
+    "id": "d",
+    "text": "เลือกเส้นที่เรียนรู้ก่อน"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "route จากโปรโตคอลเดียวกัน → เทียบ **cost** ต่ำสุด = 20 (ถ้า cost เท่ากันจึงจะเป็น ECMP)",
+  "ref": "Book1 Ch5 §5.1.4"
+ },
+ {
+  "id": "m4-default-007",
+  "module": "M4",
+  "topic": "Default route",
+  "type": "single",
+  "difficulty": 1,
+  "question": "คำสั่งใดสร้าง **default route** ชี้ไปที่ next hop 203.0.113.1 บน VRP ได้ถูกต้อง",
+  "options": [
+   {
+    "id": "a",
+    "text": "`ip route 0.0.0.0 0.0.0.0 203.0.113.1`"
+   },
+   {
+    "id": "b",
+    "text": "`ip route-static 0.0.0.0 0 203.0.113.1`"
+   },
+   {
+    "id": "c",
+    "text": "`ip default-gateway 203.0.113.1`"
+   },
+   {
+    "id": "d",
+    "text": "`route add default 203.0.113.1`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "VRP ใช้ `ip route-static <ปลายทาง> <mask> <next-hop>` โดย default route คือปลายทาง `0.0.0.0` mask `0` (หรือ 0.0.0.0)\n\n`ip route ...` และ `ip default-gateway` เป็นรูปแบบของ Cisco IOS",
+  "ref": "Book1 Ch5 §5.4.2"
+ },
+ {
+  "id": "m4-direct-017",
+  "module": "M4",
+  "topic": "Route preference",
+  "type": "single",
+  "difficulty": 1,
+  "question": "Direct route (subnet ที่ต่อตรงกับ interface ที่ up) มี preference เท่าใดบน Huawei",
+  "options": [
+   {
+    "id": "a",
+    "text": "0"
+   },
+   {
+    "id": "b",
+    "text": "1"
+   },
+   {
+    "id": "c",
+    "text": "10"
+   },
+   {
+    "id": "d",
+    "text": "60"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "Direct route มี preference **0** ซึ่งดีที่สุด — router จะเชื่อ subnet ที่ต่อตรงมากกว่าข้อมูลจากโปรโตคอลใดเสมอ",
+  "ref": "Book1 Ch5 §5.1.3"
+ },
+ {
+  "id": "m4-ecmp-006",
+  "module": "M4",
+  "topic": "Load balancing",
+  "type": "truefalse",
+  "difficulty": 2,
+  "question": "ถ้าตั้ง static route ปลายทางเดียวกัน 2 เส้นไปคนละ next hop โดยใช้ preference เท่ากัน router จะใช้ทั้งสองเส้นแบบ load balancing (ECMP)",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "T"
+  ],
+  "explanation": "เมื่อ prefix, preference และ cost เท่ากัน route ทั้งสองจะถูกติดตั้งใน routing table พร้อมกันและกระจาย traffic (equal-cost multi-path) — ถ้าต้องการให้เป็นเส้นสำรองต้องตั้ง preference ต่างกัน",
+  "ref": "Book1 Ch5 §5.2"
+ },
+ {
+  "id": "m4-floating-005",
+  "module": "M4",
+  "topic": "Floating static route",
+  "type": "single",
+  "difficulty": 2,
+  "question": "บน R1 ตั้งค่าดังนี้ และทั้งสองลิงก์ up ปกติ\n\n```vrp\n[R1]ip route-static 172.16.0.0 16 10.1.1.2\n[R1]ip route-static 172.16.0.0 16 10.2.2.2 preference 100\n```\n\nroute ใดจะปรากฏใน IP routing table (active)",
+  "diagram": "m4-floating",
+  "options": [
+   {
+    "id": "a",
+    "text": "เฉพาะเส้นที่ไป 10.1.1.2"
+   },
+   {
+    "id": "b",
+    "text": "เฉพาะเส้นที่ไป 10.2.2.2"
+   },
+   {
+    "id": "c",
+    "text": "ทั้งสองเส้นแบบ load balancing"
+   },
+   {
+    "id": "d",
+    "text": "ไม่มีเส้นใดเลยเพราะ prefix ซ้ำกัน"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "เส้นแรกมี preference default **60** ดีกว่า 100 จึง active ส่วนเส้น preference 100 เป็น **floating static route** อยู่ในสถานะ inactive และจะขึ้นมาแทนเมื่อเส้นหลักหายจาก table",
+  "ref": "Book1 Ch5 §5.2.4"
+ },
+ {
+  "id": "m4-floating-024",
+  "module": "M4",
+  "topic": "Floating static route",
+  "type": "single",
+  "difficulty": 2,
+  "question": "เส้นทาง floating static route (preference 100) จะถูกนำมาใช้เมื่อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ทันทีที่ตั้งค่า"
+   },
+   {
+    "id": "b",
+    "text": "เมื่อ route หลักที่ preference ดีกว่าหายไปจาก routing table เช่น interface ขาออกของเส้นหลัก down"
+   },
+   {
+    "id": "c",
+    "text": "เมื่อ traffic บนเส้นหลักเกิน 50%"
+   },
+   {
+    "id": "d",
+    "text": "เมื่อ OSPF ถูกปิด"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "floating route ขึ้นมาแทนเมื่อ route หลักถูกถอนออกจาก routing table — static route หลักจะหายไปเมื่อ interface ขาออกของมัน down (หรือเมื่อ next hop หา route ไม่ได้) ไม่ได้ดูจากปริมาณ traffic",
+  "ref": "Book1 Ch5 §5.2.4"
+ },
+ {
+  "id": "m4-host-020",
+  "module": "M4",
+  "topic": "Default route",
+  "type": "truefalse",
+  "difficulty": 1,
+  "question": "การตั้ง default gateway บน PC มีผลเทียบเท่ากับการให้ PC มี default route ชี้ไปที่ gateway",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "T"
+  ],
+  "explanation": "PC ส่ง packet ที่ปลายทางอยู่นอก subnet ตัวเองให้ default gateway ซึ่งก็คือ default route `0.0.0.0/0` ใน routing table ของ PC นั่นเอง",
+  "ref": "Book1 Ch5 §5.4.6"
+ },
+ {
+  "id": "m4-inactive-018",
+  "module": "M4",
+  "topic": "Floating static route",
+  "type": "single",
+  "difficulty": 2,
+  "question": "`display ip routing-table protocol static` แสดง route ไป 172.16.0.0/16 ที่ preference 100 อยู่ในส่วน **Inactive** เหตุผลที่เป็นไปได้มากที่สุดคือ",
+  "options": [
+   {
+    "id": "a",
+    "text": "next hop ของ route นี้ ping ไม่ได้เสมอ"
+   },
+   {
+    "id": "b",
+    "text": "มี route อื่นไป 172.16.0.0/16 ที่ preference ดีกว่าและ active อยู่"
+   },
+   {
+    "id": "c",
+    "text": "static route ที่มี preference มากกว่า 60 ใช้ไม่ได้"
+   },
+   {
+    "id": "d",
+    "text": "ยังไม่ได้ save config"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "floating static route จะอยู่สถานะ inactive ตราบที่ route หลัก (preference ดีกว่า) ยัง active — คำสั่ง `protocol static` แสดงทั้ง Active และ Inactive ให้ตรวจได้",
+  "ref": "Book1 Ch5 §5.2.4"
+ },
+ {
+  "id": "m4-interface-025",
+  "module": "M4",
+  "topic": "Static route configuration",
+  "type": "multiple",
+  "difficulty": 3,
+  "question": "ในกรณีใดที่ระบุเพียง **outbound interface** (ไม่ต้องระบุ next hop) ใน static route แล้วทำงานได้อย่างเหมาะสม (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "interface serial ที่ใช้ PPP แบบ point-to-point"
+   },
+   {
+    "id": "b",
+    "text": "interface GigabitEthernet ที่ต่อเข้าสวิตช์ที่มี router หลายตัว"
+   },
+   {
+    "id": "c",
+    "text": "interface `NULL0` เพื่อทิ้ง packet"
+   },
+   {
+    "id": "d",
+    "text": "interface Ethernet ที่ต่อกับ ISP ผ่านสวิตช์ของ ISP"
+   }
+  ],
+  "answer": [
+   "a",
+   "c"
+  ],
+  "explanation": "ระบุแค่ interface ได้เมื่อปลายทางของลิงก์มีเพียงหนึ่งเดียว (P2P เช่น PPP) หรือเป็น NULL0 ที่ไม่ต้องส่งต่อจริง\n\nบน Ethernet/broadcast ต้องระบุ next hop เพื่อให้ ARP ได้ถูกตัว",
+  "ref": "Book1 Ch5 §5.2.2"
+ },
+ {
+  "id": "m4-lookup-019",
+  "module": "M4",
+  "topic": "Verification",
+  "type": "single",
+  "difficulty": 1,
+  "question": "คำสั่ง `display ip routing-table 172.16.5.9` ใช้เพื่ออะไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "แสดงทุก route ที่ขึ้นต้นด้วย 172"
+   },
+   {
+    "id": "b",
+    "text": "แสดง route ที่ router จะใช้จริงสำหรับปลายทาง 172.16.5.9 (longest match)"
+   },
+   {
+    "id": "c",
+    "text": "ping ไปยัง 172.16.5.9"
+   },
+   {
+    "id": "d",
+    "text": "เพิ่ม route ไป 172.16.5.9"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "เมื่อระบุ IP ต่อท้าย VRP จะค้นหาและแสดง route ที่ match **ยาวที่สุด** สำหรับปลายทางนั้น เหมาะใช้ตรวจว่า packet จะออกทางไหน",
+  "ref": "Book1 Ch5 §5.3.2"
+ },
+ {
+  "id": "m4-loop-011",
+  "module": "M4",
+  "topic": "Routing loop",
+  "type": "single",
+  "difficulty": 3,
+  "question": "R1 มี default route ชี้ไป R2 และ R2 มี default route ชี้กลับมา R1 (R2 เป็นเจ้าของ block 172.16.0.0/16 แต่ใช้จริงแค่บาง subnet) วิธีใด **ป้องกัน** packet ที่ไปยัง subnet ที่ไม่มีจริงใน 172.16.0.0/16 วนลูปได้ดีที่สุด",
+  "options": [
+   {
+    "id": "a",
+    "text": "เพิ่ม TTL ของ packet"
+   },
+   {
+    "id": "b",
+    "text": "บน R2 เพิ่ม `ip route-static 172.16.0.0 16 NULL0`"
+   },
+   {
+    "id": "c",
+    "text": "ลบ default route ทั้งสองฝั่ง"
+   },
+   {
+    "id": "d",
+    "text": "เปลี่ยน preference ของ default route บน R1 เป็น 100"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "summary route ชี้ไป **NULL0** บน R2 จะ match ปลายทางที่ไม่มีอยู่จริงใน 172.16.0.0/16 (prefix ยาวกว่า default) แล้วทิ้ง packet ทันที ส่วน subnet ที่มีจริงยังใช้ route เฉพาะที่ยาวกว่า\n\nการลบ default route ทำให้ออกอินเทอร์เน็ตไม่ได้ ส่วนการปรับ TTL หรือ preference ไม่แก้ลูป",
+  "ref": "Book1 Ch5 §5.4.5"
+ },
+ {
+  "id": "m4-lpm-001",
+  "module": "M4",
+  "topic": "Longest prefix match",
+  "type": "single",
+  "difficulty": 2,
+  "question": "routing table ของ R1 มี route ดังนี้\n\n| Destination | Proto | Pre | NextHop |\n|---|---|---|---|\n| 10.0.0.0/8 | OSPF | 10 | 10.9.9.1 |\n| 10.1.0.0/16 | Static | 60 | 10.9.9.2 |\n| 10.1.1.0/24 | RIP | 100 | 10.9.9.3 |\n| 0.0.0.0/0 | Static | 60 | 10.9.9.4 |\n\npacket ที่มีปลายทาง **10.1.1.5** จะถูกส่งไปที่ next hop ใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "10.9.9.1"
+   },
+   {
+    "id": "b",
+    "text": "10.9.9.2"
+   },
+   {
+    "id": "c",
+    "text": "10.9.9.3"
+   },
+   {
+    "id": "d",
+    "text": "10.9.9.4"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "router ใช้ **longest prefix match ก่อนเสมอ** — ทั้ง /8, /16, /24 และ /0 match แต่ `10.1.1.0/24` ยาวที่สุด จึงใช้ next hop 10.9.9.3 แม้ RIP จะมี preference แย่ที่สุดก็ตาม\n\npreference ใช้เทียบเฉพาะ route ที่ destination/mask **เหมือนกัน** เท่านั้น",
+  "ref": "Book1 Ch5 §5.3.2"
+ },
+ {
+  "id": "m4-lpm-002",
+  "module": "M4",
+  "topic": "Longest prefix match",
+  "type": "single",
+  "difficulty": 2,
+  "question": "routing table ของ R1 มี route ดังนี้\n\n| Destination | Proto | Pre | NextHop |\n|---|---|---|---|\n| 10.0.0.0/8 | OSPF | 10 | 10.9.9.1 |\n| 10.1.0.0/16 | Static | 60 | 10.9.9.2 |\n| 10.1.1.0/24 | RIP | 100 | 10.9.9.3 |\n| 0.0.0.0/0 | Static | 60 | 10.9.9.4 |\n\npacket ที่มีปลายทาง **10.1.200.9** จะถูกส่งไปที่ next hop ใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "10.9.9.1"
+   },
+   {
+    "id": "b",
+    "text": "10.9.9.2"
+   },
+   {
+    "id": "c",
+    "text": "10.9.9.3"
+   },
+   {
+    "id": "d",
+    "text": "10.9.9.4"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "10.1.200.9 ไม่อยู่ใน 10.1.1.0/24 แต่ match `10.1.0.0/16` และ `10.0.0.0/8` และ default\n\nprefix ที่ยาวที่สุดที่ match คือ **/16** → next hop 10.9.9.2",
+  "ref": "Book1 Ch5 §5.3.2"
+ },
+ {
+  "id": "m4-nexthop-008",
+  "module": "M4",
+  "topic": "Static route configuration",
+  "type": "single",
+  "difficulty": 3,
+  "question": "R1 ต่อกับ R2 ผ่าน Ethernet (G0/0/1) ผู้ดูแลตั้ง `ip route-static 192.168.3.0 24 GigabitEthernet 0/0/1` โดยไม่ระบุ next hop ผลที่น่าจะเกิดขึ้นคือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "ทำงานได้ดีเหมือน P2P link ทุกประการ"
+   },
+   {
+    "id": "b",
+    "text": "route อาจขึ้นใน table แต่การส่งจริงล้มเหลว เพราะ router ไม่รู้ว่าจะ ARP หา MAC ของ next hop ใด"
+   },
+   {
+    "id": "c",
+    "text": "VRP ไม่ยอมรับคำสั่งเพราะ Ethernet ห้ามใช้ static route"
+   },
+   {
+    "id": "d",
+    "text": "route จะถูกแปลงเป็น default route อัตโนมัติ"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "บน broadcast network (Ethernet) มีหลายอุปกรณ์อยู่บน segment เดียวกัน ถ้าไม่ระบุ next hop router จะไม่รู้ IP ที่ต้อง resolve เป็น MAC — แนวปฏิบัติคือ **ต้องระบุ next hop** เสมอบน Ethernet\n\nการระบุแค่ outbound interface เหมาะกับ P2P (เช่น PPP) หรือ NULL0",
+  "ref": "Book1 Ch5 §5.2.2"
+ },
+ {
+  "id": "m4-nomatch-022",
+  "module": "M4",
+  "topic": "Forwarding",
+  "type": "single",
+  "difficulty": 2,
+  "question": "router ได้รับ packet ไปยัง 8.8.8.8 แต่ routing table **ไม่มี route ใดที่ match** (ไม่มี default route) router จะทำอย่างไร",
+  "options": [
+   {
+    "id": "a",
+    "text": "flood packet ออกทุก interface"
+   },
+   {
+    "id": "b",
+    "text": "ทิ้ง packet และอาจส่ง ICMP Destination Unreachable กลับไปหาต้นทาง"
+   },
+   {
+    "id": "c",
+    "text": "ส่งกลับไปทาง interface ที่รับเข้ามา"
+   },
+   {
+    "id": "d",
+    "text": "เก็บ packet ไว้จนกว่าจะมี route"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "router ไม่ flood แบบสวิตช์ — ถ้าไม่มี route ที่ match จะ **ทิ้ง packet** และส่ง ICMP type 3 (network unreachable) กลับหาต้นทาง",
+  "ref": "Book1 Ch5 §5.1.5"
+ },
+ {
+  "id": "m4-pref-003",
+  "module": "M4",
+  "topic": "Route preference",
+  "type": "single",
+  "difficulty": 1,
+  "question": "ค่า **preference default** ของ static route บนอุปกรณ์ Huawei คือเท่าใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "0"
+   },
+   {
+    "id": "b",
+    "text": "1"
+   },
+   {
+    "id": "c",
+    "text": "10"
+   },
+   {
+    "id": "d",
+    "text": "60"
+   }
+  ],
+  "answer": [
+   "d"
+  ],
+  "explanation": "Huawei: Direct 0, OSPF 10, IS-IS 15, **Static 60**, RIP 100, OSPF ASE 150, BGP 255\n\nค่า 1 คือ administrative distance ของ static บน Cisco ซึ่งเป็นกับดักที่พบบ่อย",
+  "ref": "Book1 Ch5 §5.1.3"
+ },
+ {
+  "id": "m4-pref-013",
+  "module": "M4",
+  "topic": "Route preference",
+  "type": "single",
+  "difficulty": 2,
+  "question": "R1 เรียนรู้ prefix `10.5.0.0/16` จาก OSPF (internal), RIP และ static route (ค่า default ทั้งหมด) route ใดจะถูกติดตั้งใน routing table",
+  "options": [
+   {
+    "id": "a",
+    "text": "OSPF"
+   },
+   {
+    "id": "b",
+    "text": "RIP"
+   },
+   {
+    "id": "c",
+    "text": "Static"
+   },
+   {
+    "id": "d",
+    "text": "ทั้งสามแบบ load balancing"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "prefix เท่ากัน → เทียบ preference: OSPF **10** < Static 60 < RIP 100 → OSPF ชนะ\n\nload balancing ทำได้เฉพาะ route ที่ preference/cost เท่ากัน ไม่ข้ามโปรโตคอล",
+  "ref": "Book1 Ch5 §5.1.3"
+ },
+ {
+  "id": "m4-pref-023",
+  "module": "M4",
+  "topic": "Route preference",
+  "type": "single",
+  "difficulty": 1,
+  "question": "แหล่ง route ใดมี **preference default สูงที่สุด (น่าเชื่อถือน้อยที่สุด)** บน Huawei",
+  "options": [
+   {
+    "id": "a",
+    "text": "OSPF ASE"
+   },
+   {
+    "id": "b",
+    "text": "RIP"
+   },
+   {
+    "id": "c",
+    "text": "BGP"
+   },
+   {
+    "id": "d",
+    "text": "Static"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "BGP = **255**, OSPF ASE = 150, RIP = 100, Static = 60",
+  "ref": "Book1 Ch5 §5.1.3"
+ },
+ {
+  "id": "m4-recursive-016",
+  "module": "M4",
+  "topic": "Route recursion",
+  "type": "truefalse",
+  "difficulty": 3,
+  "question": "บน VRP static route ต้องระบุ next hop ที่อยู่ใน subnet ที่ต่อตรงกับ router เท่านั้น ถ้า next hop อยู่ไกลกว่านั้น router จะไม่ยอมใช้ route",
+  "options": [
+   {
+    "id": "T",
+    "text": "ถูก"
+   },
+   {
+    "id": "F",
+    "text": "ผิด"
+   }
+  ],
+  "answer": [
+   "F"
+  ],
+  "explanation": "VRP รองรับ **route recursion** — ถ้า next hop ไม่ได้ต่อตรง router จะค้นหา route ไปยัง next hop นั้นต่อ (flag **R** = relay) จนได้ next hop ที่ต่อตรงและ outbound interface จริง ตราบใดที่หา route ไปถึง next hop ได้ static route ก็จะ active",
+  "ref": "Book1 Ch5 §5.1"
+ },
+ {
+  "id": "m4-return-009",
+  "module": "M4",
+  "topic": "Troubleshooting",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ใน topology R1 มี `ip route-static 192.168.3.0 24 10.0.12.2` และ R2 มี route ไปทั้ง 192.168.1.0/24 และ 192.168.3.0/24 แต่ R3 **ไม่มี static route ใดเลย** PC1 ping PC2 ไม่สำเร็จ ต้องเพิ่มคำสั่งใด",
+  "diagram": "m4-static-3r",
+  "options": [
+   {
+    "id": "a",
+    "text": "บน R1: `ip route-static 192.168.1.0 24 10.0.12.2`"
+   },
+   {
+    "id": "b",
+    "text": "บน R3: `ip route-static 192.168.1.0 24 10.0.23.2`"
+   },
+   {
+    "id": "c",
+    "text": "บน R2: `ip route-static 0.0.0.0 0 10.0.23.3`"
+   },
+   {
+    "id": "d",
+    "text": "บน R3: `ip route-static 192.168.3.0 24 10.0.23.2`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "Echo Request ไปถึง PC2 ได้ แต่ Echo Reply ต้องกลับไปหา 192.168.1.10 — R3 ไม่มี route ไป 192.168.1.0/24 จึงทิ้ง packet\n\nเพิ่มเส้นทางขากลับบน **R3** ชี้ไป R2 (10.0.23.2) — การสื่อสารต้องมีทั้งขาไปและขากลับ",
+  "ref": "Book1 Ch5 §5.2.3"
+ },
+ {
+  "id": "m4-select-004",
+  "module": "M4",
+  "topic": "Route selection",
+  "type": "ordering",
+  "difficulty": 2,
+  "question": "เรียงลำดับเกณฑ์ที่ router ใช้เลือก route สำหรับปลายทางหนึ่ง (พิจารณาข้อแรกก่อน)",
+  "options": [
+   {
+    "id": "a",
+    "text": "Longest prefix match (mask ยาวที่สุด)"
+   },
+   {
+    "id": "b",
+    "text": "Preference ต่ำสุด (เมื่อ prefix เท่ากันแต่มาจากต่างแหล่ง)"
+   },
+   {
+    "id": "c",
+    "text": "Cost/metric ต่ำสุด (เมื่อมาจากโปรโตคอลเดียวกัน)"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "1. หา route ที่ mask ยาวที่สุดที่ match ก่อน\n2. ถ้ามีหลาย route prefix เดียวกันจากหลายโปรโตคอล → preference ต่ำสุดชนะ\n3. ถ้ามาจากโปรโตคอลเดียวกัน → cost ต่ำสุดชนะ (เท่ากัน = ECMP)",
+  "ref": "Book1 Ch5 §5.1"
+ },
+ {
+  "id": "m4-static-015",
+  "module": "M4",
+  "topic": "Static routing concepts",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "ข้อใดเป็นคุณสมบัติของ **static route** (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "ไม่ใช้ bandwidth/CPU ในการแลกข้อมูล routing"
+   },
+   {
+    "id": "b",
+    "text": "ปรับเส้นทางเองอัตโนมัติเมื่อมีลิงก์ระหว่างทางล่ม"
+   },
+   {
+    "id": "c",
+    "text": "เหมาะกับเครือข่ายเล็กหรือ stub network ที่มีทางออกทางเดียว"
+   },
+   {
+    "id": "d",
+    "text": "ใช้สร้าง default route ได้"
+   },
+   {
+    "id": "e",
+    "text": "ต้องตั้งค่าเองบนทุก router ที่เกี่ยวข้อง"
+   }
+  ],
+  "answer": [
+   "a",
+   "c",
+   "d",
+   "e"
+  ],
+  "explanation": "static route ไม่มี overhead ของโปรโตคอล แต่ **ไม่รู้จักการเปลี่ยนแปลงของ topology ที่อยู่ไกลออกไป** — จะหายจาก table เฉพาะเมื่อ interface ขาออกของตัวเอง down ต้องดูแลด้วยมือ จึงเหมาะกับเครือข่ายเล็ก/stub และใช้สร้าง default route ได้",
+  "ref": "Book1 Ch5 §5.2.1"
+ },
+ {
+  "id": "m4-summary-012",
+  "module": "M4",
+  "topic": "Route summarization",
+  "type": "single",
+  "difficulty": 2,
+  "question": "R1 ต้องมี static route ไป `192.168.0.0/24`, `192.168.1.0/24`, `192.168.2.0/24`, `192.168.3.0/24` ผ่าน next hop เดียวกัน 10.0.12.2 คำสั่งเดียวที่รวมได้พอดีคือข้อใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "`ip route-static 192.168.0.0 16 10.0.12.2`"
+   },
+   {
+    "id": "b",
+    "text": "`ip route-static 192.168.0.0 22 10.0.12.2`"
+   },
+   {
+    "id": "c",
+    "text": "`ip route-static 192.168.0.0 23 10.0.12.2`"
+   },
+   {
+    "id": "d",
+    "text": "`ip route-static 192.168.0.0 24 10.0.12.2`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "4 network ต่อเนื่องเริ่มที่ 0 = 2² → prefix /24 − 2 = **/22** ครอบคลุม 192.168.0.0–192.168.3.255 พอดี\n\n/16 กว้างเกิน (ครอบคลุมทั้ง 192.168.x.x)",
+  "ref": "Book1 Ch5 §5.3"
+ },
+ {
+  "id": "m4-table-010",
+  "module": "M4",
+  "topic": "Routing table",
+  "type": "multiple",
+  "difficulty": 2,
+  "question": "จาก output ด้านล่าง ข้อใดถูกต้อง (เลือกทุกข้อที่ถูก)\n\n```vrp\nDestination/Mask    Proto   Pre  Cost      Flags NextHop         Interface\n   192.168.3.0/24   Static  60   0          RD   10.0.12.2       GigabitEthernet0/0/1\n    10.0.12.0/24    Direct  0    0           D   10.0.12.1       GigabitEthernet0/0/1\n    10.0.12.1/32    Direct  0    0           D   127.0.0.1       GigabitEthernet0/0/1\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "route ไป 192.168.3.0/24 มาจาก static route ที่ใช้ preference default"
+   },
+   {
+    "id": "b",
+    "text": "flag D หมายถึง route ถูกติดตั้งลง FIB และใช้ส่งข้อมูลจริง"
+   },
+   {
+    "id": "c",
+    "text": "10.0.12.1/32 คือ IP ของ R1 เองบน G0/0/1"
+   },
+   {
+    "id": "d",
+    "text": "flag R หมายความว่า route นั้นถูก reject"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "- Proto Static, Pre 60 = static ค่า default ✓\n- **D** = download to FIB ✓\n- interface IP ของตัวเองปรากฏเป็น /32 ชี้ไป 127.0.0.1 ✓\n- **R = relay** (ต้อง recursive lookup หา next hop) ไม่ใช่ reject ✗",
+  "ref": "Book1 Ch5 §5.1"
+ }
+]

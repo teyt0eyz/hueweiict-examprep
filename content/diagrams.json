@@ -1,18 +1,751 @@
 {
-  "ospf-bma-4r": {
-    "w": 460, "h": 250, "title": "4 routers บน broadcast segment เดียวกัน (Area 0)",
-    "nodes": [
-      { "id": "SW", "type": "switch", "x": 230, "y": 125, "label": "SW" },
-      { "id": "R1", "type": "router", "x": 70, "y": 50, "label": "R1", "sub": "RID 1.1.1.1 · pri 1" },
-      { "id": "R2", "type": "router", "x": 390, "y": 50, "label": "R2", "sub": "RID 2.2.2.2 · pri 1" },
-      { "id": "R3", "type": "router", "x": 70, "y": 195, "label": "R3", "sub": "RID 3.3.3.3 · pri 0" },
-      { "id": "R4", "type": "router", "x": 390, "y": 195, "label": "R4", "sub": "RID 4.4.4.4 · pri 1" }
-    ],
-    "links": [
-      { "a": "R1", "b": "SW", "la": "G0/0/0" },
-      { "a": "R2", "b": "SW", "la": "G0/0/0" },
-      { "a": "R3", "b": "SW", "la": "G0/0/0" },
-      { "a": "R4", "b": "SW", "la": "G0/0/0" }
-    ]
-  }
+ "ospf-bma-4r": {
+  "w": 460,
+  "h": 250,
+  "title": "4 routers บน broadcast segment เดียวกัน (Area 0)",
+  "nodes": [
+   {
+    "id": "SW",
+    "type": "switch",
+    "x": 230,
+    "y": 125,
+    "label": "SW"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 70,
+    "y": 50,
+    "label": "R1",
+    "sub": "RID 1.1.1.1 · pri 1"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 390,
+    "y": 50,
+    "label": "R2",
+    "sub": "RID 2.2.2.2 · pri 1"
+   },
+   {
+    "id": "R3",
+    "type": "router",
+    "x": 70,
+    "y": 195,
+    "label": "R3",
+    "sub": "RID 3.3.3.3 · pri 0"
+   },
+   {
+    "id": "R4",
+    "type": "router",
+    "x": 390,
+    "y": 195,
+    "label": "R4",
+    "sub": "RID 4.4.4.4 · pri 1"
+   }
+  ],
+  "links": [
+   {
+    "a": "R1",
+    "b": "SW",
+    "la": "G0/0/0"
+   },
+   {
+    "a": "R2",
+    "b": "SW",
+    "la": "G0/0/0"
+   },
+   {
+    "a": "R3",
+    "b": "SW",
+    "la": "G0/0/0"
+   },
+   {
+    "a": "R4",
+    "b": "SW",
+    "la": "G0/0/0"
+   }
+  ]
+ },
+ "m1-lan-wan": {
+  "w": 620,
+  "h": 200,
+  "title": "LAN สองแห่งเชื่อมกันผ่าน WAN",
+  "areas": [
+   {
+    "x": 10,
+    "y": 30,
+    "w": 230,
+    "h": 160,
+    "label": "LAN สำนักงานใหญ่"
+   },
+   {
+    "x": 380,
+    "y": 30,
+    "w": 230,
+    "h": 160,
+    "label": "LAN สาขา"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "PC1",
+    "type": "pc",
+    "x": 50,
+    "y": 80
+   },
+   {
+    "id": "PC2",
+    "type": "pc",
+    "x": 50,
+    "y": 150
+   },
+   {
+    "id": "SW1",
+    "type": "switch",
+    "x": 130,
+    "y": 115
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 215,
+    "y": 115
+   },
+   {
+    "id": "WAN",
+    "type": "cloud",
+    "x": 310,
+    "y": 115,
+    "label": "WAN / Internet"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 405,
+    "y": 115
+   },
+   {
+    "id": "SW2",
+    "type": "switch",
+    "x": 490,
+    "y": 115
+   },
+   {
+    "id": "SRV",
+    "type": "server",
+    "x": 570,
+    "y": 115,
+    "label": "Server"
+   }
+  ],
+  "links": [
+   {
+    "a": "PC1",
+    "b": "SW1"
+   },
+   {
+    "a": "PC2",
+    "b": "SW1"
+   },
+   {
+    "a": "SW1",
+    "b": "R1"
+   },
+   {
+    "a": "R1",
+    "b": "WAN",
+    "style": "dashed"
+   },
+   {
+    "a": "WAN",
+    "b": "R2",
+    "style": "dashed"
+   },
+   {
+    "a": "R2",
+    "b": "SW2"
+   },
+   {
+    "a": "SW2",
+    "b": "SRV"
+   }
+  ]
+ },
+ "m2-mgmt": {
+  "w": 520,
+  "h": 200,
+  "title": "วิธีเข้าจัดการอุปกรณ์: Console (out-of-band) และ Telnet/SSH (in-band)",
+  "nodes": [
+   {
+    "id": "ADMIN",
+    "type": "pc",
+    "x": 70,
+    "y": 60,
+    "label": "Admin PC",
+    "sub": "Console cable"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 260,
+    "y": 60,
+    "label": "R1",
+    "sub": "Vlanif/G0/0/0 10.0.0.1"
+   },
+   {
+    "id": "SW",
+    "type": "switch",
+    "x": 260,
+    "y": 160,
+    "label": "SW"
+   },
+   {
+    "id": "NOC",
+    "type": "pc",
+    "x": 450,
+    "y": 160,
+    "label": "NOC PC",
+    "sub": "10.0.0.100"
+   }
+  ],
+  "links": [
+   {
+    "a": "ADMIN",
+    "b": "R1",
+    "label": "Console 9600 bps",
+    "style": "dashed"
+   },
+   {
+    "a": "R1",
+    "b": "SW",
+    "la": "G0/0/0"
+   },
+   {
+    "a": "SW",
+    "b": "NOC",
+    "label": "SSH TCP 22 / Telnet TCP 23"
+   }
+  ]
+ },
+ "m3-vlsm": {
+  "w": 560,
+  "h": 240,
+  "title": "ออกแบบ VLSM จาก 192.168.10.0/24",
+  "nodes": [
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 280,
+    "y": 70,
+    "label": "R1"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 110,
+    "y": 170,
+    "label": "R2"
+   },
+   {
+    "id": "R3",
+    "type": "router",
+    "x": 450,
+    "y": 170,
+    "label": "R3"
+   },
+   {
+    "id": "LA",
+    "type": "switch",
+    "x": 280,
+    "y": 200,
+    "label": "LAN A",
+    "sub": "100 hosts"
+   },
+   {
+    "id": "LB",
+    "type": "switch",
+    "x": 40,
+    "y": 60,
+    "label": "LAN B",
+    "sub": "50 hosts"
+   },
+   {
+    "id": "LC",
+    "type": "switch",
+    "x": 520,
+    "y": 60,
+    "label": "LAN C",
+    "sub": "20 hosts"
+   }
+  ],
+  "links": [
+   {
+    "a": "R1",
+    "b": "LA"
+   },
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "P2P (2 hosts)"
+   },
+   {
+    "a": "R1",
+    "b": "R3",
+    "label": "P2P (2 hosts)"
+   },
+   {
+    "a": "R2",
+    "b": "LB"
+   },
+   {
+    "a": "R3",
+    "b": "LC"
+   }
+  ]
+ },
+ "m4-static-3r": {
+  "w": 640,
+  "h": 170,
+  "title": "Static routing ระหว่าง 3 router",
+  "nodes": [
+   {
+    "id": "PC1",
+    "type": "pc",
+    "x": 40,
+    "y": 85,
+    "sub": "192.168.1.10/24"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 170,
+    "y": 85
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 330,
+    "y": 85
+   },
+   {
+    "id": "R3",
+    "type": "router",
+    "x": 490,
+    "y": 85
+   },
+   {
+    "id": "PC2",
+    "type": "pc",
+    "x": 600,
+    "y": 85,
+    "sub": "192.168.3.10/24"
+   }
+  ],
+  "links": [
+   {
+    "a": "PC1",
+    "b": "R1",
+    "label": "192.168.1.0/24",
+    "lb": ".1"
+   },
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "10.0.12.0/24",
+    "la": ".1",
+    "lb": ".2"
+   },
+   {
+    "a": "R2",
+    "b": "R3",
+    "label": "10.0.23.0/24",
+    "la": ".2",
+    "lb": ".3"
+   },
+   {
+    "a": "R3",
+    "b": "PC2",
+    "label": "192.168.3.0/24",
+    "la": ".1"
+   }
+  ]
+ },
+ "m4-floating": {
+  "w": 520,
+  "h": 220,
+  "title": "Floating static route: เส้นหลักกับเส้นสำรอง",
+  "nodes": [
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 90,
+    "y": 110,
+    "label": "R1"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 420,
+    "y": 110,
+    "label": "R2",
+    "sub": "LAN 172.16.0.0/16"
+   }
+  ],
+  "links": [
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "เส้นหลัก G0/0/0 · 10.1.1.0/30 (preference 60)",
+    "color": "accent",
+    "offset": -22
+   },
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "เส้นสำรอง G0/0/1 · 10.2.2.0/30 (preference 100)",
+    "style": "dashed",
+    "offset": 22
+   }
+  ]
+ },
+ "m5-multiarea": {
+  "w": 640,
+  "h": 230,
+  "title": "OSPF หลาย area: ABR เชื่อม area อื่นเข้ากับ backbone",
+  "areas": [
+   {
+    "x": 10,
+    "y": 40,
+    "w": 200,
+    "h": 170,
+    "label": "Area 1"
+   },
+   {
+    "x": 215,
+    "y": 40,
+    "w": 210,
+    "h": 170,
+    "label": "Area 0 (backbone)"
+   },
+   {
+    "x": 430,
+    "y": 40,
+    "w": 200,
+    "h": 170,
+    "label": "Area 2"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 80,
+    "y": 130,
+    "label": "R1",
+    "sub": "internal"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 215,
+    "y": 130,
+    "label": "R2",
+    "sub": "ABR"
+   },
+   {
+    "id": "R3",
+    "type": "router",
+    "x": 320,
+    "y": 130,
+    "label": "R3",
+    "sub": "backbone"
+   },
+   {
+    "id": "R4",
+    "type": "router",
+    "x": 430,
+    "y": 130,
+    "label": "R4",
+    "sub": "ABR"
+   },
+   {
+    "id": "R5",
+    "type": "router",
+    "x": 560,
+    "y": 130,
+    "label": "R5",
+    "sub": "internal"
+   }
+  ],
+  "links": [
+   {
+    "a": "R1",
+    "b": "R2"
+   },
+   {
+    "a": "R2",
+    "b": "R3"
+   },
+   {
+    "a": "R3",
+    "b": "R4"
+   },
+   {
+    "a": "R4",
+    "b": "R5"
+   }
+  ]
+ },
+ "m5-cost": {
+  "w": 520,
+  "h": 250,
+  "title": "เลือกเส้นทางจาก cost สะสม (ตัวเลขบนลิงก์ = OSPF cost)",
+  "nodes": [
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 70,
+    "y": 125,
+    "label": "R1"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 260,
+    "y": 40,
+    "label": "R2"
+   },
+   {
+    "id": "R3",
+    "type": "router",
+    "x": 260,
+    "y": 210,
+    "label": "R3"
+   },
+   {
+    "id": "R4",
+    "type": "router",
+    "x": 450,
+    "y": 125,
+    "label": "R4",
+    "sub": "10.4.4.0/24 (cost 1)"
+   }
+  ],
+  "links": [
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "10"
+   },
+   {
+    "a": "R2",
+    "b": "R4",
+    "label": "10"
+   },
+   {
+    "a": "R1",
+    "b": "R3",
+    "label": "1"
+   },
+   {
+    "a": "R3",
+    "b": "R4",
+    "label": "30"
+   },
+   {
+    "a": "R2",
+    "b": "R3",
+    "label": "5"
+   }
+  ]
+ },
+ "m6-vlan-2sw": {
+  "w": 560,
+  "h": 220,
+  "title": "VLAN ข้ามสวิตช์ด้วย trunk link",
+  "nodes": [
+   {
+    "id": "SW1",
+    "type": "switch",
+    "x": 170,
+    "y": 70
+   },
+   {
+    "id": "SW2",
+    "type": "switch",
+    "x": 390,
+    "y": 70
+   },
+   {
+    "id": "PCA",
+    "type": "pc",
+    "x": 80,
+    "y": 180,
+    "label": "PC-A",
+    "sub": "VLAN 10"
+   },
+   {
+    "id": "PCB",
+    "type": "pc",
+    "x": 240,
+    "y": 180,
+    "label": "PC-B",
+    "sub": "VLAN 20"
+   },
+   {
+    "id": "PCC",
+    "type": "pc",
+    "x": 330,
+    "y": 180,
+    "label": "PC-C",
+    "sub": "VLAN 10"
+   },
+   {
+    "id": "PCD",
+    "type": "pc",
+    "x": 480,
+    "y": 180,
+    "label": "PC-D",
+    "sub": "VLAN 20"
+   }
+  ],
+  "links": [
+   {
+    "a": "SW1",
+    "b": "SW2",
+    "label": "Trunk (VLAN 10, 20)",
+    "style": "trunk",
+    "la": "G0/0/24",
+    "lb": "G0/0/24"
+   },
+   {
+    "a": "SW1",
+    "b": "PCA",
+    "la": "G0/0/1"
+   },
+   {
+    "a": "SW1",
+    "b": "PCB",
+    "la": "G0/0/2"
+   },
+   {
+    "a": "SW2",
+    "b": "PCC",
+    "la": "G0/0/1"
+   },
+   {
+    "a": "SW2",
+    "b": "PCD",
+    "la": "G0/0/2"
+   }
+  ]
+ },
+ "m6-roas": {
+  "w": 480,
+  "h": 250,
+  "title": "Router-on-a-stick: sub-interface + dot1q termination",
+  "nodes": [
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 240,
+    "y": 45,
+    "label": "R1",
+    "sub": "G0/0/1.10 · G0/0/1.20"
+   },
+   {
+    "id": "SW1",
+    "type": "switch",
+    "x": 240,
+    "y": 140
+   },
+   {
+    "id": "PCA",
+    "type": "pc",
+    "x": 110,
+    "y": 215,
+    "label": "PC-A",
+    "sub": "VLAN 10 · 192.168.10.10"
+   },
+   {
+    "id": "PCB",
+    "type": "pc",
+    "x": 370,
+    "y": 215,
+    "label": "PC-B",
+    "sub": "VLAN 20 · 192.168.20.10"
+   }
+  ],
+  "links": [
+   {
+    "a": "R1",
+    "b": "SW1",
+    "label": "Trunk",
+    "style": "trunk"
+   },
+   {
+    "a": "SW1",
+    "b": "PCA"
+   },
+   {
+    "a": "SW1",
+    "b": "PCB"
+   }
+  ]
+ },
+ "m6-mac-learn": {
+  "w": 520,
+  "h": 200,
+  "title": "สวิตช์เรียนรู้ MAC จาก source address ของ frame",
+  "nodes": [
+   {
+    "id": "SW",
+    "type": "switch",
+    "x": 260,
+    "y": 70
+   },
+   {
+    "id": "PCA",
+    "type": "pc",
+    "x": 80,
+    "y": 160,
+    "label": "PC-A",
+    "sub": "MAC 5489-98aa-0001"
+   },
+   {
+    "id": "PCB",
+    "type": "pc",
+    "x": 260,
+    "y": 170,
+    "label": "PC-B",
+    "sub": "MAC 5489-98aa-0002"
+   },
+   {
+    "id": "PCC",
+    "type": "pc",
+    "x": 440,
+    "y": 160,
+    "label": "PC-C",
+    "sub": "MAC 5489-98aa-0003"
+   }
+  ],
+  "links": [
+   {
+    "a": "SW",
+    "b": "PCA",
+    "la": "G0/0/1"
+   },
+   {
+    "a": "SW",
+    "b": "PCB",
+    "la": "G0/0/2"
+   },
+   {
+    "a": "SW",
+    "b": "PCC",
+    "la": "G0/0/3"
+   }
+  ]
+ }
 }

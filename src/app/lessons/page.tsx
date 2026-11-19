@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LessonBadge } from "@/components/lesson/LessonTracker";
 import PageHeader from "@/components/PageHeader";
 import { GROUPS, MODULES, WEIGHT_LABEL, type Module } from "@/lib/modules";
 
@@ -31,6 +32,7 @@ export default function LessonsPage() {
                     </div>
                     <h3 className="mt-2 font-medium">{m.title}</h3>
                     <p className="text-sm text-muted">{m.titleTh}</p>
+                    <span className="mt-auto pt-2"><LessonBadge slug={m.slug} /></span>
                   </Link>
                 </li>
               ))}

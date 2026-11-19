@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HomeProgress from "@/components/HomeProgress";
 import { MODULES } from "@/lib/modules";
 
 const QUICK = [
@@ -27,12 +28,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="progress-h" className="rounded-xl border border-border bg-surface p-6">
-        <h2 id="progress-h" className="font-semibold">ความคืบหน้าของคุณ</h2>
-        <p className="mt-1 text-sm text-muted">
-          ระบบติดตามความคืบหน้าและ “ไปต่อจากที่ค้าง” จะเปิดใช้ใน Phase 1 (บันทึกในเบราว์เซอร์ของคุณเท่านั้น)
-        </p>
-      </section>
+      <HomeProgress />
 
       <section className="grid gap-4 sm:grid-cols-2">
         {QUICK.map((q) => (

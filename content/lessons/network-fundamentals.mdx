@@ -1,0 +1,174 @@
+<Objectives items={[
+  "อธิบายองค์ประกอบของเครือข่าย ประเภทเครือข่าย (LAN/MAN/WAN) และ topology แบบต่าง ๆ ได้",
+  "เปรียบเทียบ OSI 7 layer กับ TCP/IP model และบอกชื่อ PDU ของแต่ละชั้นได้",
+  "อธิบายกระบวนการ encapsulation / decapsulation ตั้งแต่ application จนถึงสายสัญญาณ",
+  "เข้าใจหลักการของ TCP (3-way handshake, 4-way close, sequence/ack, window) เทียบกับ UDP",
+  "อธิบายโครงสร้าง IPv4 header, ICMP และการทำงานของ ARP ได้",
+]} />
+
+## เครือข่ายคืออะไร
+
+เครือข่าย (network) คือกลุ่มอุปกรณ์ที่เชื่อมต่อกันเพื่อ **แลกเปลี่ยนข้อมูลและแบ่งปันทรัพยากร** อินเทอร์เน็ตคือ "เครือข่ายของเครือข่าย" ที่ร้อยเครือข่ายนับล้านเข้าด้วยกันผ่าน router
+
+อุปกรณ์หลักที่ต้องรู้จักในระดับ HCIA:
+
+| อุปกรณ์ | ทำงานที่ layer | หน้าที่หลัก |
+|---|---|---|
+| Hub / Repeater | 1 (Physical) | ขยายสัญญาณ ส่งทุกพอร์ต อยู่ใน collision domain เดียวกัน |
+| Switch | 2 (Data link) | ส่งต่อ frame ตาม **MAC address table** แยก collision domain ต่อพอร์ต |
+| Router | 3 (Network) | ส่งต่อ packet ตาม **routing table** แยก broadcast domain |
+| Firewall | 3–7 | ควบคุมการผ่านของ traffic ตาม security policy แบ่ง security zone |
+| AP / AC | 2 | ให้บริการ WLAN (ดู M11) |
+
+<Topology name="m1-lan-wan" />
+
+### ประเภทเครือข่ายตามขนาด
+
+- **LAN** (Local Area Network) — ครอบคลุมพื้นที่เล็ก เช่น อาคารหรือแคมปัส ความเร็วสูง ความหน่วงต่ำ องค์กรเป็นเจ้าของเอง
+- **MAN** (Metropolitan) — ระดับเมือง
+- **WAN** (Wide Area Network) — ข้ามเมือง/ประเทศ มักเช่าวงจรจากผู้ให้บริการ (ดู M13 เรื่อง PPP/PPPoE)
+
+### Topology
+
+| Topology | ลักษณะ | ข้อดี / ข้อเสีย |
+|---|---|---|
+| Bus | ทุกเครื่องต่อสายหลักเส้นเดียว | ประหยัดสาย แต่สายหลักขาด = ล่มทั้งหมด |
+| Star | ทุกเครื่องต่อเข้าศูนย์กลาง (switch) | จัดการง่าย นิยมที่สุดใน LAN แต่ศูนย์กลางเป็น single point of failure |
+| Ring | ต่อเป็นวง | ข้อมูลวิ่งทางเดียว/สองทาง ขาดหนึ่งจุดอาจกระทบทั้งวง |
+| Tree | star ซ้อนเป็นชั้น | ขยายง่าย ใช้ในแคมปัสแบบ hierarchical |
+| Full mesh | ทุกโหนดต่อกันหมด | ทนทานสูงสุด แต่ต้องใช้ลิงก์ n(n−1)/2 เส้น |
+| Partial mesh | ต่อซ้ำซ้อนเฉพาะจุดสำคัญ | สมดุลระหว่างต้นทุนกับความทนทาน |
+
+<Callout type="exam">
+Full mesh ของ **n** โหนดต้องใช้ลิงก์ **n(n−1)/2** เส้น เช่น 6 โหนด = 15 ลิงก์ — มักออกเป็นโจทย์คำนวณสั้น ๆ
+</Callout>
+
+## OSI 7 layer กับ TCP/IP
+
+แบบจำลองแบ่งชั้น (layered model) ช่วยให้แต่ละชั้นทำหน้าที่ของตัวเองและคุยกับชั้นเดียวกันของอีกฝั่ง (peer-to-peer) โดยอาศัยบริการของชั้นที่อยู่ข้างล่าง
+
+| OSI | TCP/IP (5 ชั้นแบบที่ Huawei ใช้สอน) | PDU | ตัวอย่างโปรโตคอล / อุปกรณ์ |
+|---|---|---|---|
+| 7 Application | Application | Data | HTTP, FTP, DNS, Telnet, SSH, SMTP, SNMP |
+| 6 Presentation | (รวมใน Application) | Data | การเข้ารหัส/แปลงรูปแบบข้อมูล |
+| 5 Session | (รวมใน Application) | Data | จัดการ session |
+| 4 Transport | Transport | **Segment** (TCP) / Datagram (UDP) | TCP, UDP |
+| 3 Network | Network | **Packet** | IP, ICMP, OSPF, ARP\* |
+| 2 Data link | Data link | **Frame** | Ethernet, PPP, VLAN tag |
+| 1 Physical | Physical | **Bit** | สาย UTP, fiber, hub |
+
+\* ARP มักถูกจัดไว้ระหว่าง layer 2 และ 3 เพราะใช้ IP address แต่ถูกส่งใน Ethernet frame โดยตรง (EtherType `0x0806`)
+
+<Callout type="trap">
+ระวังสับสน **ARP** กับ **RARP** และอย่าลืมว่า OSPF ทำงานบน IP โดยตรง (protocol number **89**) ไม่ได้ใช้ TCP หรือ UDP
+</Callout>
+
+### Encapsulation
+
+เมื่อส่งข้อมูล แต่ละชั้นจะ **เติม header** ของตัวเองครอบข้อมูลจากชั้นบน:
+
+```text
+Data
+[TCP header | Data]                               ← Segment
+[IP header | TCP header | Data]                   ← Packet
+[Eth header | IP | TCP | Data | FCS]              ← Frame
+0101010101...                                     ← Bits
+```
+
+ฝั่งรับทำกลับกัน (decapsulation) โดยอ่านฟิลด์ที่บอกว่าชั้นบนเป็นอะไร:
+
+- Ethernet ดู **Type**: `0x0800` = IPv4, `0x0806` = ARP, `0x86DD` = IPv6, `0x8100` = VLAN tag
+- IP ดู **Protocol**: 1 = ICMP, 6 = TCP, 17 = UDP, 89 = OSPF
+- TCP/UDP ดู **Port** ปลายทาง เพื่อส่งให้แอปพลิเคชันที่ถูกต้อง
+
+## Transport layer: TCP vs UDP
+
+| | TCP | UDP |
+|---|---|---|
+| การเชื่อมต่อ | Connection-oriented (มี handshake) | Connectionless |
+| ความน่าเชื่อถือ | มี sequence, ACK, retransmission, flow control (window) | ไม่มี — ส่งแล้วจบ |
+| Header | 20 byte (ขั้นต่ำ) | **8 byte** |
+| เหมาะกับ | Web, FTP, email, SSH | DNS query, VoIP, video, TFTP, DHCP, SNMP |
+
+พอร์ตที่ควรจำ: FTP **20/21**, SSH **22**, Telnet **23**, SMTP **25**, DNS **53**, DHCP **67/68**, TFTP **69**, HTTP **80**, NTP **123**, SNMP **161/162**, HTTPS **443**
+
+### TCP 3-way handshake และ 4-way close
+
+```text
+Client                          Server
+  | --- SYN (seq=x) ------------> |
+  | <-- SYN+ACK (seq=y, ack=x+1)  |
+  | --- ACK (ack=y+1) ----------> |     → ESTABLISHED
+
+  | --- FIN ---------------------> |
+  | <-- ACK ---------------------- |
+  | <-- FIN ---------------------- |
+  | --- ACK ---------------------> |     → client เข้า TIME_WAIT
+```
+
+- **Sequence number** นับเป็นจำนวน byte; **ACK number** = byte ถัดไปที่คาดว่าจะได้รับ
+- **Window** คือปริมาณข้อมูลที่ฝั่งรับยังรับได้ — ใช้ทำ flow control (sliding window)
+- การปิดใช้ 4 ขั้นเพราะ TCP เป็น full-duplex แต่ละทิศต้องปิดแยกกัน
+
+<Callout type="exam">
+- ACK number = sequence ที่ได้รับ + จำนวน byte ของข้อมูล (หรือ +1 สำหรับ SYN/FIN)
+- เลือก UDP เมื่อ "ต้องการความเร็ว/real-time ยอมเสีย packet บ้าง" — VoIP และวิดีโอสดคือคำตอบคลาสสิก
+</Callout>
+
+## Network layer: IPv4, ICMP, ARP
+
+### ฟิลด์สำคัญใน IPv4 header (20 byte ขั้นต่ำ)
+
+- **Version** (4), **IHL**, **ToS/DSCP** สำหรับ QoS
+- **Total Length**, **Identification / Flags / Fragment Offset** ใช้ทำ fragmentation
+- **TTL** — ลดลง 1 ทุกครั้งที่ผ่าน router ถ้าเหลือ 0 จะถูกทิ้งและส่ง ICMP Time Exceeded กลับ (กันวนลูปไม่รู้จบ)
+- **Protocol** — บอกชั้นบน
+- **Header checksum**, **Source / Destination IP**
+
+### ICMP
+
+ใช้รายงานข้อผิดพลาดและตรวจสอบการเชื่อมต่อ:
+
+| Type | ความหมาย | ใช้ใน |
+|---|---|---|
+| 8 / 0 | Echo Request / Echo Reply | `ping` |
+| 3 | Destination Unreachable | เช่น port unreachable, network unreachable |
+| 11 | Time Exceeded (TTL = 0) | `tracert` ใช้กลไกนี้หาทีละ hop |
+| 5 | Redirect | บอก host ให้ใช้ gateway ที่ดีกว่า |
+
+บน VRP ใช้ `ping` และ `tracert` (ไม่ใช่ traceroute):
+
+<CliWalk device="R1" title="ทดสอบการเชื่อมต่อ" lines={[
+  ["<R1>ping 10.0.12.2", "ส่ง ICMP Echo Request 5 ครั้ง (ค่า default) ไปยังปลายทาง"],
+  ["<R1>ping -c 10 -s 1000 10.0.12.2", "-c กำหนดจำนวนครั้ง, -s กำหนดขนาด packet (byte)"],
+  ["<R1>ping -a 1.1.1.1 3.3.3.3", "-a กำหนด source address เช่น loopback ใช้ทดสอบว่าอีกฝั่งมี route กลับมาหรือไม่"],
+  ["<R1>tracert 3.3.3.3", "ไล่ดูทีละ hop โดยเพิ่ม TTL ทีละ 1 และอ่าน ICMP Time Exceeded ที่ตอบกลับ"],
+]} />
+
+### ARP — จาก IP หา MAC
+
+ก่อนส่ง frame ใน LAN ต้องรู้ MAC ปลายทาง:
+
+1. ดู ARP cache ก่อน ถ้าไม่มีจึงส่ง **ARP Request แบบ broadcast** (`FFFF-FFFF-FFFF`) ถามว่า "ใครมี IP นี้"
+2. เจ้าของ IP ตอบ **ARP Reply แบบ unicast** กลับมา และทั้งสองฝั่งบันทึกลง cache
+3. ถ้าปลายทางอยู่ต่าง subnet host จะ ARP หา MAC ของ **default gateway** แทน — IP ปลายทางใน packet ไม่เปลี่ยน แต่ MAC ปลายทางใน frame เป็นของ gateway
+
+- **Gratuitous ARP** — ประกาศ IP ของตัวเอง ใช้ตรวจ IP ซ้ำและอัปเดต cache ของเครื่องอื่น
+- **Proxy ARP** — router ตอบ ARP แทนเครื่องที่อยู่อีก subnet
+
+<CliWalk device="R1" title="ตรวจสอบ ARP" lines={[
+  ["<R1>display arp", "แสดงตาราง ARP: IP, MAC, เวลาหมดอายุ, ชนิด (D = dynamic, S = static) และ interface"],
+  ["[R1]arp static 10.0.12.9 5489-98aa-1234", "สร้าง ARP entry แบบ static"],
+]} />
+
+<Callout type="trap">
+เมื่อ packet วิ่งผ่าน router หลาย hop: **IP ต้นทาง/ปลายทางคงเดิม** (ถ้าไม่มี NAT) แต่ **MAC ต้นทาง/ปลายทางเปลี่ยนทุก hop** — โจทย์ถามบ่อยมาก
+</Callout>
+
+## สรุปท้ายบท
+
+- Switch แยก collision domain; router แยก broadcast domain
+- จำ PDU: Data → Segment → Packet → Frame → Bit
+- TCP เชื่อถือได้ (handshake, ack, window) ส่วน UDP เบาและเร็ว (header 8 byte)
+- TTL กันลูป, ICMP type 8/0 คือ ping, type 11 คือ tracert
+- ARP request = broadcast, reply = unicast และ MAC เปลี่ยนทุก hop
