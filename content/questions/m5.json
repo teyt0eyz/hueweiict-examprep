@@ -1,0 +1,91 @@
+[
+  {
+    "id": "m5-ospf-001",
+    "module": "M5",
+    "topic": "DR/BDR election",
+    "type": "single",
+    "difficulty": 2,
+    "diagram": "ospf-bma-4r",
+    "question": "จาก topology ทุก router เปิด OSPF พร้อมกัน ไม่มีการแก้ไขค่าอื่น router ใดจะได้เป็น **DR** และ **BDR**",
+    "options": [
+      { "id": "a", "text": "DR = R4, BDR = R2" },
+      { "id": "b", "text": "DR = R1, BDR = R2" },
+      { "id": "c", "text": "DR = R4, BDR = R3" },
+      { "id": "d", "text": "DR = R3, BDR = R4" }
+    ],
+    "answer": ["a"],
+    "explanation": "การเลือก DR/BDR พิจารณา **DR priority สูงสุดก่อน** ถ้าเท่ากันจึงดู **Router ID สูงสุด**\n\n- R3 มี priority 0 → ไม่มีสิทธิ์เป็น DR/BDR เลย (c, d ผิด)\n- R1, R2, R4 priority = 1 เท่ากัน → ตัดสินด้วย Router ID: R4 (4.4.4.4) สูงสุดได้ DR, R2 (2.2.2.2) รองลงมาได้ BDR\n\nหมายเหตุ: การเลือกตั้งเป็นแบบ non-preemptive ถ้า router เปิดไม่พร้อมกัน ตัวที่ขึ้นก่อนอาจได้เป็น DR ไปแล้ว",
+    "ref": "Book1 Ch6 §6.2.7"
+  },
+  {
+    "id": "m5-ospf-002",
+    "module": "M5",
+    "topic": "OSPF cost",
+    "type": "single",
+    "difficulty": 1,
+    "question": "บนอุปกรณ์ Huawei ที่ใช้ค่า default ของ OSPF (`bandwidth-reference` = 100 Mbit/s) อินเทอร์เฟซ **FastEthernet 100 Mbit/s** และ **GigabitEthernet 1000 Mbit/s** มี cost เท่าใดตามลำดับ",
+    "options": [
+      { "id": "a", "text": "1 และ 1" },
+      { "id": "b", "text": "10 และ 1" },
+      { "id": "c", "text": "1 และ 0.1" },
+      { "id": "d", "text": "100 และ 10" }
+    ],
+    "answer": ["a"],
+    "explanation": "cost = reference bandwidth / interface bandwidth = 100 / 100 = **1** สำหรับ FE และ 100 / 1000 = 0.1 ซึ่ง cost ต้องเป็นจำนวนเต็มและต่ำสุดคือ 1 → GE ก็ได้ **1** เช่นกัน\n\nผลคือ OSPF แยก FE กับ GE ไม่ออก จึงควรปรับ reference ให้สูงขึ้นด้วย `bandwidth-reference 10000` ในมุมมอง `ospf` (ตั้งให้เหมือนกันทุก router)",
+    "ref": "Book1 Ch6 §6.2.2"
+  },
+  {
+    "id": "m5-ospf-003",
+    "module": "M5",
+    "topic": "Neighbor states",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงลำดับ **OSPF neighbor state** ตั้งแต่เริ่มจนถึง adjacency สมบูรณ์บน point-to-point link",
+    "options": [
+      { "id": "a", "text": "Down" },
+      { "id": "b", "text": "Init" },
+      { "id": "c", "text": "2-Way" },
+      { "id": "d", "text": "ExStart" },
+      { "id": "e", "text": "Exchange" },
+      { "id": "f", "text": "Loading" },
+      { "id": "g", "text": "Full" }
+    ],
+    "answer": ["a", "b", "c", "d", "e", "f", "g"],
+    "explanation": "- **Down** → ยังไม่ได้รับ Hello\n- **Init** → ได้รับ Hello แล้ว แต่ใน Hello ยังไม่มี Router ID ของเรา\n- **2-Way** → เห็น Router ID ตัวเองใน Hello ของอีกฝั่ง (เป็น neighbor แล้ว)\n- **ExStart** → เลือก master/slave และเลข DD sequence\n- **Exchange** → แลก DD packet (สรุป LSDB)\n- **Loading** → ส่ง LSR ขอ LSA ที่ขาด และรับ LSU\n- **Full** → LSDB ตรงกัน adjacency สมบูรณ์",
+    "ref": "Book1 Ch6 §6.2.4"
+  },
+  {
+    "id": "m5-ospf-004",
+    "module": "M5",
+    "topic": "Hello parameters",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "พารามิเตอร์ใดที่ **ต้องตรงกัน** ระหว่างสอง router จึงจะกลายเป็น OSPF neighbor กันได้ (เลือกทุกข้อที่ถูก)",
+    "options": [
+      { "id": "a", "text": "Hello interval และ Dead interval" },
+      { "id": "b", "text": "Area ID" },
+      { "id": "c", "text": "Router ID" },
+      { "id": "d", "text": "Subnet mask ของอินเทอร์เฟซ (บน broadcast network)" },
+      { "id": "e", "text": "OSPF process ID" },
+      { "id": "f", "text": "รหัสผ่าน authentication (ถ้าเปิดใช้)" }
+    ],
+    "answer": ["a", "b", "d", "f"],
+    "explanation": "ค่าที่ต้องตรงกันใน Hello ได้แก่ Hello/Dead interval, Area ID, network mask (บน broadcast/NBMA), authentication และ stub flag\n\n- **Router ID ต้องไม่ซ้ำกัน** (ไม่ใช่ต้องเหมือนกัน)\n- **process ID มีความหมายเฉพาะในเครื่อง** จึงต่างกันได้ เช่น R1 ใช้ `ospf 1` และ R2 ใช้ `ospf 10` ก็เป็น neighbor กันได้",
+    "ref": "Book1 Ch6 §6.2.4"
+  },
+  {
+    "id": "m5-ospf-005",
+    "module": "M5",
+    "topic": "Route preference",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "บน Huawei VRP ค่า **preference** default ของ OSPF internal route คือ 10 ซึ่งดีกว่า (น้อยกว่า) static route ที่มีค่า default 60",
+    "options": [
+      { "id": "T", "text": "ถูก" },
+      { "id": "F", "text": "ผิด" }
+    ],
+    "answer": ["T"],
+    "explanation": "ค่า preference default บน Huawei: Direct = 0, OSPF internal = **10**, IS-IS = 15, Static = **60**, RIP = 100, OSPF ASE = 150, BGP = 255 — ค่ายิ่งน้อยยิ่งน่าเชื่อถือ\n\nเมื่อ OSPF และ static เรียนรู้ prefix เดียวกัน (mask ยาวเท่ากัน) route จาก OSPF จึงถูกเลือก",
+    "ref": "Book1 Ch5 §5.1.3"
+  }
+]

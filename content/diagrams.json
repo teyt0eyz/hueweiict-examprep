@@ -1,0 +1,18 @@
+{
+  "ospf-bma-4r": {
+    "w": 460, "h": 250, "title": "4 routers บน broadcast segment เดียวกัน (Area 0)",
+    "nodes": [
+      { "id": "SW", "type": "switch", "x": 230, "y": 125, "label": "SW" },
+      { "id": "R1", "type": "router", "x": 70, "y": 50, "label": "R1", "sub": "RID 1.1.1.1 · pri 1" },
+      { "id": "R2", "type": "router", "x": 390, "y": 50, "label": "R2", "sub": "RID 2.2.2.2 · pri 1" },
+      { "id": "R3", "type": "router", "x": 70, "y": 195, "label": "R3", "sub": "RID 3.3.3.3 · pri 0" },
+      { "id": "R4", "type": "router", "x": 390, "y": 195, "label": "R4", "sub": "RID 4.4.4.4 · pri 1" }
+    ],
+    "links": [
+      { "a": "R1", "b": "SW", "la": "G0/0/0" },
+      { "a": "R2", "b": "SW", "la": "G0/0/0" },
+      { "a": "R3", "b": "SW", "la": "G0/0/0" },
+      { "a": "R4", "b": "SW", "la": "G0/0/0" }
+    ]
+  }
+}

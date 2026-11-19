@@ -1,0 +1,88 @@
+[
+  {
+    "id": "m3-subnet-001",
+    "module": "M3",
+    "topic": "Subnet calculation",
+    "type": "single",
+    "difficulty": 1,
+    "question": "host มี IP `172.16.45.130/26` ข้อใดคือ **network address** และ **broadcast address** ของ subnet นี้",
+    "options": [
+      { "id": "a", "text": "network `172.16.45.128`, broadcast `172.16.45.191`" },
+      { "id": "b", "text": "network `172.16.45.0`, broadcast `172.16.45.255`" },
+      { "id": "c", "text": "network `172.16.45.128`, broadcast `172.16.45.255`" },
+      { "id": "d", "text": "network `172.16.45.130`, broadcast `172.16.45.193`" }
+    ],
+    "answer": ["a"],
+    "explanation": "/26 → mask 255.255.255.192 → block size ใน octet ที่ 4 = 256 − 192 = **64** ดังนั้น subnet แบ่งเป็น .0, .64, .128, .192\n\n130 อยู่ในช่วง .128–.191 จึงได้ network = `172.16.45.128` และ broadcast = `172.16.45.191` (host ใช้ได้ .129–.190)\n\n- (b) เป็นคำตอบของ /24\n- (c) ใช้ broadcast ของ /25\n- (d) network address ต้องมี host bits เป็น 0 ทั้งหมด 130 จึงไม่ใช่ network address",
+    "ref": "Book1 Ch4 §4.4"
+  },
+  {
+    "id": "m3-subnet-002",
+    "module": "M3",
+    "topic": "Usable hosts",
+    "type": "single",
+    "difficulty": 1,
+    "question": "subnet ที่ต้องรองรับ host อย่างน้อย **50** เครื่อง และต้องการประหยัด address ให้มากที่สุด ควรใช้ prefix length เท่าใด",
+    "options": [
+      { "id": "a", "text": "/25" },
+      { "id": "b", "text": "/26" },
+      { "id": "c", "text": "/27" },
+      { "id": "d", "text": "/28" }
+    ],
+    "answer": ["b"],
+    "explanation": "จำนวน host ที่ใช้ได้ = 2^h − 2 (h = จำนวน host bits)\n\n- /27 → h = 5 → 30 host (ไม่พอ)\n- /26 → h = 6 → **62 host** (พอและเล็กที่สุด)\n- /25 → 126 host (พอแต่เปลือง)\n\nจึงเลือก /26",
+    "ref": "Book1 Ch4 §4.4.2"
+  },
+  {
+    "id": "m3-classes-003",
+    "module": "M3",
+    "topic": "Private addresses",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "ข้อใดเป็น **private IPv4 address** ตาม RFC 1918 (เลือกทุกข้อที่ถูก)",
+    "options": [
+      { "id": "a", "text": "`10.255.0.1`" },
+      { "id": "b", "text": "`172.32.1.1`" },
+      { "id": "c", "text": "`192.168.100.5`" },
+      { "id": "d", "text": "`172.20.8.8`" },
+      { "id": "e", "text": "`169.254.1.1`" }
+    ],
+    "answer": ["a", "c", "d"],
+    "explanation": "ช่วง private ตาม RFC 1918 มี 3 ช่วง: `10.0.0.0/8`, `172.16.0.0/12` (172.16.0.0–172.31.255.255) และ `192.168.0.0/16`\n\n- `172.32.1.1` อยู่นอกช่วง /12 (สูงสุดคือ 172.31.x.x) จึงเป็น public\n- `169.254.1.1` เป็น link-local (APIPA) ที่ host ตั้งให้ตัวเองเมื่อขอ DHCP ไม่ได้ ไม่ใช่ private ตาม RFC 1918",
+    "ref": "Book1 Ch4 §4.3.2"
+  },
+  {
+    "id": "m3-summary-004",
+    "module": "M3",
+    "topic": "Route summarization",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ต้องการรวม (summarize) network ต่อไปนี้ให้เป็น route เดียวที่เล็กที่สุดที่ครอบคลุมทั้งหมด\n\n`192.168.8.0/24`, `192.168.9.0/24`, `192.168.10.0/24`, `192.168.11.0/24`",
+    "options": [
+      { "id": "a", "text": "`192.168.8.0/22`" },
+      { "id": "b", "text": "`192.168.8.0/21`" },
+      { "id": "c", "text": "`192.168.0.0/20`" },
+      { "id": "d", "text": "`192.168.8.0/23`" }
+    ],
+    "answer": ["a"],
+    "explanation": "เขียน octet ที่ 3 เป็น binary:\n\n```\n 8 = 0000 1000\n 9 = 0000 1001\n10 = 0000 1010\n11 = 0000 1011\n```\n\nbit ที่เหมือนกันคือ 6 bit แรก (`000010`) → prefix = 16 + 6 = **/22** ได้ `192.168.8.0/22` (ครอบคลุม .8.0–.11.255 พอดี)\n\n- /23 ครอบคลุมแค่ .8–.9\n- /21 และ /20 ครอบคลุมเกินจำเป็น",
+    "ref": "Book1 Ch4 §4.5"
+  },
+  {
+    "id": "m3-ordering-005",
+    "module": "M3",
+    "topic": "VLSM procedure",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงขั้นตอนการออกแบบ **VLSM** ให้ถูกต้อง",
+    "options": [
+      { "id": "a", "text": "เรียง subnet ตามจำนวน host ที่ต้องการจากมากไปน้อย" },
+      { "id": "b", "text": "หา prefix ที่เล็กที่สุดที่รองรับ host ของ subnet ที่ใหญ่ที่สุด แล้วจัดสรรจากต้น address block" },
+      { "id": "c", "text": "จัดสรร subnet ถัดไปต่อจาก broadcast address ของ subnet ก่อนหน้า" },
+      { "id": "d", "text": "จัดสรร /30 สำหรับลิงก์ point-to-point ระหว่าง router เป็นลำดับท้าย" }
+    ],
+    "answer": ["a", "b", "c", "d"],
+    "explanation": "หลักของ VLSM คือ **จัดสรรจากก้อนใหญ่ไปก้อนเล็ก** เพื่อให้ทุก subnet ลงตัวตาม boundary และไม่เกิดช่องว่าง/ทับซ้อน\n\n1. เรียงความต้องการจากมากไปน้อย\n2. subnet ใหญ่สุดได้ address ต้น block\n3. subnet ถัดไปเริ่มจาก address ถัดจาก broadcast ของก้อนก่อน\n4. ลิงก์ P2P (2 host) ใช้ /30 ซึ่งเล็กที่สุด จึงจัดเป็นลำดับท้าย",
+    "ref": "Book1 Ch4 §4.4.4"
+  }
+]

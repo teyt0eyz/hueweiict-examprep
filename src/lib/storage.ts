@@ -1,13 +1,31 @@
 // Safe localStorage wrapper: storage may be unavailable (private mode, SSR, quota).
 const PREFIX = "hcia:";
+export const STORE_EVENT = "hcia:store";
+
+export function readRaw(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(PREFIX + key);
+  } catch {
+    return null;
+  }
+}
 
 export function readStore<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
+  const raw = readRaw(key);
+  if (!raw) return fallback;
   try {
-    const raw = window.localStorage.getItem(PREFIX + key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
+    return JSON.parse(raw) as T;
   } catch {
     return fallback;
+  }
+}
+
+function notify(key: string) {
+  try {
+    window.dispatchEvent(new CustomEvent(STORE_EVENT, { detail: key }));
+  } catch {
+    /* ignore */
   }
 }
 
@@ -18,6 +36,7 @@ export function writeStore<T>(key: string, value: T): void {
   } catch {
     /* ignore */
   }
+  notify(key);
 }
 
 export function removeStore(key: string): void {
@@ -27,4 +46,5 @@ export function removeStore(key: string): void {
   } catch {
     /* ignore */
   }
+  notify(key);
 }

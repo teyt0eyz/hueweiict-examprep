@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import ComingSoon from "@/components/ComingSoon";
 import PageHeader from "@/components/PageHeader";
+import ReviewBoard from "@/components/ReviewBoard";
 
 export const metadata: Metadata = { title: "ทบทวน" };
 
-export default function Page() {
+export default function ReviewPage() {
   return (
     <>
-      <PageHeader title="ทบทวน" subtitle="รวมข้อที่เคยตอบผิดและข้อที่ bookmark ไว้ เพื่อทบทวนแบบ spaced review" />
-      <ComingSoon phase={5}>ข้อมูลจะถูกเก็บในเบราว์เซอร์ของคุณ (localStorage) เท่านั้น</ComingSoon>
+      <PageHeader title="ทบทวน" subtitle="ข้อที่เคยตอบผิดและข้อที่ bookmark ไว้ จัดรอบทบทวนแบบ spaced repetition — ข้อมูลเก็บในเบราว์เซอร์นี้เท่านั้น" />
+      <ReviewBoard />
     </>
   );
 }

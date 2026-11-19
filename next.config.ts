@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   assetPrefix: isProd ? `/${repo}/` : undefined,
   trailingSlash: true,
   images: { unoptimized: true },
-  env: { NEXT_PUBLIC_BASE_PATH: basePath },
+  env: { NEXT_PUBLIC_BASE_PATH: basePath, NEXT_PUBLIC_DATA_VERSION: Date.now().toString(36) },
   turbopack: {
     root: path.resolve(__dirname),
     rules: {

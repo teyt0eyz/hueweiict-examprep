@@ -1,0 +1,63 @@
+{
+  "name": "vrp",
+  "displayName": "Huawei VRP",
+  "scopeName": "source.vrp",
+  "aliases": ["huawei"],
+  "patterns": [
+    { "include": "#prompt" },
+    { "include": "#comment" },
+    { "include": "#interface" },
+    { "include": "#ipv6" },
+    { "include": "#ipv4" },
+    { "include": "#mac" },
+    { "include": "#action" },
+    { "include": "#state" },
+    { "include": "#number" }
+  ],
+  "repository": {
+    "prompt": {
+      "match": "^(\\s*)(<[^>\\s]+>|\\[[^\\]\\s]+\\])(\\s*)(undo\\s+)?([a-z][a-z0-9-]*)?",
+      "captures": {
+        "2": { "name": "entity.name.tag.prompt.vrp" },
+        "4": { "name": "keyword.control.undo.vrp" },
+        "5": { "name": "entity.name.function.command.vrp" }
+      }
+    },
+    "comment": {
+      "patterns": [
+        { "match": "^\\s*#.*$", "name": "comment.line.separator.vrp" },
+        { "match": "\\s--\\s.*$", "name": "comment.line.note.vrp" }
+      ]
+    },
+    "interface": {
+      "match": "\\b(GigabitEthernet|GE|Ethernet|XGigabitEthernet|Eth-Trunk|Vlanif|LoopBack|Serial|Dialer|Tunnel|NULL|Virtual-Template|MEth)\\s?\\d+(/\\d+){0,2}(\\.\\d+)?\\b",
+      "name": "variable.other.interface.vrp"
+    },
+    "ipv4": {
+      "match": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}(?:/\\d{1,2})?\\b",
+      "name": "constant.numeric.ipv4.vrp"
+    },
+    "ipv6": {
+      "match": "(?<![\\w:])(?:[0-9A-Fa-f]{1,4}:){1,7}(?::|[0-9A-Fa-f]{1,4})(?::[0-9A-Fa-f]{1,4})*(?:/\\d{1,3})?(?![\\w:])",
+      "name": "constant.numeric.ipv6.vrp"
+    },
+    "mac": {
+      "match": "\\b[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}\\b",
+      "name": "constant.numeric.mac.vrp"
+    },
+    "action": {
+      "patterns": [
+        { "match": "\\bpermit\\b", "name": "markup.inserted.permit.vrp" },
+        { "match": "\\bdeny\\b", "name": "markup.deleted.deny.vrp" }
+      ]
+    },
+    "state": {
+      "match": "\\b(UP|DOWN|Up|Down|up|down|\\*down|Full|FULL|2-Way|ExStart|Exchange|Loading|Init|Attempt|DR|BDR|DROther|FORWARDING|DISCARDING|LEARNING|ROOT|DESI|ALTE|BACK|Selected|Unselect)\\b",
+      "name": "constant.language.state.vrp"
+    },
+    "number": {
+      "match": "\\b\\d+\\b",
+      "name": "constant.numeric.vrp"
+    }
+  }
+}
