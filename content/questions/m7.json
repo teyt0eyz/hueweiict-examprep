@@ -1,786 +1,1002 @@
 [
- {
-  "id": "m7-active-021",
-  "module": "M7",
-  "topic": "LACP",
-  "type": "single",
-  "difficulty": 2,
-  "question": "Eth-Trunk แบบ LACP มีพอร์ตสมาชิก 4 พอร์ต และตั้ง `max active-linknumber 3` ผลคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "ทั้ง 4 พอร์ตส่งข้อมูลพร้อมกัน"
-   },
-   {
-    "id": "b",
-    "text": "3 พอร์ตเป็น active อีก 1 พอร์ตเป็น backup"
-   },
-   {
-    "id": "c",
-    "text": "Eth-Trunk จะ down"
-   },
-   {
-    "id": "d",
-    "text": "ใช้ได้เพียง 1 พอร์ต"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "LACP จำกัดจำนวน active link ได้ พอร์ตที่เหลือเป็น backup (Unselect) และจะเข้าแทนเมื่อ active link เสีย — manual mode ไม่มีความสามารถนี้",
-  "ref": "Book1 Ch8 §8.2.4"
- },
- {
-  "id": "m7-block-005",
-  "module": "M7",
-  "topic": "Blocked port",
-  "type": "single",
-  "difficulty": 2,
-  "question": "จาก topology เดียวกัน พอร์ตใดจะถูก **block** (alternate)",
-  "diagram": "m7-stp-3sw",
-  "options": [
-   {
-    "id": "a",
-    "text": "SW2 G0/0/2"
-   },
-   {
-    "id": "b",
-    "text": "SW3 G0/0/2"
-   },
-   {
-    "id": "c",
-    "text": "SW1 G0/0/1"
-   },
-   {
-    "id": "d",
-    "text": "SW3 G0/0/1"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "บน segment SW2–SW3 ทั้งสองฝั่งมี RPC ไป root เท่ากัน (20000) จึงเทียบ BID ของเจ้าของพอร์ต: SW2 (…0002) ต่ำกว่า SW3 (…0003) → พอร์ตของ SW2 เป็น designated และ **SW3 G0/0/2** ถูก block",
-  "ref": "Book1 Ch8 §8.1.3"
- },
- {
-  "id": "m7-config-019",
-  "module": "M7",
-  "topic": "Link aggregation",
-  "type": "single",
-  "difficulty": 1,
-  "question": "คำสั่งใดใช้ **เพิ่มพอร์ต GE0/0/1 ถึง GE0/0/3** เข้าเป็นสมาชิกของ Eth-Trunk 1 (ใน Eth-Trunk view)",
-  "options": [
-   {
-    "id": "a",
-    "text": "`port-group 0/0/1 to 0/0/3`"
-   },
-   {
-    "id": "b",
-    "text": "`trunkport GigabitEthernet 0/0/1 to 0/0/3`"
-   },
-   {
-    "id": "c",
-    "text": "`channel-group 1 mode on`"
-   },
-   {
-    "id": "d",
-    "text": "`eth-trunk add 0/0/1-0/0/3`"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "ใน Eth-Trunk view ใช้ `trunkport <interface> to <interface>` หรือเข้าไปที่พอร์ตสมาชิกแล้วสั่ง `eth-trunk 1`\n\n`channel-group` เป็นของ Cisco",
-  "ref": "Book1 Ch8 §8.2.6"
- },
- {
-  "id": "m7-converge-010",
-  "module": "M7",
-  "topic": "Port states",
-  "type": "single",
-  "difficulty": 2,
-  "question": "พอร์ต STP (802.1D) ที่เปลี่ยนจาก Blocking ไป Forwarding เมื่อ topology เปลี่ยนแบบที่ต้องรอ Max Age หมดก่อน ใช้เวลาประมาณเท่าใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "2 วินาที"
-   },
-   {
-    "id": "b",
-    "text": "15 วินาที"
-   },
-   {
-    "id": "c",
-    "text": "30 วินาที"
-   },
-   {
-    "id": "d",
-    "text": "50 วินาที"
-   }
-  ],
-  "answer": [
-   "d"
-  ],
-  "explanation": "Max Age 20 วินาที + Listening 15 + Learning 15 = **50 วินาที** (ถ้าเริ่มจาก Listening ทันทีจะใช้ 30 วินาที) — นี่คือเหตุผลที่ RSTP ถูกพัฒนาขึ้น",
-  "ref": "Book1 Ch8 §8.1.5"
- },
- {
-  "id": "m7-cost-007",
-  "module": "M7",
-  "topic": "Path cost",
-  "type": "single",
-  "difficulty": 2,
-  "question": "บน Huawei switch ที่ใช้มาตรฐาน path cost แบบ default (802.1t) พอร์ต **1 Gbit/s** มี cost เท่าใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "4"
-   },
-   {
-    "id": "b",
-    "text": "19"
-   },
-   {
-    "id": "c",
-    "text": "20000"
-   },
-   {
-    "id": "d",
-    "text": "200000"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "Huawei ใช้ **dot1t** เป็นค่า default: 1 Gbit/s = **20,000**, 100 Mbit/s = 200,000, 10 Gbit/s = 2,000\n\n4 และ 19 เป็นค่าของมาตรฐานเก่า 802.1D-1998 (1G และ 100M ตามลำดับ)",
-  "ref": "Book1 Ch8 §8.1.6"
- },
- {
-  "id": "m7-display-015",
-  "module": "M7",
-  "topic": "Verification",
-  "type": "single",
-  "difficulty": 2,
-  "question": "จาก output ข้อใดถูกต้อง\n\n```vrp\n<SW3>display stp brief\n MSTID  Port                        Role  STP State     Protection\n   0    GigabitEthernet0/0/1        ROOT  FORWARDING      NONE\n   0    GigabitEthernet0/0/2        ALTE  DISCARDING      NONE\n   0    GigabitEthernet0/0/10       DESI  FORWARDING      NONE\n```",
-  "options": [
-   {
-    "id": "a",
-    "text": "SW3 เป็น root bridge"
-   },
-   {
-    "id": "b",
-    "text": "G0/0/2 เป็นเส้นสำรองไป root และไม่ส่งข้อมูลอยู่ในขณะนี้"
-   },
-   {
-    "id": "c",
-    "text": "G0/0/10 ถูก block"
-   },
-   {
-    "id": "d",
-    "text": "สวิตช์ทำงานใน STP แบบ 802.1D"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**ALTE + DISCARDING** = alternate port สำรองให้ root port จะขึ้นแทนเมื่อ G0/0/1 เสีย · SW3 มี ROOT port จึงไม่ใช่ root bridge · state DISCARDING บ่งบอกว่าเป็น RSTP/MSTP ไม่ใช่ 802.1D",
-  "ref": "Book1 Ch8 §8.1.6"
- },
- {
-  "id": "m7-edge-014",
-  "module": "M7",
-  "topic": "Edge port",
-  "type": "truefalse",
-  "difficulty": 2,
-  "question": "ถ้า edge port ได้รับ BPDU และไม่ได้เปิด BPDU protection ไว้ พอร์ตนั้นจะสูญเสียสถานะ edge และกลับไปร่วมคำนวณ STP ตามปกติ",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "T"
-  ],
-  "explanation": "edge port ควรต่อกับ host เท่านั้น เมื่อได้รับ BPDU (มีคนเอาสวิตช์มาต่อ) จะเปลี่ยนเป็นพอร์ตปกติ ถ้าเปิด `stp bpdu-protection` สวิตช์จะ **ปิดพอร์ตนั้น** แทน เพื่อป้องกันการเปลี่ยน topology จากภายนอก",
-  "ref": "Book1 Ch8 §8.1"
- },
- {
-  "id": "m7-ethtrunk-016",
-  "module": "M7",
-  "topic": "Link aggregation",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "ประโยชน์ของ **link aggregation (Eth-Trunk)** คือข้อใด (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "เพิ่ม bandwidth รวมของลิงก์"
-   },
-   {
-    "id": "b",
-    "text": "ลิงก์สมาชิกเสียหนึ่งเส้นยังสื่อสารได้"
-   },
-   {
-    "id": "c",
-    "text": "STP มองเป็นลิงก์เดียวจึงไม่ block ลิงก์สมาชิก"
-   },
-   {
-    "id": "d",
-    "text": "กระจายโหลดได้แม้พอร์ตสมาชิกต่างความเร็วกัน"
-   },
-   {
-    "id": "e",
-    "text": "ไม่ต้องตั้งค่าใด ๆ ที่สวิตช์ปลายทาง"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "Eth-Trunk ให้ bandwidth เพิ่ม, redundancy และหลบ STP block — แต่พอร์ตสมาชิก **ต้องมีความเร็ว/duplex เหมือนกัน** และต้องตั้งค่าที่ทั้งสองฝั่ง",
-  "ref": "Book1 Ch8 §8.2.1"
- },
- {
-  "id": "m7-lacp-017",
-  "module": "M7",
-  "topic": "LACP",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน LACP mode สวิตช์ฝั่งใดจะเป็น **actor** ที่ตัดสินใจเลือก active link",
-  "options": [
-   {
-    "id": "a",
-    "text": "ฝั่งที่มี LACP system priority ต่ำกว่า (ถ้าเท่ากันดู MAC ต่ำกว่า)"
-   },
-   {
-    "id": "b",
-    "text": "ฝั่งที่มี system priority สูงกว่า"
-   },
-   {
-    "id": "c",
-    "text": "ฝั่งที่มีพอร์ตมากกว่า"
-   },
-   {
-    "id": "d",
-    "text": "ฝั่งที่เปิดเครื่องก่อน"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "LACP system priority (default 32768) **ต่ำกว่าชนะ** ถ้าเท่ากันใช้ system MAC ต่ำกว่า จากนั้น actor เลือก active port ตาม port priority (ต่ำกว่าดีกว่า) และ port number",
-  "ref": "Book1 Ch8 §8.2.4"
- },
- {
-  "id": "m7-lb-020",
-  "module": "M7",
-  "topic": "Load balancing",
-  "type": "single",
-  "difficulty": 3,
-  "question": "traffic ส่วนใหญ่ของ Eth-Trunk มาจาก server ตัวเดียว (source IP เดียว) ไปหาผู้ใช้จำนวนมาก โหมดใดเหมาะ **น้อยที่สุด**",
-  "options": [
-   {
-    "id": "a",
-    "text": "src-dst-ip"
-   },
-   {
-    "id": "b",
-    "text": "dst-ip"
-   },
-   {
-    "id": "c",
-    "text": "src-ip"
-   },
-   {
-    "id": "d",
-    "text": "dst-mac (เมื่อปลายทางอยู่ VLAN เดียวกัน)"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "การกระจายโหลดเป็นแบบ per-flow ตามค่า hash — ถ้าใช้ **src-ip** ทุก flow มี source เดียวกันจะถูก hash ลงลิงก์เดียว ลิงก์อื่นว่าง ควรใช้ dst-ip หรือ src-dst-ip ซึ่งมีความหลากหลายมากกว่า",
-  "ref": "Book1 Ch8 §8.2.5"
- },
- {
-  "id": "m7-loop-001",
-  "module": "M7",
-  "topic": "Layer 2 loops",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "ปัญหาใดเกิดขึ้นได้เมื่อมี loop ใน layer 2 และไม่มี STP (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "Broadcast storm"
-   },
-   {
-    "id": "b",
-    "text": "MAC address table ไม่เสถียร (MAC flapping)"
-   },
-   {
-    "id": "c",
-    "text": "ปลายทางได้รับ frame ซ้ำ"
-   },
-   {
-    "id": "d",
-    "text": "TTL ของ frame หมดแล้ว frame ถูกทิ้งเอง"
-   },
-   {
-    "id": "e",
-    "text": "routing loop ระหว่าง router"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "Ethernet frame **ไม่มี TTL** จึงวนได้ไม่รู้จบ ทำให้เกิด broadcast storm, MAC flapping และ duplicate frame\n\nTTL อยู่ใน IP header ไม่ใช่ Ethernet frame ส่วน routing loop เป็นปัญหาของ layer 3",
-  "ref": "Book1 Ch8 §8.1.1"
- },
- {
-  "id": "m7-manual-018",
-  "module": "M7",
-  "topic": "Link aggregation",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ข้อเสียหลักของ Eth-Trunk แบบ **manual mode** เมื่อเทียบกับ LACP คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "รองรับได้แค่ 2 ลิงก์"
-   },
-   {
-    "id": "b",
-    "text": "ไม่มีการเจรจา จึงตรวจจับการต่อสายผิดหรือความผิดปกติของลิงก์ที่ยัง up ได้ไม่ดี"
-   },
-   {
-    "id": "c",
-    "text": "ใช้ได้เฉพาะ layer 3"
-   },
-   {
-    "id": "d",
-    "text": "ไม่สามารถกระจายโหลดได้"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "manual mode ตรวจได้เพียง physical up/down — ถ้าเสียบสายผิดเครื่องหรือลิงก์ผิดปกติแต่ยัง up จะยังส่งข้อมูลลงไปทำให้สื่อสารผิดพลาด LACP แลก LACPDU เพื่อยืนยันว่าปลายทางเป็นสมาชิกของ trunk เดียวกัน",
-  "ref": "Book1 Ch8 §8.2.4"
- },
- {
-  "id": "m7-mode-012",
-  "module": "M7",
-  "topic": "STP configuration",
-  "type": "single",
-  "difficulty": 1,
-  "question": "STP mode ที่เป็น **ค่า default** บน Huawei switch คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "STP"
-   },
-   {
-    "id": "b",
-    "text": "RSTP"
-   },
-   {
-    "id": "c",
-    "text": "MSTP"
-   },
-   {
-    "id": "d",
-    "text": "PVST+"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "Huawei ใช้ **MSTP** เป็นค่า default (ทำงานร่วมกับ STP/RSTP ได้) เปลี่ยนด้วย `stp mode stp|rstp|mstp` — PVST+ เป็นของ Cisco",
-  "ref": "Book1 Ch8 §8.1.6"
- },
- {
-  "id": "m7-monitor-025",
-  "module": "M7",
-  "topic": "Monitor Link",
-  "type": "single",
-  "difficulty": 2,
-  "question": "**Monitor Link** ทำหน้าที่อะไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "ตรวจสอบ bandwidth ของลิงก์"
-   },
-   {
-    "id": "b",
-    "text": "ผูกสถานะ downlink ให้ตาม uplink — เมื่อ uplink ล่ม downlink จะถูกปิดตามเพื่อให้อุปกรณ์ปลายทางรู้และสลับเส้นทาง"
-   },
-   {
-    "id": "c",
-    "text": "สร้าง Eth-Trunk อัตโนมัติ"
-   },
-   {
-    "id": "d",
-    "text": "เลือก root bridge"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Monitor Link ใช้คู่กับ Smart Link — ถ้า uplink ของสวิตช์ตรงกลางล่ม การปิด downlink ตามทำให้สวิตช์ปลายที่ใช้ Smart Link เห็น master down แล้วสลับไป slave ได้",
-  "ref": "Book1 Ch8 §8.4.1"
- },
- {
-  "id": "m7-priority-003",
-  "module": "M7",
-  "topic": "Bridge priority",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ค่าใด **ไม่สามารถ** ตั้งเป็น STP bridge priority บน Huawei switch ได้",
-  "options": [
-   {
-    "id": "a",
-    "text": "0"
-   },
-   {
-    "id": "b",
-    "text": "4096"
-   },
-   {
-    "id": "c",
-    "text": "8192"
-   },
-   {
-    "id": "d",
-    "text": "10000"
-   }
-  ],
-  "answer": [
-   "d"
-  ],
-  "explanation": "bridge priority ต้องเป็น **ผลคูณของ 4096** (0–61440) — 10000 ไม่ใช่ผลคูณของ 4096 จึงตั้งไม่ได้ ค่า default คือ 32768",
-  "ref": "Book1 Ch8 §8.1.6"
- },
- {
-  "id": "m7-root-002",
-  "module": "M7",
-  "topic": "Root bridge election",
-  "type": "single",
-  "difficulty": 1,
-  "question": "สวิตช์ 3 ตัวมี BID ดังนี้ ตัวใดจะเป็น **root bridge**\n\n- SW1: priority 32768, MAC 4c1f-0000-0001\n- SW2: priority 4096, MAC 4c1f-0000-00ff\n- SW3: priority 32768, MAC 00e0-0000-0001",
-  "options": [
-   {
-    "id": "a",
-    "text": "SW1"
-   },
-   {
-    "id": "b",
-    "text": "SW2"
-   },
-   {
-    "id": "c",
-    "text": "SW3"
-   },
-   {
-    "id": "d",
-    "text": "ตัวที่เปิดเครื่องก่อน"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "BID = priority + MAC และเทียบ **priority ก่อน** — SW2 มี priority 4096 ต่ำสุดจึงเป็น root ทันที โดยไม่ต้องดู MAC\n\nMAC จะใช้ตัดสินเมื่อ priority เท่ากันเท่านั้น",
-  "ref": "Book1 Ch8 §8.1.3"
- },
- {
-  "id": "m7-rootprimary-013",
-  "module": "M7",
-  "topic": "STP configuration",
-  "type": "single",
-  "difficulty": 2,
-  "question": "คำสั่ง `stp root primary` บน Huawei switch มีผลอย่างไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "ตั้ง bridge priority เป็น 0 เพื่อให้เป็น root"
-   },
-   {
-    "id": "b",
-    "text": "ตั้ง priority เป็น 4096"
-   },
-   {
-    "id": "c",
-    "text": "ปิด STP บนสวิตช์"
-   },
-   {
-    "id": "d",
-    "text": "ทำให้ทุกพอร์ตเป็น root port"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "`stp root primary` กำหนด priority = **0** (ต่ำสุด) ส่วน `stp root secondary` กำหนด **4096** ให้เป็นตัวสำรอง",
-  "ref": "Book1 Ch8 §8.1.6"
- },
- {
-  "id": "m7-rp-004",
-  "module": "M7",
-  "topic": "Root port",
-  "type": "single",
-  "difficulty": 2,
-  "question": "จาก topology (ทุกตัว priority 32768, ลิงก์ GE ทั้งหมด) พอร์ตใดของ **SW3** จะเป็น root port",
-  "diagram": "m7-stp-3sw",
-  "options": [
-   {
-    "id": "a",
-    "text": "G0/0/1 (ต่อ SW1)"
-   },
-   {
-    "id": "b",
-    "text": "G0/0/2 (ต่อ SW2)"
-   },
-   {
-    "id": "c",
-    "text": "ทั้งสองพอร์ต"
-   },
-   {
-    "id": "d",
-    "text": "SW3 ไม่มี root port"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "SW1 มี MAC ต่ำสุดจึงเป็น root · SW3 ไป root ผ่าน G0/0/1 ได้ RPC = 20000 ส่วนผ่าน SW2 ได้ 20000 + 20000 = 40000 → **G0/0/1** มี RPC ต่ำกว่าจึงเป็น root port",
-  "ref": "Book1 Ch8 §8.1.3"
- },
- {
-  "id": "m7-rpsel-006",
-  "module": "M7",
-  "topic": "Root port",
-  "type": "ordering",
-  "difficulty": 3,
-  "question": "เรียงเกณฑ์ที่สวิตช์ non-root ใช้เลือก **root port** (พิจารณาข้อแรกก่อน)",
-  "options": [
-   {
-    "id": "a",
-    "text": "Root path cost ต่ำสุด"
-   },
-   {
-    "id": "b",
-    "text": "BID ของสวิตช์ฝั่งตรงข้าม (sender BID) ต่ำสุด"
-   },
-   {
-    "id": "c",
-    "text": "Port ID ของฝั่งตรงข้าม (sender PID) ต่ำสุด"
-   },
-   {
-    "id": "d",
-    "text": "Port ID ของพอร์ตตัวเองต่ำสุด"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "ลำดับคือ RPC → sender BID → sender PID → local PID — ทุกเกณฑ์ \"ต่ำกว่าดีกว่า\" เกณฑ์สุดท้ายใช้เมื่อต่อสองพอร์ตเข้าหาพอร์ตเดียวกันผ่าน hub",
-  "ref": "Book1 Ch8 §8.1.3"
- },
- {
-  "id": "m7-rstp-011",
-  "module": "M7",
-  "topic": "RSTP",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ข้อใดเป็นสิ่งที่ **RSTP** ปรับปรุงจาก STP (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "รวม port state เหลือ Discarding, Learning, Forwarding"
-   },
-   {
-    "id": "b",
-    "text": "เพิ่มบทบาท alternate port และ backup port"
-   },
-   {
-    "id": "c",
-    "text": "edge port เข้า forwarding ได้ทันที"
-   },
-   {
-    "id": "d",
-    "text": "ใช้กลไก proposal/agreement บน P2P link เพื่อ converge เร็ว"
-   },
-   {
-    "id": "e",
-    "text": "ยกเลิกการใช้ bridge ID ในการเลือก root"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "RSTP (802.1w) ลด state, เพิ่ม alternate/backup, มี edge port และ P/A mechanism ทำให้ converge ในไม่กี่วินาที แต่ยัง **ใช้ BID เลือก root bridge เหมือนเดิม**",
-  "ref": "Book1 Ch8 §8.1"
- },
- {
-  "id": "m7-smartlink-022",
-  "module": "M7",
-  "topic": "Smart Link",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน Smart Link group เมื่อ **master port** ล่ม จะเกิดอะไรขึ้น",
-  "diagram": "m7-smartlink",
-  "options": [
-   {
-    "id": "a",
-    "text": "ทุกพอร์ตใน group ถูกปิด"
-   },
-   {
-    "id": "b",
-    "text": "slave port เข้าสู่สถานะ forwarding แทน และส่ง flush packet ให้สวิตช์อื่นล้าง MAC ที่ค้าง"
-   },
-   {
-    "id": "c",
-    "text": "STP คำนวณใหม่ทั้งเครือข่าย"
-   },
-   {
-    "id": "d",
-    "text": "ต้องรอผู้ดูแลสลับเอง"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Smart Link สลับไป slave ทันที (ระดับมิลลิวินาที) และส่ง **flush packet** ผ่าน control VLAN เพื่อให้สวิตช์ upstream ลบ MAC/ARP entry เดิมที่ชี้ไปทาง master",
-  "ref": "Book1 Ch8 §8.3.1"
- },
- {
-  "id": "m7-smartstp-023",
-  "module": "M7",
-  "topic": "Smart Link",
-  "type": "truefalse",
-  "difficulty": 2,
-  "question": "พอร์ตที่จะใส่ใน Smart Link group สามารถเปิด STP ทำงานพร้อมกันได้ตามปกติ",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "Smart Link เป็นทางเลือกแทน STP สำหรับ dual-homing — พอร์ตที่เป็นสมาชิกต้อง **ปิด STP** (`stp disable`) ก่อน ไม่เช่นนั้นสองกลไกจะขัดกัน",
-  "ref": "Book1 Ch8 §8.3.2"
- },
- {
-  "id": "m7-states-009",
-  "module": "M7",
-  "topic": "Port states",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน STP แบบดั้งเดิม (802.1D) พอร์ตใน state ใดที่ **เรียนรู้ MAC address ได้แต่ยังไม่ส่งข้อมูลผู้ใช้**",
-  "options": [
-   {
-    "id": "a",
-    "text": "Blocking"
-   },
-   {
-    "id": "b",
-    "text": "Listening"
-   },
-   {
-    "id": "c",
-    "text": "Learning"
-   },
-   {
-    "id": "d",
-    "text": "Forwarding"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "**Learning** สร้าง MAC table ล่วงหน้าเพื่อลดการ flood เมื่อเข้าสู่ Forwarding — Listening ส่ง/รับ BPDU แต่ไม่เรียนรู้ MAC",
-  "ref": "Book1 Ch8 §8.1.5"
- },
- {
-  "id": "m7-timers-008",
-  "module": "M7",
-  "topic": "STP timers",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ค่า default ของ STP timer: Hello time, Max Age และ Forward Delay คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "1, 10, 5 วินาที"
-   },
-   {
-    "id": "b",
-    "text": "2, 20, 15 วินาที"
-   },
-   {
-    "id": "c",
-    "text": "2, 15, 20 วินาที"
-   },
-   {
-    "id": "d",
-    "text": "5, 30, 15 วินาที"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Hello **2** วินาที, Max Age **20** วินาที, Forward Delay **15** วินาที",
-  "ref": "Book1 Ch8 §8.1.4"
- },
- {
-  "id": "m7-wtr-024",
-  "module": "M7",
-  "topic": "Smart Link",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน Smart Link ที่เปิด `restore enable` และ `timer wtr 30` ค่า WTR มีไว้เพื่ออะไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "เวลาที่ slave รอก่อนเข้าแทน master ที่ล่ม"
-   },
-   {
-    "id": "b",
-    "text": "เวลาที่รอหลัง master ฟื้นก่อนจะสลับกลับมาใช้ master เพื่อกันการสลับไปมาจากลิงก์ที่ไม่เสถียร"
-   },
-   {
-    "id": "c",
-    "text": "ระยะส่ง flush packet"
-   },
-   {
-    "id": "d",
-    "text": "อายุของ MAC entry"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**WTR (Wait-to-Restore)** ใช้กับโหมด revertive — เมื่อ master กลับมา up ระบบจะรอให้ครบ WTR ก่อนสลับกลับ เพื่อไม่ให้สลับไปมาถ้าลิงก์กระพริบ",
-  "ref": "Book1 Ch8 §8.3.2"
- }
+  {
+    "id": "m7-active-021",
+    "module": "M7",
+    "topic": "LACP",
+    "type": "single",
+    "difficulty": 2,
+    "question": "Eth-Trunk แบบ LACP มีพอร์ตสมาชิก 4 พอร์ต และตั้ง `max active-linknumber 3` ผลคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ทั้ง 4 พอร์ตส่งข้อมูลพร้อมกัน"
+      },
+      {
+        "id": "b",
+        "text": "3 พอร์ตเป็น active อีก 1 พอร์ตเป็น backup"
+      },
+      {
+        "id": "c",
+        "text": "Eth-Trunk จะ down"
+      },
+      {
+        "id": "d",
+        "text": "ใช้ได้เพียง 1 พอร์ต"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "LACP จำกัดจำนวน active link ได้ พอร์ตที่เหลือเป็น backup (Unselect) และจะเข้าแทนเมื่อ active link เสีย — manual mode ไม่มีความสามารถนี้",
+    "ref": "Book1 Ch8 §8.2.4",
+    "en": {
+      "question": "An LACP Eth-Trunk has 4 member ports and `max active-linknumber 3` is configured. What is the result?",
+      "options": {
+        "a": "All 4 ports forward traffic simultaneously",
+        "b": "3 ports are active and 1 port is a backup",
+        "c": "The Eth-Trunk goes down",
+        "d": "Only 1 port can be used"
+      }
+    }
+  },
+  {
+    "id": "m7-block-005",
+    "module": "M7",
+    "topic": "Blocked port",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก topology เดียวกัน พอร์ตใดจะถูก **block** (alternate)",
+    "diagram": "m7-stp-3sw",
+    "options": [
+      {
+        "id": "a",
+        "text": "SW2 G0/0/2"
+      },
+      {
+        "id": "b",
+        "text": "SW3 G0/0/2"
+      },
+      {
+        "id": "c",
+        "text": "SW1 G0/0/1"
+      },
+      {
+        "id": "d",
+        "text": "SW3 G0/0/1"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "บน segment SW2–SW3 ทั้งสองฝั่งมี RPC ไป root เท่ากัน (20000) จึงเทียบ BID ของเจ้าของพอร์ต: SW2 (…0002) ต่ำกว่า SW3 (…0003) → พอร์ตของ SW2 เป็น designated และ **SW3 G0/0/2** ถูก block",
+    "ref": "Book1 Ch8 §8.1.3",
+    "en": {
+      "question": "Refer to the same topology. Which port is **blocked** (alternate)?",
+      "options": {
+        "a": "SW2 G0/0/2",
+        "b": "SW3 G0/0/2",
+        "c": "SW1 G0/0/1",
+        "d": "SW3 G0/0/1"
+      }
+    }
+  },
+  {
+    "id": "m7-config-019",
+    "module": "M7",
+    "topic": "Link aggregation",
+    "type": "single",
+    "difficulty": 1,
+    "question": "คำสั่งใดใช้ **เพิ่มพอร์ต GE0/0/1 ถึง GE0/0/3** เข้าเป็นสมาชิกของ Eth-Trunk 1 (ใน Eth-Trunk view)",
+    "options": [
+      {
+        "id": "a",
+        "text": "`port-group 0/0/1 to 0/0/3`"
+      },
+      {
+        "id": "b",
+        "text": "`trunkport GigabitEthernet 0/0/1 to 0/0/3`"
+      },
+      {
+        "id": "c",
+        "text": "`channel-group 1 mode on`"
+      },
+      {
+        "id": "d",
+        "text": "`eth-trunk add 0/0/1-0/0/3`"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "ใน Eth-Trunk view ใช้ `trunkport <interface> to <interface>` หรือเข้าไปที่พอร์ตสมาชิกแล้วสั่ง `eth-trunk 1`\n\n`channel-group` เป็นของ Cisco",
+    "ref": "Book1 Ch8 §8.2.6",
+    "en": {
+      "question": "Which command **adds GE0/0/1 through GE0/0/3** as member ports of Eth-Trunk 1 (in the Eth-Trunk interface view)?",
+      "options": {
+        "a": "`port-group 0/0/1 to 0/0/3`",
+        "b": "`trunkport GigabitEthernet 0/0/1 to 0/0/3`",
+        "c": "`channel-group 1 mode on`",
+        "d": "`eth-trunk add 0/0/1-0/0/3`"
+      }
+    }
+  },
+  {
+    "id": "m7-converge-010",
+    "module": "M7",
+    "topic": "Port states",
+    "type": "single",
+    "difficulty": 2,
+    "question": "พอร์ต STP (802.1D) ที่เปลี่ยนจาก Blocking ไป Forwarding เมื่อ topology เปลี่ยนแบบที่ต้องรอ Max Age หมดก่อน ใช้เวลาประมาณเท่าใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "2 วินาที"
+      },
+      {
+        "id": "b",
+        "text": "15 วินาที"
+      },
+      {
+        "id": "c",
+        "text": "30 วินาที"
+      },
+      {
+        "id": "d",
+        "text": "50 วินาที"
+      }
+    ],
+    "answer": [
+      "d"
+    ],
+    "explanation": "Max Age 20 วินาที + Listening 15 + Learning 15 = **50 วินาที** (ถ้าเริ่มจาก Listening ทันทีจะใช้ 30 วินาที) — นี่คือเหตุผลที่ RSTP ถูกพัฒนาขึ้น",
+    "ref": "Book1 Ch8 §8.1.5",
+    "en": {
+      "question": "In STP (802.1D), when a topology change requires waiting for Max Age to expire, approximately how long does it take a port to move from Blocking to Forwarding?",
+      "options": {
+        "a": "2 seconds",
+        "b": "15 seconds",
+        "c": "30 seconds",
+        "d": "50 seconds"
+      }
+    }
+  },
+  {
+    "id": "m7-cost-007",
+    "module": "M7",
+    "topic": "Path cost",
+    "type": "single",
+    "difficulty": 2,
+    "question": "บน Huawei switch ที่ใช้มาตรฐาน path cost แบบ default (802.1t) พอร์ต **1 Gbit/s** มี cost เท่าใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "4"
+      },
+      {
+        "id": "b",
+        "text": "19"
+      },
+      {
+        "id": "c",
+        "text": "20000"
+      },
+      {
+        "id": "d",
+        "text": "200000"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "Huawei ใช้ **dot1t** เป็นค่า default: 1 Gbit/s = **20,000**, 100 Mbit/s = 200,000, 10 Gbit/s = 2,000\n\n4 และ 19 เป็นค่าของมาตรฐานเก่า 802.1D-1998 (1G และ 100M ตามลำดับ)",
+    "ref": "Book1 Ch8 §8.1.6",
+    "en": {
+      "question": "On a Huawei switch using the default path cost standard (IEEE 802.1t), what is the cost of a **1 Gbit/s** port?",
+      "options": {
+        "a": "4",
+        "b": "19",
+        "c": "20000",
+        "d": "200000"
+      }
+    }
+  },
+  {
+    "id": "m7-display-015",
+    "module": "M7",
+    "topic": "Verification",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก output ข้อใดถูกต้อง\n\n```vrp\n<SW3>display stp brief\n MSTID  Port                        Role  STP State     Protection\n   0    GigabitEthernet0/0/1        ROOT  FORWARDING      NONE\n   0    GigabitEthernet0/0/2        ALTE  DISCARDING      NONE\n   0    GigabitEthernet0/0/10       DESI  FORWARDING      NONE\n```",
+    "options": [
+      {
+        "id": "a",
+        "text": "SW3 เป็น root bridge"
+      },
+      {
+        "id": "b",
+        "text": "G0/0/2 เป็นเส้นสำรองไป root และไม่ส่งข้อมูลอยู่ในขณะนี้"
+      },
+      {
+        "id": "c",
+        "text": "G0/0/10 ถูก block"
+      },
+      {
+        "id": "d",
+        "text": "สวิตช์ทำงานใน STP แบบ 802.1D"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**ALTE + DISCARDING** = alternate port สำรองให้ root port จะขึ้นแทนเมื่อ G0/0/1 เสีย · SW3 มี ROOT port จึงไม่ใช่ root bridge · state DISCARDING บ่งบอกว่าเป็น RSTP/MSTP ไม่ใช่ 802.1D",
+    "ref": "Book1 Ch8 §8.1.6",
+    "en": {
+      "question": "Refer to the output. Which statement is correct?\n\n```vrp\n<SW3>display stp brief\n MSTID  Port                        Role  STP State     Protection\n   0    GigabitEthernet0/0/1        ROOT  FORWARDING      NONE\n   0    GigabitEthernet0/0/2        ALTE  DISCARDING      NONE\n   0    GigabitEthernet0/0/10       DESI  FORWARDING      NONE\n```",
+      "options": {
+        "a": "SW3 is the root bridge",
+        "b": "G0/0/2 is a backup path to the root and is currently not forwarding data",
+        "c": "G0/0/10 is blocked",
+        "d": "The switch is running 802.1D STP"
+      }
+    }
+  },
+  {
+    "id": "m7-edge-014",
+    "module": "M7",
+    "topic": "Edge port",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "ถ้า edge port ได้รับ BPDU และไม่ได้เปิด BPDU protection ไว้ พอร์ตนั้นจะสูญเสียสถานะ edge และกลับไปร่วมคำนวณ STP ตามปกติ",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "edge port ควรต่อกับ host เท่านั้น เมื่อได้รับ BPDU (มีคนเอาสวิตช์มาต่อ) จะเปลี่ยนเป็นพอร์ตปกติ ถ้าเปิด `stp bpdu-protection` สวิตช์จะ **ปิดพอร์ตนั้น** แทน เพื่อป้องกันการเปลี่ยน topology จากภายนอก",
+    "ref": "Book1 Ch8 §8.1",
+    "en": {
+      "question": "If an edge port receives a BPDU and BPDU protection is not enabled, the port loses its edge status and participates in STP calculation as a normal port."
+    }
+  },
+  {
+    "id": "m7-ethtrunk-016",
+    "module": "M7",
+    "topic": "Link aggregation",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "ประโยชน์ของ **link aggregation (Eth-Trunk)** คือข้อใด (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "เพิ่ม bandwidth รวมของลิงก์"
+      },
+      {
+        "id": "b",
+        "text": "ลิงก์สมาชิกเสียหนึ่งเส้นยังสื่อสารได้"
+      },
+      {
+        "id": "c",
+        "text": "STP มองเป็นลิงก์เดียวจึงไม่ block ลิงก์สมาชิก"
+      },
+      {
+        "id": "d",
+        "text": "กระจายโหลดได้แม้พอร์ตสมาชิกต่างความเร็วกัน"
+      },
+      {
+        "id": "e",
+        "text": "ไม่ต้องตั้งค่าใด ๆ ที่สวิตช์ปลายทาง"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "Eth-Trunk ให้ bandwidth เพิ่ม, redundancy และหลบ STP block — แต่พอร์ตสมาชิก **ต้องมีความเร็ว/duplex เหมือนกัน** และต้องตั้งค่าที่ทั้งสองฝั่ง",
+    "ref": "Book1 Ch8 §8.2.1",
+    "en": {
+      "question": "What are the benefits of **link aggregation (Eth-Trunk)**? (Choose all that apply.)",
+      "options": {
+        "a": "Increases total link bandwidth",
+        "b": "Communication continues if one member link fails",
+        "c": "STP treats it as a single link, so member links are not blocked",
+        "d": "Load balances even when member ports have different speeds",
+        "e": "No configuration is needed on the peer switch"
+      }
+    }
+  },
+  {
+    "id": "m7-lacp-017",
+    "module": "M7",
+    "topic": "LACP",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน LACP mode สวิตช์ฝั่งใดจะเป็น **actor** ที่ตัดสินใจเลือก active link",
+    "options": [
+      {
+        "id": "a",
+        "text": "ฝั่งที่มี LACP system priority ต่ำกว่า (ถ้าเท่ากันดู MAC ต่ำกว่า)"
+      },
+      {
+        "id": "b",
+        "text": "ฝั่งที่มี system priority สูงกว่า"
+      },
+      {
+        "id": "c",
+        "text": "ฝั่งที่มีพอร์ตมากกว่า"
+      },
+      {
+        "id": "d",
+        "text": "ฝั่งที่เปิดเครื่องก่อน"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "LACP system priority (default 32768) **ต่ำกว่าชนะ** ถ้าเท่ากันใช้ system MAC ต่ำกว่า จากนั้น actor เลือก active port ตาม port priority (ต่ำกว่าดีกว่า) และ port number",
+    "ref": "Book1 Ch8 §8.2.4",
+    "en": {
+      "question": "In LACP mode, which switch becomes the **actor** that decides which links are active?",
+      "options": {
+        "a": "The switch with the lower LACP system priority (if equal, the lower MAC address)",
+        "b": "The switch with the higher system priority",
+        "c": "The switch with more ports",
+        "d": "The switch that was powered on first"
+      }
+    }
+  },
+  {
+    "id": "m7-lb-020",
+    "module": "M7",
+    "topic": "Load balancing",
+    "type": "single",
+    "difficulty": 3,
+    "question": "traffic ส่วนใหญ่ของ Eth-Trunk มาจาก server ตัวเดียว (source IP เดียว) ไปหาผู้ใช้จำนวนมาก โหมดใดเหมาะ **น้อยที่สุด**",
+    "options": [
+      {
+        "id": "a",
+        "text": "src-dst-ip"
+      },
+      {
+        "id": "b",
+        "text": "dst-ip"
+      },
+      {
+        "id": "c",
+        "text": "src-ip"
+      },
+      {
+        "id": "d",
+        "text": "dst-mac (เมื่อปลายทางอยู่ VLAN เดียวกัน)"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "การกระจายโหลดเป็นแบบ per-flow ตามค่า hash — ถ้าใช้ **src-ip** ทุก flow มี source เดียวกันจะถูก hash ลงลิงก์เดียว ลิงก์อื่นว่าง ควรใช้ dst-ip หรือ src-dst-ip ซึ่งมีความหลากหลายมากกว่า",
+    "ref": "Book1 Ch8 §8.2.5",
+    "en": {
+      "question": "Most traffic on an Eth-Trunk comes from a single server (one source IP) to many users. Which load-balancing mode is the **least** suitable?",
+      "options": {
+        "a": "src-dst-ip",
+        "b": "dst-ip",
+        "c": "src-ip",
+        "d": "dst-mac (when destinations are in the same VLAN)"
+      }
+    }
+  },
+  {
+    "id": "m7-loop-001",
+    "module": "M7",
+    "topic": "Layer 2 loops",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "ปัญหาใดเกิดขึ้นได้เมื่อมี loop ใน layer 2 และไม่มี STP (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "Broadcast storm"
+      },
+      {
+        "id": "b",
+        "text": "MAC address table ไม่เสถียร (MAC flapping)"
+      },
+      {
+        "id": "c",
+        "text": "ปลายทางได้รับ frame ซ้ำ"
+      },
+      {
+        "id": "d",
+        "text": "TTL ของ frame หมดแล้ว frame ถูกทิ้งเอง"
+      },
+      {
+        "id": "e",
+        "text": "routing loop ระหว่าง router"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "Ethernet frame **ไม่มี TTL** จึงวนได้ไม่รู้จบ ทำให้เกิด broadcast storm, MAC flapping และ duplicate frame\n\nTTL อยู่ใน IP header ไม่ใช่ Ethernet frame ส่วน routing loop เป็นปัญหาของ layer 3",
+    "ref": "Book1 Ch8 §8.1.1",
+    "en": {
+      "question": "Which problems can occur when a Layer 2 network has a loop and STP is not running? (Choose all that apply.)",
+      "options": {
+        "a": "Broadcast storm",
+        "b": "MAC address table instability (MAC flapping)",
+        "c": "Destination hosts receive duplicate frames",
+        "d": "The frame TTL expires and the frame is discarded automatically",
+        "e": "Routing loops between routers"
+      }
+    }
+  },
+  {
+    "id": "m7-manual-018",
+    "module": "M7",
+    "topic": "Link aggregation",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ข้อเสียหลักของ Eth-Trunk แบบ **manual mode** เมื่อเทียบกับ LACP คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "รองรับได้แค่ 2 ลิงก์"
+      },
+      {
+        "id": "b",
+        "text": "ไม่มีการเจรจา จึงตรวจจับการต่อสายผิดหรือความผิดปกติของลิงก์ที่ยัง up ได้ไม่ดี"
+      },
+      {
+        "id": "c",
+        "text": "ใช้ได้เฉพาะ layer 3"
+      },
+      {
+        "id": "d",
+        "text": "ไม่สามารถกระจายโหลดได้"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "manual mode ตรวจได้เพียง physical up/down — ถ้าเสียบสายผิดเครื่องหรือลิงก์ผิดปกติแต่ยัง up จะยังส่งข้อมูลลงไปทำให้สื่อสารผิดพลาด LACP แลก LACPDU เพื่อยืนยันว่าปลายทางเป็นสมาชิกของ trunk เดียวกัน",
+    "ref": "Book1 Ch8 §8.2.4",
+    "en": {
+      "question": "What is the main disadvantage of a **manual mode** Eth-Trunk compared with LACP?",
+      "options": {
+        "a": "It supports only 2 links",
+        "b": "There is no negotiation, so miscabling or faults on links that stay up are poorly detected",
+        "c": "It works only at Layer 3",
+        "d": "It cannot load balance"
+      }
+    }
+  },
+  {
+    "id": "m7-mode-012",
+    "module": "M7",
+    "topic": "STP configuration",
+    "type": "single",
+    "difficulty": 1,
+    "question": "STP mode ที่เป็น **ค่า default** บน Huawei switch คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "STP"
+      },
+      {
+        "id": "b",
+        "text": "RSTP"
+      },
+      {
+        "id": "c",
+        "text": "MSTP"
+      },
+      {
+        "id": "d",
+        "text": "PVST+"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "Huawei ใช้ **MSTP** เป็นค่า default (ทำงานร่วมกับ STP/RSTP ได้) เปลี่ยนด้วย `stp mode stp|rstp|mstp` — PVST+ เป็นของ Cisco",
+    "ref": "Book1 Ch8 §8.1.6",
+    "en": {
+      "question": "What is the **default** STP mode on a Huawei switch?",
+      "options": {
+        "a": "STP",
+        "b": "RSTP",
+        "c": "MSTP",
+        "d": "PVST+"
+      }
+    }
+  },
+  {
+    "id": "m7-monitor-025",
+    "module": "M7",
+    "topic": "Monitor Link",
+    "type": "single",
+    "difficulty": 2,
+    "question": "**Monitor Link** ทำหน้าที่อะไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "ตรวจสอบ bandwidth ของลิงก์"
+      },
+      {
+        "id": "b",
+        "text": "ผูกสถานะ downlink ให้ตาม uplink — เมื่อ uplink ล่ม downlink จะถูกปิดตามเพื่อให้อุปกรณ์ปลายทางรู้และสลับเส้นทาง"
+      },
+      {
+        "id": "c",
+        "text": "สร้าง Eth-Trunk อัตโนมัติ"
+      },
+      {
+        "id": "d",
+        "text": "เลือก root bridge"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Monitor Link ใช้คู่กับ Smart Link — ถ้า uplink ของสวิตช์ตรงกลางล่ม การปิด downlink ตามทำให้สวิตช์ปลายที่ใช้ Smart Link เห็น master down แล้วสลับไป slave ได้",
+    "ref": "Book1 Ch8 §8.4.1",
+    "en": {
+      "question": "What does **Monitor Link** do?",
+      "options": {
+        "a": "Monitors link bandwidth",
+        "b": "Ties the downlink state to the uplink — when the uplink fails, the downlink is shut down so downstream devices can switch paths",
+        "c": "Creates Eth-Trunks automatically",
+        "d": "Elects the root bridge"
+      }
+    }
+  },
+  {
+    "id": "m7-priority-003",
+    "module": "M7",
+    "topic": "Bridge priority",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ค่าใด **ไม่สามารถ** ตั้งเป็น STP bridge priority บน Huawei switch ได้",
+    "options": [
+      {
+        "id": "a",
+        "text": "0"
+      },
+      {
+        "id": "b",
+        "text": "4096"
+      },
+      {
+        "id": "c",
+        "text": "8192"
+      },
+      {
+        "id": "d",
+        "text": "10000"
+      }
+    ],
+    "answer": [
+      "d"
+    ],
+    "explanation": "bridge priority ต้องเป็น **ผลคูณของ 4096** (0–61440) — 10000 ไม่ใช่ผลคูณของ 4096 จึงตั้งไม่ได้ ค่า default คือ 32768",
+    "ref": "Book1 Ch8 §8.1.6",
+    "en": {
+      "question": "Which value **cannot** be configured as the STP bridge priority on a Huawei switch?",
+      "options": {
+        "a": "0",
+        "b": "4096",
+        "c": "8192",
+        "d": "10000"
+      }
+    }
+  },
+  {
+    "id": "m7-root-002",
+    "module": "M7",
+    "topic": "Root bridge election",
+    "type": "single",
+    "difficulty": 1,
+    "question": "สวิตช์ 3 ตัวมี BID ดังนี้ ตัวใดจะเป็น **root bridge**\n\n- SW1: priority 32768, MAC 4c1f-0000-0001\n- SW2: priority 4096, MAC 4c1f-0000-00ff\n- SW3: priority 32768, MAC 00e0-0000-0001",
+    "options": [
+      {
+        "id": "a",
+        "text": "SW1"
+      },
+      {
+        "id": "b",
+        "text": "SW2"
+      },
+      {
+        "id": "c",
+        "text": "SW3"
+      },
+      {
+        "id": "d",
+        "text": "ตัวที่เปิดเครื่องก่อน"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "BID = priority + MAC และเทียบ **priority ก่อน** — SW2 มี priority 4096 ต่ำสุดจึงเป็น root ทันที โดยไม่ต้องดู MAC\n\nMAC จะใช้ตัดสินเมื่อ priority เท่ากันเท่านั้น",
+    "ref": "Book1 Ch8 §8.1.3",
+    "en": {
+      "question": "Three switches have the following BIDs. Which one becomes the **root bridge**?\n\n- SW1: priority 32768, MAC 4c1f-0000-0001\n- SW2: priority 4096, MAC 4c1f-0000-00ff\n- SW3: priority 32768, MAC 00e0-0000-0001",
+      "options": {
+        "a": "SW1",
+        "b": "SW2",
+        "c": "SW3",
+        "d": "The switch that was powered on first"
+      }
+    }
+  },
+  {
+    "id": "m7-rootprimary-013",
+    "module": "M7",
+    "topic": "STP configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "คำสั่ง `stp root primary` บน Huawei switch มีผลอย่างไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "ตั้ง bridge priority เป็น 0 เพื่อให้เป็น root"
+      },
+      {
+        "id": "b",
+        "text": "ตั้ง priority เป็น 4096"
+      },
+      {
+        "id": "c",
+        "text": "ปิด STP บนสวิตช์"
+      },
+      {
+        "id": "d",
+        "text": "ทำให้ทุกพอร์ตเป็น root port"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "`stp root primary` กำหนด priority = **0** (ต่ำสุด) ส่วน `stp root secondary` กำหนด **4096** ให้เป็นตัวสำรอง",
+    "ref": "Book1 Ch8 §8.1.6",
+    "en": {
+      "question": "What is the effect of the command `stp root primary` on a Huawei switch?",
+      "options": {
+        "a": "Sets the bridge priority to 0 so the switch becomes the root",
+        "b": "Sets the priority to 4096",
+        "c": "Disables STP on the switch",
+        "d": "Makes every port a root port"
+      }
+    }
+  },
+  {
+    "id": "m7-rp-004",
+    "module": "M7",
+    "topic": "Root port",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก topology (ทุกตัว priority 32768, ลิงก์ GE ทั้งหมด) พอร์ตใดของ **SW3** จะเป็น root port",
+    "diagram": "m7-stp-3sw",
+    "options": [
+      {
+        "id": "a",
+        "text": "G0/0/1 (ต่อ SW1)"
+      },
+      {
+        "id": "b",
+        "text": "G0/0/2 (ต่อ SW2)"
+      },
+      {
+        "id": "c",
+        "text": "ทั้งสองพอร์ต"
+      },
+      {
+        "id": "d",
+        "text": "SW3 ไม่มี root port"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "SW1 มี MAC ต่ำสุดจึงเป็น root · SW3 ไป root ผ่าน G0/0/1 ได้ RPC = 20000 ส่วนผ่าน SW2 ได้ 20000 + 20000 = 40000 → **G0/0/1** มี RPC ต่ำกว่าจึงเป็น root port",
+    "ref": "Book1 Ch8 §8.1.3",
+    "en": {
+      "question": "Refer to the topology (all switches use priority 32768 and all links are GE). Which port on **SW3** becomes the root port?",
+      "options": {
+        "a": "G0/0/1 (to SW1)",
+        "b": "G0/0/2 (to SW2)",
+        "c": "Both ports",
+        "d": "SW3 has no root port"
+      }
+    }
+  },
+  {
+    "id": "m7-rpsel-006",
+    "module": "M7",
+    "topic": "Root port",
+    "type": "ordering",
+    "difficulty": 3,
+    "question": "เรียงเกณฑ์ที่สวิตช์ non-root ใช้เลือก **root port** (พิจารณาข้อแรกก่อน)",
+    "options": [
+      {
+        "id": "a",
+        "text": "Root path cost ต่ำสุด"
+      },
+      {
+        "id": "b",
+        "text": "BID ของสวิตช์ฝั่งตรงข้าม (sender BID) ต่ำสุด"
+      },
+      {
+        "id": "c",
+        "text": "Port ID ของฝั่งตรงข้าม (sender PID) ต่ำสุด"
+      },
+      {
+        "id": "d",
+        "text": "Port ID ของพอร์ตตัวเองต่ำสุด"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "ลำดับคือ RPC → sender BID → sender PID → local PID — ทุกเกณฑ์ \"ต่ำกว่าดีกว่า\" เกณฑ์สุดท้ายใช้เมื่อต่อสองพอร์ตเข้าหาพอร์ตเดียวกันผ่าน hub",
+    "ref": "Book1 Ch8 §8.1.3",
+    "en": {
+      "question": "Arrange the criteria a non-root switch uses to select its **root port** (first criterion first).",
+      "options": {
+        "a": "Lowest root path cost",
+        "b": "Lowest BID of the upstream (sender) switch",
+        "c": "Lowest port ID of the upstream (sender) port",
+        "d": "Lowest local port ID"
+      }
+    }
+  },
+  {
+    "id": "m7-rstp-011",
+    "module": "M7",
+    "topic": "RSTP",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ข้อใดเป็นสิ่งที่ **RSTP** ปรับปรุงจาก STP (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "รวม port state เหลือ Discarding, Learning, Forwarding"
+      },
+      {
+        "id": "b",
+        "text": "เพิ่มบทบาท alternate port และ backup port"
+      },
+      {
+        "id": "c",
+        "text": "edge port เข้า forwarding ได้ทันที"
+      },
+      {
+        "id": "d",
+        "text": "ใช้กลไก proposal/agreement บน P2P link เพื่อ converge เร็ว"
+      },
+      {
+        "id": "e",
+        "text": "ยกเลิกการใช้ bridge ID ในการเลือก root"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "RSTP (802.1w) ลด state, เพิ่ม alternate/backup, มี edge port และ P/A mechanism ทำให้ converge ในไม่กี่วินาที แต่ยัง **ใช้ BID เลือก root bridge เหมือนเดิม**",
+    "ref": "Book1 Ch8 §8.1",
+    "en": {
+      "question": "Which of the following are improvements of **RSTP** over STP? (Choose all that apply.)",
+      "options": {
+        "a": "Port states are reduced to Discarding, Learning, and Forwarding",
+        "b": "Adds the alternate port and backup port roles",
+        "c": "Edge ports transition to forwarding immediately",
+        "d": "Uses the proposal/agreement mechanism on P2P links for fast convergence",
+        "e": "No longer uses the bridge ID to elect the root bridge"
+      }
+    }
+  },
+  {
+    "id": "m7-smartlink-022",
+    "module": "M7",
+    "topic": "Smart Link",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน Smart Link group เมื่อ **master port** ล่ม จะเกิดอะไรขึ้น",
+    "diagram": "m7-smartlink",
+    "options": [
+      {
+        "id": "a",
+        "text": "ทุกพอร์ตใน group ถูกปิด"
+      },
+      {
+        "id": "b",
+        "text": "slave port เข้าสู่สถานะ forwarding แทน และส่ง flush packet ให้สวิตช์อื่นล้าง MAC ที่ค้าง"
+      },
+      {
+        "id": "c",
+        "text": "STP คำนวณใหม่ทั้งเครือข่าย"
+      },
+      {
+        "id": "d",
+        "text": "ต้องรอผู้ดูแลสลับเอง"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Smart Link สลับไป slave ทันที (ระดับมิลลิวินาที) และส่ง **flush packet** ผ่าน control VLAN เพื่อให้สวิตช์ upstream ลบ MAC/ARP entry เดิมที่ชี้ไปทาง master",
+    "ref": "Book1 Ch8 §8.3.1",
+    "en": {
+      "question": "In a Smart Link group, what happens when the **master port** fails?",
+      "options": {
+        "a": "All ports in the group are shut down",
+        "b": "The slave port starts forwarding and sends flush packets so other switches clear stale MAC entries",
+        "c": "STP recalculates across the whole network",
+        "d": "The administrator must switch over manually"
+      }
+    }
+  },
+  {
+    "id": "m7-smartstp-023",
+    "module": "M7",
+    "topic": "Smart Link",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "พอร์ตที่จะใส่ใน Smart Link group สามารถเปิด STP ทำงานพร้อมกันได้ตามปกติ",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "Smart Link เป็นทางเลือกแทน STP สำหรับ dual-homing — พอร์ตที่เป็นสมาชิกต้อง **ปิด STP** (`stp disable`) ก่อน ไม่เช่นนั้นสองกลไกจะขัดกัน",
+    "ref": "Book1 Ch8 §8.3.2",
+    "en": {
+      "question": "Ports added to a Smart Link group can run STP at the same time as normal."
+    }
+  },
+  {
+    "id": "m7-states-009",
+    "module": "M7",
+    "topic": "Port states",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน STP แบบดั้งเดิม (802.1D) พอร์ตใน state ใดที่ **เรียนรู้ MAC address ได้แต่ยังไม่ส่งข้อมูลผู้ใช้**",
+    "options": [
+      {
+        "id": "a",
+        "text": "Blocking"
+      },
+      {
+        "id": "b",
+        "text": "Listening"
+      },
+      {
+        "id": "c",
+        "text": "Learning"
+      },
+      {
+        "id": "d",
+        "text": "Forwarding"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "**Learning** สร้าง MAC table ล่วงหน้าเพื่อลดการ flood เมื่อเข้าสู่ Forwarding — Listening ส่ง/รับ BPDU แต่ไม่เรียนรู้ MAC",
+    "ref": "Book1 Ch8 §8.1.5",
+    "en": {
+      "question": "In traditional STP (IEEE 802.1D), in which port state does a port **learn MAC addresses but not yet forward user traffic**?",
+      "options": {
+        "a": "Blocking",
+        "b": "Listening",
+        "c": "Learning",
+        "d": "Forwarding"
+      }
+    }
+  },
+  {
+    "id": "m7-timers-008",
+    "module": "M7",
+    "topic": "STP timers",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ค่า default ของ STP timer: Hello time, Max Age และ Forward Delay คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "1, 10, 5 วินาที"
+      },
+      {
+        "id": "b",
+        "text": "2, 20, 15 วินาที"
+      },
+      {
+        "id": "c",
+        "text": "2, 15, 20 วินาที"
+      },
+      {
+        "id": "d",
+        "text": "5, 30, 15 วินาที"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Hello **2** วินาที, Max Age **20** วินาที, Forward Delay **15** วินาที",
+    "ref": "Book1 Ch8 §8.1.4",
+    "en": {
+      "question": "What are the default STP Hello time, Max Age, and Forward Delay values?",
+      "options": {
+        "a": "1, 10, 5 seconds",
+        "b": "2, 20, 15 seconds",
+        "c": "2, 15, 20 seconds",
+        "d": "5, 30, 15 seconds"
+      }
+    }
+  },
+  {
+    "id": "m7-wtr-024",
+    "module": "M7",
+    "topic": "Smart Link",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน Smart Link ที่เปิด `restore enable` และ `timer wtr 30` ค่า WTR มีไว้เพื่ออะไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "เวลาที่ slave รอก่อนเข้าแทน master ที่ล่ม"
+      },
+      {
+        "id": "b",
+        "text": "เวลาที่รอหลัง master ฟื้นก่อนจะสลับกลับมาใช้ master เพื่อกันการสลับไปมาจากลิงก์ที่ไม่เสถียร"
+      },
+      {
+        "id": "c",
+        "text": "ระยะส่ง flush packet"
+      },
+      {
+        "id": "d",
+        "text": "อายุของ MAC entry"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**WTR (Wait-to-Restore)** ใช้กับโหมด revertive — เมื่อ master กลับมา up ระบบจะรอให้ครบ WTR ก่อนสลับกลับ เพื่อไม่ให้สลับไปมาถ้าลิงก์กระพริบ",
+    "ref": "Book1 Ch8 §8.3.2",
+    "en": {
+      "question": "With `restore enable` and `timer wtr 30` configured in Smart Link, what is the purpose of the WTR value?",
+      "options": {
+        "a": "The time the slave waits before taking over from a failed master",
+        "b": "The time to wait after the master recovers before switching back, preventing flapping on an unstable link",
+        "c": "The interval for sending flush packets",
+        "d": "The MAC entry aging time"
+      }
+    }
+  }
 ]

@@ -7,9 +7,10 @@ export type QItem = {
   topic: string;
   type: QType;
   difficulty: 1 | 2 | 3;
-  q: string; // html
+  q: string; // html (Thai)
+  qEn?: string; // html (English) — real exam is in English
   diagram?: string;
-  options: { id: string; html: string }[];
+  options: { id: string; html: string; htmlEn?: string }[];
   answer: string[];
   exp: string; // html
   ref?: string;

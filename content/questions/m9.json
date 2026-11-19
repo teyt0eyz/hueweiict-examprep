@@ -1,787 +1,1003 @@
 [
- {
-  "id": "m9-acl-007",
-  "module": "M9",
-  "topic": "NAT and ACL",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน `nat outbound 2000 address-group 1` บทบาทของ ACL 2000 คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "กรอง traffic ที่จะถูก deny ออกจาก router"
-   },
-   {
-    "id": "b",
-    "text": "กำหนดว่า packet ที่ source ตรงกับ rule **permit** จะถูกแปลง address"
-   },
-   {
-    "id": "c",
-    "text": "กำหนดช่วง public IP ที่ใช้"
-   },
-   {
-    "id": "d",
-    "text": "กำหนด port ที่ใช้แปลง"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "ACL ใน NAT ใช้ **เลือก traffic** — permit = แปลง, ไม่ match/deny = ส่งออกไปโดยไม่แปลง ไม่ได้ใช้ทิ้ง packet · pool public IP กำหนดใน address-group",
-  "ref": "Book1 Ch10 §10.2.2"
- },
- {
-  "id": "m9-alg-019",
-  "module": "M9",
-  "topic": "NAT concepts",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ทำไมโปรโตคอลอย่าง **FTP (active mode)** จึงต้องใช้ NAT ALG",
-  "options": [
-   {
-    "id": "a",
-    "text": "เพราะ FTP ใช้ UDP"
-   },
-   {
-    "id": "b",
-    "text": "เพราะ FTP ฝัง IP address/port ไว้ใน payload ซึ่ง NAT ปกติไม่แก้"
-   },
-   {
-    "id": "c",
-    "text": "เพราะ FTP เข้ารหัส"
-   },
-   {
-    "id": "d",
-    "text": "เพราะ FTP ใช้ port 80"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "NAT ปกติแก้เฉพาะ IP/transport header แต่ FTP ส่ง IP:port สำหรับ data channel ไว้ใน **payload** (คำสั่ง PORT) **ALG** จะเข้าไปแก้ข้อมูลนั้นให้ตรงกับการแปลง",
-  "ref": "Book1 Ch10 §10.1"
- },
- {
-  "id": "m9-compare-015",
-  "module": "M9",
-  "topic": "NAT types",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ข้อใดเปรียบเทียบ Dynamic NAT (no-pat) กับ NAPT ได้ **ถูกต้อง**",
-  "options": [
-   {
-    "id": "a",
-    "text": "Dynamic NAT แปลงทั้ง IP และ port ส่วน NAPT แปลงเฉพาะ IP"
-   },
-   {
-    "id": "b",
-    "text": "Dynamic NAT แปลงเฉพาะ IP (1:1 ชั่วคราว) ส่วน NAPT แปลงทั้ง IP และ port ทำให้หลาย host ใช้ IP เดียวได้"
-   },
-   {
-    "id": "c",
-    "text": "ทั้งสองแบบให้ภายนอกเริ่มเชื่อมต่อเข้ามาได้"
-   },
-   {
-    "id": "d",
-    "text": "NAPT ต้องใช้ public IP เท่ากับจำนวน host"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Dynamic NAT (no-pat) ยืม public IP หนึ่งตัวให้ host หนึ่งตัวในขณะนั้น ส่วน NAPT ใช้ port แยก session ทั้งสองแบบรองรับเฉพาะการเชื่อมต่อที่เริ่มจากภายใน",
-  "ref": "Book1 Ch10 §10.2"
- },
- {
-  "id": "m9-current-017",
-  "module": "M9",
-  "topic": "NAT Server",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน `nat server protocol tcp global current-interface 2222 inside 192.168.1.50 22` คำว่า `current-interface` หมายถึงอะไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "ใช้ IP ของ interface ที่ตั้งคำสั่งนี้เป็น public address"
-   },
-   {
-    "id": "b",
-    "text": "ใช้ IP ของ interface ฝั่ง LAN"
-   },
-   {
-    "id": "c",
-    "text": "ใช้ IP ใดก็ได้ใน pool"
-   },
-   {
-    "id": "d",
-    "text": "ใช้ loopback"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "`current-interface` ใช้ **IP ของ interface ปัจจุบัน** (ขาออก) เหมาะกับกรณีมี public IP ตัวเดียวหรือเป็น IP แบบ dynamic — ผู้ใช้ภายนอกเข้า port 2222 ของ IP นั้นจะไปถึง SSH (22) ของ 192.168.1.50",
-  "ref": "Book1 Ch10 §10.2.5"
- },
- {
-  "id": "m9-direction-021",
-  "module": "M9",
-  "topic": "NAT concepts",
-  "type": "single",
-  "difficulty": 2,
-  "question": "เมื่อ packet ขาออกจาก PC1 (192.168.1.10) ผ่าน Easy IP บน R1 ไปยัง 8.8.8.8 address ใดของ packet ถูกเปลี่ยน",
-  "diagram": "m9-nat",
-  "options": [
-   {
-    "id": "a",
-    "text": "Destination IP เปลี่ยนเป็น 202.1.1.1"
-   },
-   {
-    "id": "b",
-    "text": "Source IP เปลี่ยนเป็น 202.1.1.1 และอาจเปลี่ยน source port"
-   },
-   {
-    "id": "c",
-    "text": "ทั้ง source และ destination เปลี่ยน"
-   },
-   {
-    "id": "d",
-    "text": "ไม่มีการเปลี่ยน"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "NAT ขาออก (source NAT) เปลี่ยน **source** เป็น public (202.1.1.1 ของ G0/0/1) และ NAPT/Easy IP เปลี่ยน source port ด้วย เมื่อ reply กลับมา destination จะถูกแปลงกลับเป็น 192.168.1.10",
-  "ref": "Book1 Ch10 §10.2.4"
- },
- {
-  "id": "m9-easyip-006",
-  "module": "M9",
-  "topic": "Easy IP",
-  "type": "single",
-  "difficulty": 2,
-  "question": "คำสั่งใดเป็นการตั้งค่า **Easy IP** บน interface ขาออก",
-  "options": [
-   {
-    "id": "a",
-    "text": "`nat outbound 2000`"
-   },
-   {
-    "id": "b",
-    "text": "`nat outbound 2000 address-group 1`"
-   },
-   {
-    "id": "c",
-    "text": "`nat static global 202.1.1.1 inside 192.168.1.1`"
-   },
-   {
-    "id": "d",
-    "text": "`nat server protocol tcp global current-interface 80 inside 192.168.1.10 80`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "`nat outbound <acl>` **โดยไม่มี address-group** = Easy IP ใช้ IP ของ interface · มี address-group = NAPT · `nat static` = Static NAT · `nat server` = NAT Server",
-  "ref": "Book1 Ch10 §10.2.4"
- },
- {
-  "id": "m9-group-016",
-  "module": "M9",
-  "topic": "NAT configuration",
-  "type": "single",
-  "difficulty": 1,
-  "question": "คำสั่งใดสร้าง pool ของ public IP สำหรับ NAT บน Huawei AR",
-  "options": [
-   {
-    "id": "a",
-    "text": "`ip nat pool 1 202.1.1.11 202.1.1.20`"
-   },
-   {
-    "id": "b",
-    "text": "`nat address-group 1 202.1.1.11 202.1.1.20`"
-   },
-   {
-    "id": "c",
-    "text": "`nat pool 1 network 202.1.1.0`"
-   },
-   {
-    "id": "d",
-    "text": "`address-pool nat 202.1.1.11 to 202.1.1.20`"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Huawei ใช้ `nat address-group <id> <start> <end>` · `ip nat pool` เป็นของ Cisco",
-  "ref": "Book1 Ch10 §10.2.2"
- },
- {
-  "id": "m9-gw-018",
-  "module": "M9",
-  "topic": "Troubleshooting",
-  "type": "single",
-  "difficulty": 3,
-  "question": "ตั้ง NAT Server ให้ web server ภายในถูกต้องและ `display nat server` แสดงรายการครบ ผู้ใช้ภายนอกส่ง SYN มาถึง server แล้ว แต่ไม่ได้รับคำตอบ สาเหตุที่น่าจะเป็นที่สุดคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "web server ไม่มี default gateway ชี้มาที่ R1 (หรือชี้ไปทางอื่น)"
-   },
-   {
-    "id": "b",
-    "text": "ACL ของ NAT ไม่ถูกต้อง"
-   },
-   {
-    "id": "c",
-    "text": "ต้องใช้ Easy IP ด้วย"
-   },
-   {
-    "id": "d",
-    "text": "ISP ไม่มี route ไป 192.168.1.0/24"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "packet ขาเข้ามาถึง server แล้ว แสดงว่าการแปลงทำงาน แต่ reply จาก server ต้องกลับผ่าน R1 เพื่อแปลงกลับ ถ้า server **ไม่มี gateway ไปที่ R1** reply จะไม่ถูกแปลงหรือไปไม่ถึง · NAT Server ไม่ใช้ ACL และ ISP ไม่จำเป็นต้องรู้จัก private subnet",
-  "ref": "Book1 Ch10 §10.3"
- },
- {
-  "id": "m9-interface-014",
-  "module": "M9",
-  "topic": "NAT configuration",
-  "type": "truefalse",
-  "difficulty": 1,
-  "question": "บน Huawei AR router คำสั่ง `nat outbound` ต้องตั้งที่ interface ฝั่ง **ภายใน (LAN)** ที่ผู้ใช้เชื่อมต่ออยู่",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "`nat outbound`, `nat static`, `nat server` ตั้งที่ **interface ขาออก** (ฝั่ง ISP/public)",
-  "ref": "Book1 Ch10 §10.2"
- },
- {
-  "id": "m9-ipv6-024",
-  "module": "M9",
-  "topic": "NAT concepts",
-  "type": "truefalse",
-  "difficulty": 2,
-  "question": "ใน IPv6 เครือข่ายส่วนใหญ่ไม่จำเป็นต้องใช้ NAT เพื่อประหยัด address เพราะ address space มีขนาดใหญ่พอให้ทุกอุปกรณ์มี global address ของตัวเอง",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "T"
-  ],
-  "explanation": "IPv6 มี 128 bit จึงไม่ขาดแคลน address การใช้ NAT เพื่อประหยัด IP จึงไม่จำเป็น และช่วยให้กลับมาสื่อสารแบบ end-to-end ได้ (ความปลอดภัยใช้ firewall แทน)",
-  "ref": "Book1 Ch13"
- },
- {
-  "id": "m9-multi-022",
-  "module": "M9",
-  "topic": "NAT configuration",
-  "type": "multiple",
-  "difficulty": 3,
-  "question": "ข้อใด **จำเป็น** สำหรับการให้ PC ใน 192.168.1.0/24 ออกอินเทอร์เน็ตด้วย NAPT ผ่าน pool บน R1 (เลือกทุกข้อที่จำเป็น)",
-  "options": [
-   {
-    "id": "a",
-    "text": "ACL ที่ permit source 192.168.1.0 0.0.0.255"
-   },
-   {
-    "id": "b",
-    "text": "`nat address-group` ที่มี public IP"
-   },
-   {
-    "id": "c",
-    "text": "`nat outbound <acl> address-group <id>` บน interface ขาออก"
-   },
-   {
-    "id": "d",
-    "text": "default route ไปยัง ISP"
-   },
-   {
-    "id": "e",
-    "text": "`nat server` สำหรับ PC ทุกเครื่อง"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "NAPT ต้องการ ACL เลือก traffic + address-group + nat outbound + route ออก ISP · nat server ใช้เฉพาะเมื่อต้องการให้ภายนอกเข้ามาหา server ไม่จำเป็นสำหรับการออก",
-  "ref": "Book1 Ch10 §10.2.3"
- },
- {
-  "id": "m9-napt-009",
-  "module": "M9",
-  "topic": "NAPT",
-  "type": "single",
-  "difficulty": 2,
-  "question": "NAPT ทำให้หลาย host ภายในใช้ public IP เดียวพร้อมกันได้โดยอาศัยข้อมูลใดในการแยก session",
-  "options": [
-   {
-    "id": "a",
-    "text": "MAC address"
-   },
-   {
-    "id": "b",
-    "text": "หมายเลข port ของ transport layer (หรือ ICMP ID)"
-   },
-   {
-    "id": "c",
-    "text": "TTL"
-   },
-   {
-    "id": "d",
-    "text": "VLAN ID"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "NAPT แปลงทั้ง IP และ **port** (สำหรับ ICMP ใช้ Identifier) แล้วเก็บใน NAT session table เมื่อ packet ตอบกลับมาจะดูพอร์ตปลายทางเพื่อหาว่าเป็นของ host ใด",
-  "ref": "Book1 Ch10 §10.2.3"
- },
- {
-  "id": "m9-natsrv-011",
-  "module": "M9",
-  "topic": "NAT Server",
-  "type": "single",
-  "difficulty": 2,
-  "question": "คำสั่งใดทำให้ผู้ใช้ภายนอกที่เข้า `202.1.1.5:80` ถูกส่งไปยัง web server ภายใน `192.168.1.100:8080`",
-  "options": [
-   {
-    "id": "a",
-    "text": "`nat server protocol tcp global 202.1.1.5 www inside 192.168.1.100 8080`"
-   },
-   {
-    "id": "b",
-    "text": "`nat server protocol tcp global 192.168.1.100 8080 inside 202.1.1.5 www`"
-   },
-   {
-    "id": "c",
-    "text": "`nat static global 202.1.1.5 inside 192.168.1.100`"
-   },
-   {
-    "id": "d",
-    "text": "`nat outbound 3000 address-group 1`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "รูปแบบ: `nat server protocol <tcp|udp> global <public-ip> <port> inside <private-ip> <port>` — global คือฝั่งนอก inside คือ server ภายใน (www = 80) ข้อ b สลับกัน ข้อ c แปลงทุกพอร์ตและไม่เปลี่ยน port เป็น 8080",
-  "ref": "Book1 Ch10 §10.2.5"
- },
- {
-  "id": "m9-nolimit-025",
-  "module": "M9",
-  "topic": "NAT types",
-  "type": "single",
-  "difficulty": 1,
-  "question": "NAT แบบใด **ไม่ต้องสร้าง address-group**",
-  "options": [
-   {
-    "id": "a",
-    "text": "NAPT"
-   },
-   {
-    "id": "b",
-    "text": "Dynamic NAT"
-   },
-   {
-    "id": "c",
-    "text": "Easy IP"
-   },
-   {
-    "id": "d",
-    "text": "ทุกแบบต้องสร้าง"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "Easy IP ใช้ IP ของ interface ขาออกโดยตรง ไม่ต้องมี pool (address-group)",
-  "ref": "Book1 Ch10 §10.2.4"
- },
- {
-  "id": "m9-nopat-005",
-  "module": "M9",
-  "topic": "Dynamic NAT",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ตั้งค่าดังนี้ ถ้ามีผู้ใช้ภายใน **5 เครื่อง** ต้องการออกอินเทอร์เน็ตพร้อมกัน ผลคือข้อใด\n\n```vrp\n[R1]nat address-group 1 202.1.1.11 202.1.1.13\n[R1-GigabitEthernet0/0/1]nat outbound 2000 address-group 1 no-pat\n```",
-  "options": [
-   {
-    "id": "a",
-    "text": "ทุกเครื่องออกได้ เพราะแยกด้วย port"
-   },
-   {
-    "id": "b",
-    "text": "ออกได้พร้อมกันสูงสุด 3 เครื่อง เครื่องที่เหลือต้องรอ public IP ว่าง"
-   },
-   {
-    "id": "c",
-    "text": "ออกได้แค่ 1 เครื่อง"
-   },
-   {
-    "id": "d",
-    "text": "ไม่มีเครื่องใดออกได้เพราะ pool เล็กเกินไป"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "`no-pat` = Dynamic NAT แปลงเฉพาะ IP แบบ 1:1 ชั่วคราว pool มี 3 address (.11–.13) จึงรองรับได้ 3 host พร้อมกัน ถ้าตัด `no-pat` ออก (NAPT) ทั้ง 5 เครื่องจะออกได้",
-  "ref": "Book1 Ch10 §10.2.2"
- },
- {
-  "id": "m9-order-023",
-  "module": "M9",
-  "topic": "NAT configuration",
-  "type": "ordering",
-  "difficulty": 2,
-  "question": "เรียงขั้นตอนตั้งค่า NAPT บน R1",
-  "options": [
-   {
-    "id": "a",
-    "text": "สร้าง ACL ที่ permit subnet ภายใน"
-   },
-   {
-    "id": "b",
-    "text": "สร้าง `nat address-group` ของ public IP"
-   },
-   {
-    "id": "c",
-    "text": "เข้า interface ขาออก"
-   },
-   {
-    "id": "d",
-    "text": "สั่ง `nat outbound <acl> address-group <id>`"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "ต้องมี ACL และ address-group ก่อนจึงอ้างถึงในคำสั่ง `nat outbound` ที่ interface ขาออกได้ (ลำดับ ACL กับ address-group สลับกันได้ แต่ทั้งคู่ต้องมาก่อน nat outbound)",
-  "ref": "Book1 Ch10 §10.2.3"
- },
- {
-  "id": "m9-pick-020",
-  "module": "M9",
-  "topic": "NAT types",
-  "type": "single",
-  "difficulty": 2,
-  "question": "องค์กรมี public IP 8 address และ server ภายใน 3 ตัวที่ต้องให้คนภายนอกเข้าถึง **ทุกพอร์ต** ด้วย IP ประจำตัว ควรใช้วิธีใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "Static NAT สำหรับแต่ละ server"
-   },
-   {
-    "id": "b",
-    "text": "Easy IP"
-   },
-   {
-    "id": "c",
-    "text": "Dynamic NAT"
-   },
-   {
-    "id": "d",
-    "text": "NAPT"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "ต้องการ public IP ประจำต่อ server และเข้าถึงได้ทุกพอร์ต → **Static NAT** 1:1 · ถ้าต้องการเฉพาะบางพอร์ตจะใช้ NAT Server ประหยัดกว่า",
-  "ref": "Book1 Ch10 §10.2.1"
- },
- {
-  "id": "m9-private-001",
-  "module": "M9",
-  "topic": "Private address",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "address ใดเป็น **private IPv4** ตาม RFC 1918 (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "10.200.1.1"
-   },
-   {
-    "id": "b",
-    "text": "172.31.255.1"
-   },
-   {
-    "id": "c",
-    "text": "192.168.100.5"
-   },
-   {
-    "id": "d",
-    "text": "172.32.0.1"
-   },
-   {
-    "id": "e",
-    "text": "100.64.0.1"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "private: 10.0.0.0/8, **172.16.0.0/12 (172.16–172.31)**, 192.168.0.0/16 · 172.32.0.1 อยู่นอกช่วง /12 · 100.64.0.0/10 เป็น shared address space สำหรับ CGN ไม่ใช่ RFC 1918",
-  "ref": "Book1 Ch10 §10.1"
- },
- {
-  "id": "m9-route-013",
-  "module": "M9",
-  "topic": "Troubleshooting",
-  "type": "single",
-  "difficulty": 3,
-  "question": "R1 ใช้ NAPT ด้วย address-group 203.0.113.0/28 ซึ่ง **คนละ subnet** กับ IP ของ interface ขาออก (202.1.1.1/24) packet ออกไปถึง server แล้วแต่ไม่มีคำตอบกลับมา สาเหตุที่น่าจะเป็นคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "ISP ไม่มี route ของ 203.0.113.0/28 ชี้กลับมาที่ R1"
-   },
-   {
-    "id": "b",
-    "text": "ACL ผิด"
-   },
-   {
-    "id": "c",
-    "text": "R1 ไม่มี default route"
-   },
-   {
-    "id": "d",
-    "text": "ต้องใช้ no-pat"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "เมื่อ pool อยู่นอก subnet ของ interface ฝั่ง ISP ต้องให้ ISP มี **route ของ pool ชี้กลับมาที่ R1** มิฉะนั้น reply ไปไม่ถึง · ถ้าไม่มี default route packet จะออกไปไม่ถึง server ตั้งแต่แรก",
-  "ref": "Book1 Ch10 §10.3"
- },
- {
-  "id": "m9-server-004",
-  "module": "M9",
-  "topic": "NAT Server",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ต้องการให้ผู้ใช้อินเทอร์เน็ตเข้าถึง web server ภายใน (192.168.1.100) ผ่าน public IP ของบริษัท ควรใช้ฟีเจอร์ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "Easy IP"
-   },
-   {
-    "id": "b",
-    "text": "NAPT"
-   },
-   {
-    "id": "c",
-    "text": "NAT Server"
-   },
-   {
-    "id": "d",
-    "text": "Dynamic NAT"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "**NAT Server** แมป public IP:port ไปยัง server ภายใน ให้ฝั่งนอกเริ่มการเชื่อมต่อเข้ามาได้ · Easy IP/NAPT/Dynamic NAT รองรับเฉพาะการเชื่อมต่อที่เริ่มจากภายใน",
-  "ref": "Book1 Ch10 §10.2.5"
- },
- {
-  "id": "m9-session-010",
-  "module": "M9",
-  "topic": "Verification",
-  "type": "single",
-  "difficulty": 2,
-  "question": "จาก output ข้อใดถูกต้อง\n\n```vrp\n<R1>display nat session all\n  Protocol          : TCP(6)\n  SrcAddr  Port Vpn : 192.168.1.11 51022\n  DestAddr Port Vpn : 8.8.8.8 443\n  NAT-Info\n    New SrcAddr     : 202.1.1.1\n    New SrcPort     : 10241\n    New DestAddr    : ----\n    New DestPort    : ----\n```",
-  "diagram": "m9-nat",
-  "options": [
-   {
-    "id": "a",
-    "text": "เป็น Static NAT ของ 8.8.8.8"
-   },
-   {
-    "id": "b",
-    "text": "PC 192.168.1.11 ออกไป HTTPS โดย source ถูกแปลงเป็น 202.1.1.1:10241"
-   },
-   {
-    "id": "c",
-    "text": "destination ถูกแปลงเป็น 202.1.1.1"
-   },
-   {
-    "id": "d",
-    "text": "เป็น NAT Server"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "เปลี่ยนเฉพาะ source (IP และ port) — เป็น NAPT/Easy IP ขาออก (202.1.1.1 คือ IP ของ G0/0/1 จึงน่าจะเป็น Easy IP) · destination ไม่ถูกเปลี่ยน (----)",
-  "ref": "Book1 Ch10 §10.3"
- },
- {
-  "id": "m9-static-008",
-  "module": "M9",
-  "topic": "Static NAT",
-  "type": "single",
-  "difficulty": 2,
-  "question": "คำสั่ง `nat static global 202.1.1.10 inside 192.168.1.10` บน G0/0/1 มีผลอย่างไร",
-  "diagram": "m9-nat",
-  "options": [
-   {
-    "id": "a",
-    "text": "แปลงเฉพาะขาออก ฝั่งนอกเริ่มการเชื่อมต่อเข้ามาไม่ได้"
-   },
-   {
-    "id": "b",
-    "text": "แปลง 1:1 ถาวรทั้งสองทิศ ฝั่งนอกเชื่อมต่อเข้ามาที่ 202.1.1.10 แล้วถึง 192.168.1.10 ได้"
-   },
-   {
-    "id": "c",
-    "text": "แปลงทุก host ใน 192.168.1.0/24"
-   },
-   {
-    "id": "d",
-    "text": "แปลงเฉพาะ TCP port 10"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Static NAT ผูก private ↔ public แบบ **1:1 ถาวร** ใช้ได้ทั้งขาออกและขาเข้า แต่ใช้ public IP หนึ่งตัวต่อ host หนึ่งตัว",
-  "ref": "Book1 Ch10 §10.2.1"
- },
- {
-  "id": "m9-trouble-012",
-  "module": "M9",
-  "topic": "Troubleshooting",
-  "type": "single",
-  "difficulty": 3,
-  "question": "ตั้ง Easy IP ครบแล้วแต่ PC ภายในยัง ping 8.8.8.8 ไม่ได้ ตรวจพบว่า `display nat session all` ไม่มี session เลย และ R1 ping 8.8.8.8 เองได้ สาเหตุใดน่าเป็นไปได้มากที่สุด",
-  "options": [
-   {
-    "id": "a",
-    "text": "ISP ไม่มี route กลับ"
-   },
-   {
-    "id": "b",
-    "text": "ACL ที่ใช้กับ nat outbound ไม่ permit subnet ของ PC หรือคำสั่ง nat outbound อยู่บน interface ฝั่ง LAN"
-   },
-   {
-    "id": "c",
-    "text": "PC ใช้ IPv6"
-   },
-   {
-    "id": "d",
-    "text": "DNS ผิด"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "R1 ออกอินเทอร์เน็ตได้ = มี route ไป ISP และ ISP ตอบกลับได้ · ไม่มี session เลย = packet ไม่ถูกแปลง ปกติเกิดจาก **ACL ไม่ match** หรือใส่ `nat outbound` ผิด interface (ต้องเป็นขาออกไป ISP) · DNS ไม่เกี่ยวเพราะ ping ด้วย IP",
-  "ref": "Book1 Ch10 §10.3"
- },
- {
-  "id": "m9-type-003",
-  "module": "M9",
-  "topic": "NAT types",
-  "type": "single",
-  "difficulty": 1,
-  "question": "บริษัทมี public IP เพียง **1 address** (ได้จาก ISP ผ่าน PPPoE และเปลี่ยนได้) ต้องการให้ผู้ใช้ 200 คนออกอินเทอร์เน็ต ควรใช้ NAT แบบใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "Static NAT"
-   },
-   {
-    "id": "b",
-    "text": "Dynamic NAT (no-pat)"
-   },
-   {
-    "id": "c",
-    "text": "Easy IP"
-   },
-   {
-    "id": "d",
-    "text": "NAT Server"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "**Easy IP** คือ NAPT ที่ใช้ IP ของ interface ขาออก ไม่ต้องรู้ IP ล่วงหน้า เหมาะกับ IP แบบ dynamic · Static/no-pat ต้องใช้ IP 1:1 · NAT Server ใช้ให้คนข้างนอกเข้ามา",
-  "ref": "Book1 Ch10 §10.2.4"
- },
- {
-  "id": "m9-why-002",
-  "module": "M9",
-  "topic": "NAT concepts",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "ข้อใดเป็นผลจากการใช้ NAT (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "ประหยัด public IPv4 address"
-   },
-   {
-    "id": "b",
-    "text": "ซ่อนโครงสร้างเครือข่ายภายใน"
-   },
-   {
-    "id": "c",
-    "text": "ทำให้การสื่อสารแบบ end-to-end ยากขึ้น"
-   },
-   {
-    "id": "d",
-    "text": "บางโปรโตคอลที่ฝัง IP ใน payload ต้องใช้ ALG"
-   },
-   {
-    "id": "e",
-    "text": "เพิ่มความเร็วในการ forward packet"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "NAT ประหยัด IP และซ่อนภายใน แต่ทำลาย end-to-end, ต้องใช้ ALG กับโปรโตคอลอย่าง FTP และ **เพิ่มภาระประมวลผล** ให้ router ไม่ได้เร็วขึ้น",
-  "ref": "Book1 Ch10 §10.1"
- }
+  {
+    "id": "m9-acl-007",
+    "module": "M9",
+    "topic": "NAT and ACL",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน `nat outbound 2000 address-group 1` บทบาทของ ACL 2000 คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "กรอง traffic ที่จะถูก deny ออกจาก router"
+      },
+      {
+        "id": "b",
+        "text": "กำหนดว่า packet ที่ source ตรงกับ rule **permit** จะถูกแปลง address"
+      },
+      {
+        "id": "c",
+        "text": "กำหนดช่วง public IP ที่ใช้"
+      },
+      {
+        "id": "d",
+        "text": "กำหนด port ที่ใช้แปลง"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "ACL ใน NAT ใช้ **เลือก traffic** — permit = แปลง, ไม่ match/deny = ส่งออกไปโดยไม่แปลง ไม่ได้ใช้ทิ้ง packet · pool public IP กำหนดใน address-group",
+    "ref": "Book1 Ch10 §10.2.2",
+    "en": {
+      "question": "In `nat outbound 2000 address-group 1`, what is the role of ACL 2000?",
+      "options": {
+        "a": "Filters traffic to be denied by the router",
+        "b": "Packets whose source matches a **permit** rule are translated",
+        "c": "Defines the range of public IPs",
+        "d": "Defines the ports used for translation"
+      }
+    }
+  },
+  {
+    "id": "m9-alg-019",
+    "module": "M9",
+    "topic": "NAT concepts",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ทำไมโปรโตคอลอย่าง **FTP (active mode)** จึงต้องใช้ NAT ALG",
+    "options": [
+      {
+        "id": "a",
+        "text": "เพราะ FTP ใช้ UDP"
+      },
+      {
+        "id": "b",
+        "text": "เพราะ FTP ฝัง IP address/port ไว้ใน payload ซึ่ง NAT ปกติไม่แก้"
+      },
+      {
+        "id": "c",
+        "text": "เพราะ FTP เข้ารหัส"
+      },
+      {
+        "id": "d",
+        "text": "เพราะ FTP ใช้ port 80"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "NAT ปกติแก้เฉพาะ IP/transport header แต่ FTP ส่ง IP:port สำหรับ data channel ไว้ใน **payload** (คำสั่ง PORT) **ALG** จะเข้าไปแก้ข้อมูลนั้นให้ตรงกับการแปลง",
+    "ref": "Book1 Ch10 §10.1",
+    "en": {
+      "question": "Why do protocols such as **FTP (active mode)** need a NAT ALG?",
+      "options": {
+        "a": "Because FTP uses UDP",
+        "b": "Because FTP embeds IP address/port information in the payload, which normal NAT does not modify",
+        "c": "Because FTP is encrypted",
+        "d": "Because FTP uses port 80"
+      }
+    }
+  },
+  {
+    "id": "m9-compare-015",
+    "module": "M9",
+    "topic": "NAT types",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ข้อใดเปรียบเทียบ Dynamic NAT (no-pat) กับ NAPT ได้ **ถูกต้อง**",
+    "options": [
+      {
+        "id": "a",
+        "text": "Dynamic NAT แปลงทั้ง IP และ port ส่วน NAPT แปลงเฉพาะ IP"
+      },
+      {
+        "id": "b",
+        "text": "Dynamic NAT แปลงเฉพาะ IP (1:1 ชั่วคราว) ส่วน NAPT แปลงทั้ง IP และ port ทำให้หลาย host ใช้ IP เดียวได้"
+      },
+      {
+        "id": "c",
+        "text": "ทั้งสองแบบให้ภายนอกเริ่มเชื่อมต่อเข้ามาได้"
+      },
+      {
+        "id": "d",
+        "text": "NAPT ต้องใช้ public IP เท่ากับจำนวน host"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Dynamic NAT (no-pat) ยืม public IP หนึ่งตัวให้ host หนึ่งตัวในขณะนั้น ส่วน NAPT ใช้ port แยก session ทั้งสองแบบรองรับเฉพาะการเชื่อมต่อที่เริ่มจากภายใน",
+    "ref": "Book1 Ch10 §10.2",
+    "en": {
+      "question": "Which statement correctly compares Dynamic NAT (no-pat) and NAPT?",
+      "options": {
+        "a": "Dynamic NAT translates both IP and port, while NAPT translates only the IP",
+        "b": "Dynamic NAT translates only the IP (temporary 1:1), while NAPT translates both IP and port so many hosts can share one IP",
+        "c": "Both allow external hosts to initiate connections",
+        "d": "NAPT needs as many public IPs as there are hosts"
+      }
+    }
+  },
+  {
+    "id": "m9-current-017",
+    "module": "M9",
+    "topic": "NAT Server",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน `nat server protocol tcp global current-interface 2222 inside 192.168.1.50 22` คำว่า `current-interface` หมายถึงอะไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "ใช้ IP ของ interface ที่ตั้งคำสั่งนี้เป็น public address"
+      },
+      {
+        "id": "b",
+        "text": "ใช้ IP ของ interface ฝั่ง LAN"
+      },
+      {
+        "id": "c",
+        "text": "ใช้ IP ใดก็ได้ใน pool"
+      },
+      {
+        "id": "d",
+        "text": "ใช้ loopback"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "`current-interface` ใช้ **IP ของ interface ปัจจุบัน** (ขาออก) เหมาะกับกรณีมี public IP ตัวเดียวหรือเป็น IP แบบ dynamic — ผู้ใช้ภายนอกเข้า port 2222 ของ IP นั้นจะไปถึง SSH (22) ของ 192.168.1.50",
+    "ref": "Book1 Ch10 §10.2.5",
+    "en": {
+      "question": "In `nat server protocol tcp global current-interface 2222 inside 192.168.1.50 22`, what does `current-interface` mean?",
+      "options": {
+        "a": "Use the IP of the interface where this command is configured as the public address",
+        "b": "Use the IP of the LAN-side interface",
+        "c": "Use any IP in the pool",
+        "d": "Use the loopback"
+      }
+    }
+  },
+  {
+    "id": "m9-direction-021",
+    "module": "M9",
+    "topic": "NAT concepts",
+    "type": "single",
+    "difficulty": 2,
+    "question": "เมื่อ packet ขาออกจาก PC1 (192.168.1.10) ผ่าน Easy IP บน R1 ไปยัง 8.8.8.8 address ใดของ packet ถูกเปลี่ยน",
+    "diagram": "m9-nat",
+    "options": [
+      {
+        "id": "a",
+        "text": "Destination IP เปลี่ยนเป็น 202.1.1.1"
+      },
+      {
+        "id": "b",
+        "text": "Source IP เปลี่ยนเป็น 202.1.1.1 และอาจเปลี่ยน source port"
+      },
+      {
+        "id": "c",
+        "text": "ทั้ง source และ destination เปลี่ยน"
+      },
+      {
+        "id": "d",
+        "text": "ไม่มีการเปลี่ยน"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "NAT ขาออก (source NAT) เปลี่ยน **source** เป็น public (202.1.1.1 ของ G0/0/1) และ NAPT/Easy IP เปลี่ยน source port ด้วย เมื่อ reply กลับมา destination จะถูกแปลงกลับเป็น 192.168.1.10",
+    "ref": "Book1 Ch10 §10.2.4",
+    "en": {
+      "question": "When an outbound packet from PC1 (192.168.1.10) to 8.8.8.8 passes through Easy IP on R1, which address(es) in the packet are changed?",
+      "options": {
+        "a": "The destination IP changes to 202.1.1.1",
+        "b": "The source IP changes to 202.1.1.1, and the source port may change",
+        "c": "Both source and destination change",
+        "d": "Nothing changes"
+      }
+    }
+  },
+  {
+    "id": "m9-easyip-006",
+    "module": "M9",
+    "topic": "Easy IP",
+    "type": "single",
+    "difficulty": 2,
+    "question": "คำสั่งใดเป็นการตั้งค่า **Easy IP** บน interface ขาออก",
+    "options": [
+      {
+        "id": "a",
+        "text": "`nat outbound 2000`"
+      },
+      {
+        "id": "b",
+        "text": "`nat outbound 2000 address-group 1`"
+      },
+      {
+        "id": "c",
+        "text": "`nat static global 202.1.1.1 inside 192.168.1.1`"
+      },
+      {
+        "id": "d",
+        "text": "`nat server protocol tcp global current-interface 80 inside 192.168.1.10 80`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "`nat outbound <acl>` **โดยไม่มี address-group** = Easy IP ใช้ IP ของ interface · มี address-group = NAPT · `nat static` = Static NAT · `nat server` = NAT Server",
+    "ref": "Book1 Ch10 §10.2.4",
+    "en": {
+      "question": "Which command configures **Easy IP** on the outbound interface?",
+      "options": {
+        "a": "`nat outbound 2000`",
+        "b": "`nat outbound 2000 address-group 1`",
+        "c": "`nat static global 202.1.1.1 inside 192.168.1.1`",
+        "d": "`nat server protocol tcp global current-interface 80 inside 192.168.1.10 80`"
+      }
+    }
+  },
+  {
+    "id": "m9-group-016",
+    "module": "M9",
+    "topic": "NAT configuration",
+    "type": "single",
+    "difficulty": 1,
+    "question": "คำสั่งใดสร้าง pool ของ public IP สำหรับ NAT บน Huawei AR",
+    "options": [
+      {
+        "id": "a",
+        "text": "`ip nat pool 1 202.1.1.11 202.1.1.20`"
+      },
+      {
+        "id": "b",
+        "text": "`nat address-group 1 202.1.1.11 202.1.1.20`"
+      },
+      {
+        "id": "c",
+        "text": "`nat pool 1 network 202.1.1.0`"
+      },
+      {
+        "id": "d",
+        "text": "`address-pool nat 202.1.1.11 to 202.1.1.20`"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Huawei ใช้ `nat address-group <id> <start> <end>` · `ip nat pool` เป็นของ Cisco",
+    "ref": "Book1 Ch10 §10.2.2",
+    "en": {
+      "question": "Which command creates a pool of public IPs for NAT on a Huawei AR router?",
+      "options": {
+        "a": "`ip nat pool 1 202.1.1.11 202.1.1.20`",
+        "b": "`nat address-group 1 202.1.1.11 202.1.1.20`",
+        "c": "`nat pool 1 network 202.1.1.0`",
+        "d": "`address-pool nat 202.1.1.11 to 202.1.1.20`"
+      }
+    }
+  },
+  {
+    "id": "m9-gw-018",
+    "module": "M9",
+    "topic": "Troubleshooting",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ตั้ง NAT Server ให้ web server ภายในถูกต้องและ `display nat server` แสดงรายการครบ ผู้ใช้ภายนอกส่ง SYN มาถึง server แล้ว แต่ไม่ได้รับคำตอบ สาเหตุที่น่าจะเป็นที่สุดคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "web server ไม่มี default gateway ชี้มาที่ R1 (หรือชี้ไปทางอื่น)"
+      },
+      {
+        "id": "b",
+        "text": "ACL ของ NAT ไม่ถูกต้อง"
+      },
+      {
+        "id": "c",
+        "text": "ต้องใช้ Easy IP ด้วย"
+      },
+      {
+        "id": "d",
+        "text": "ISP ไม่มี route ไป 192.168.1.0/24"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "packet ขาเข้ามาถึง server แล้ว แสดงว่าการแปลงทำงาน แต่ reply จาก server ต้องกลับผ่าน R1 เพื่อแปลงกลับ ถ้า server **ไม่มี gateway ไปที่ R1** reply จะไม่ถูกแปลงหรือไปไม่ถึง · NAT Server ไม่ใช้ ACL และ ISP ไม่จำเป็นต้องรู้จัก private subnet",
+    "ref": "Book1 Ch10 §10.3",
+    "en": {
+      "question": "NAT Server is configured correctly for an internal web server, and `display nat server` shows the entry. External users' SYN packets reach the server, but they get no reply. What is the most likely cause?",
+      "options": {
+        "a": "The web server has no default gateway pointing to R1 (or it points elsewhere)",
+        "b": "The NAT ACL is wrong",
+        "c": "Easy IP must also be configured",
+        "d": "The ISP has no route to 192.168.1.0/24"
+      }
+    }
+  },
+  {
+    "id": "m9-interface-014",
+    "module": "M9",
+    "topic": "NAT configuration",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "บน Huawei AR router คำสั่ง `nat outbound` ต้องตั้งที่ interface ฝั่ง **ภายใน (LAN)** ที่ผู้ใช้เชื่อมต่ออยู่",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "`nat outbound`, `nat static`, `nat server` ตั้งที่ **interface ขาออก** (ฝั่ง ISP/public)",
+    "ref": "Book1 Ch10 §10.2",
+    "en": {
+      "question": "On a Huawei AR router, the `nat outbound` command must be configured on the **inside (LAN)** interface where users are connected."
+    }
+  },
+  {
+    "id": "m9-ipv6-024",
+    "module": "M9",
+    "topic": "NAT concepts",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "ใน IPv6 เครือข่ายส่วนใหญ่ไม่จำเป็นต้องใช้ NAT เพื่อประหยัด address เพราะ address space มีขนาดใหญ่พอให้ทุกอุปกรณ์มี global address ของตัวเอง",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "IPv6 มี 128 bit จึงไม่ขาดแคลน address การใช้ NAT เพื่อประหยัด IP จึงไม่จำเป็น และช่วยให้กลับมาสื่อสารแบบ end-to-end ได้ (ความปลอดภัยใช้ firewall แทน)",
+    "ref": "Book1 Ch13",
+    "en": {
+      "question": "In IPv6, most networks do not need NAT to conserve addresses, because the address space is large enough for every device to have its own global address."
+    }
+  },
+  {
+    "id": "m9-multi-022",
+    "module": "M9",
+    "topic": "NAT configuration",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "ข้อใด **จำเป็น** สำหรับการให้ PC ใน 192.168.1.0/24 ออกอินเทอร์เน็ตด้วย NAPT ผ่าน pool บน R1 (เลือกทุกข้อที่จำเป็น)",
+    "options": [
+      {
+        "id": "a",
+        "text": "ACL ที่ permit source 192.168.1.0 0.0.0.255"
+      },
+      {
+        "id": "b",
+        "text": "`nat address-group` ที่มี public IP"
+      },
+      {
+        "id": "c",
+        "text": "`nat outbound <acl> address-group <id>` บน interface ขาออก"
+      },
+      {
+        "id": "d",
+        "text": "default route ไปยัง ISP"
+      },
+      {
+        "id": "e",
+        "text": "`nat server` สำหรับ PC ทุกเครื่อง"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "NAPT ต้องการ ACL เลือก traffic + address-group + nat outbound + route ออก ISP · nat server ใช้เฉพาะเมื่อต้องการให้ภายนอกเข้ามาหา server ไม่จำเป็นสำหรับการออก",
+    "ref": "Book1 Ch10 §10.2.3",
+    "en": {
+      "question": "Which items are **required** for PCs in 192.168.1.0/24 to access the Internet with NAPT using a pool on R1? (Choose all that apply.)",
+      "options": {
+        "a": "An ACL that permits source 192.168.1.0 0.0.0.255",
+        "b": "A `nat address-group` containing public IPs",
+        "c": "`nat outbound <acl> address-group <id>` on the outbound interface",
+        "d": "A default route to the ISP",
+        "e": "A `nat server` entry for every PC"
+      }
+    }
+  },
+  {
+    "id": "m9-napt-009",
+    "module": "M9",
+    "topic": "NAPT",
+    "type": "single",
+    "difficulty": 2,
+    "question": "NAPT ทำให้หลาย host ภายในใช้ public IP เดียวพร้อมกันได้โดยอาศัยข้อมูลใดในการแยก session",
+    "options": [
+      {
+        "id": "a",
+        "text": "MAC address"
+      },
+      {
+        "id": "b",
+        "text": "หมายเลข port ของ transport layer (หรือ ICMP ID)"
+      },
+      {
+        "id": "c",
+        "text": "TTL"
+      },
+      {
+        "id": "d",
+        "text": "VLAN ID"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "NAPT แปลงทั้ง IP และ **port** (สำหรับ ICMP ใช้ Identifier) แล้วเก็บใน NAT session table เมื่อ packet ตอบกลับมาจะดูพอร์ตปลายทางเพื่อหาว่าเป็นของ host ใด",
+    "ref": "Book1 Ch10 §10.2.3",
+    "en": {
+      "question": "NAPT allows many internal hosts to share one public IP at the same time. What information does it use to distinguish sessions?",
+      "options": {
+        "a": "MAC address",
+        "b": "Transport-layer port number (or ICMP ID)",
+        "c": "TTL",
+        "d": "VLAN ID"
+      }
+    }
+  },
+  {
+    "id": "m9-natsrv-011",
+    "module": "M9",
+    "topic": "NAT Server",
+    "type": "single",
+    "difficulty": 2,
+    "question": "คำสั่งใดทำให้ผู้ใช้ภายนอกที่เข้า `202.1.1.5:80` ถูกส่งไปยัง web server ภายใน `192.168.1.100:8080`",
+    "options": [
+      {
+        "id": "a",
+        "text": "`nat server protocol tcp global 202.1.1.5 www inside 192.168.1.100 8080`"
+      },
+      {
+        "id": "b",
+        "text": "`nat server protocol tcp global 192.168.1.100 8080 inside 202.1.1.5 www`"
+      },
+      {
+        "id": "c",
+        "text": "`nat static global 202.1.1.5 inside 192.168.1.100`"
+      },
+      {
+        "id": "d",
+        "text": "`nat outbound 3000 address-group 1`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "รูปแบบ: `nat server protocol <tcp|udp> global <public-ip> <port> inside <private-ip> <port>` — global คือฝั่งนอก inside คือ server ภายใน (www = 80) ข้อ b สลับกัน ข้อ c แปลงทุกพอร์ตและไม่เปลี่ยน port เป็น 8080",
+    "ref": "Book1 Ch10 §10.2.5",
+    "en": {
+      "question": "Which command sends external users who connect to `202.1.1.5:80` to the internal web server `192.168.1.100:8080`?",
+      "options": {
+        "a": "`nat server protocol tcp global 202.1.1.5 www inside 192.168.1.100 8080`",
+        "b": "`nat server protocol tcp global 192.168.1.100 8080 inside 202.1.1.5 www`",
+        "c": "`nat static global 202.1.1.5 inside 192.168.1.100`",
+        "d": "`nat outbound 3000 address-group 1`"
+      }
+    }
+  },
+  {
+    "id": "m9-nolimit-025",
+    "module": "M9",
+    "topic": "NAT types",
+    "type": "single",
+    "difficulty": 1,
+    "question": "NAT แบบใด **ไม่ต้องสร้าง address-group**",
+    "options": [
+      {
+        "id": "a",
+        "text": "NAPT"
+      },
+      {
+        "id": "b",
+        "text": "Dynamic NAT"
+      },
+      {
+        "id": "c",
+        "text": "Easy IP"
+      },
+      {
+        "id": "d",
+        "text": "ทุกแบบต้องสร้าง"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "Easy IP ใช้ IP ของ interface ขาออกโดยตรง ไม่ต้องมี pool (address-group)",
+    "ref": "Book1 Ch10 §10.2.4",
+    "en": {
+      "question": "Which NAT type does **not** require creating an address-group?",
+      "options": {
+        "a": "NAPT",
+        "b": "Dynamic NAT",
+        "c": "Easy IP",
+        "d": "All types require one"
+      }
+    }
+  },
+  {
+    "id": "m9-nopat-005",
+    "module": "M9",
+    "topic": "Dynamic NAT",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ตั้งค่าดังนี้ ถ้ามีผู้ใช้ภายใน **5 เครื่อง** ต้องการออกอินเทอร์เน็ตพร้อมกัน ผลคือข้อใด\n\n```vrp\n[R1]nat address-group 1 202.1.1.11 202.1.1.13\n[R1-GigabitEthernet0/0/1]nat outbound 2000 address-group 1 no-pat\n```",
+    "options": [
+      {
+        "id": "a",
+        "text": "ทุกเครื่องออกได้ เพราะแยกด้วย port"
+      },
+      {
+        "id": "b",
+        "text": "ออกได้พร้อมกันสูงสุด 3 เครื่อง เครื่องที่เหลือต้องรอ public IP ว่าง"
+      },
+      {
+        "id": "c",
+        "text": "ออกได้แค่ 1 เครื่อง"
+      },
+      {
+        "id": "d",
+        "text": "ไม่มีเครื่องใดออกได้เพราะ pool เล็กเกินไป"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "`no-pat` = Dynamic NAT แปลงเฉพาะ IP แบบ 1:1 ชั่วคราว pool มี 3 address (.11–.13) จึงรองรับได้ 3 host พร้อมกัน ถ้าตัด `no-pat` ออก (NAPT) ทั้ง 5 เครื่องจะออกได้",
+    "ref": "Book1 Ch10 §10.2.2",
+    "en": {
+      "question": "With the following configuration, what happens if **5** internal hosts want to access the Internet at the same time?\n\n```vrp\n[R1]nat address-group 1 202.1.1.11 202.1.1.13\n[R1-GigabitEthernet0/0/1]nat outbound 2000 address-group 1 no-pat\n```",
+      "options": {
+        "a": "All hosts can access it because sessions are distinguished by port",
+        "b": "At most 3 hosts can access it at once; the others must wait for a free public IP",
+        "c": "Only 1 host can access it",
+        "d": "No host can access it because the pool is too small"
+      }
+    }
+  },
+  {
+    "id": "m9-order-023",
+    "module": "M9",
+    "topic": "NAT configuration",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงขั้นตอนตั้งค่า NAPT บน R1",
+    "options": [
+      {
+        "id": "a",
+        "text": "สร้าง ACL ที่ permit subnet ภายใน"
+      },
+      {
+        "id": "b",
+        "text": "สร้าง `nat address-group` ของ public IP"
+      },
+      {
+        "id": "c",
+        "text": "เข้า interface ขาออก"
+      },
+      {
+        "id": "d",
+        "text": "สั่ง `nat outbound <acl> address-group <id>`"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "ต้องมี ACL และ address-group ก่อนจึงอ้างถึงในคำสั่ง `nat outbound` ที่ interface ขาออกได้ (ลำดับ ACL กับ address-group สลับกันได้ แต่ทั้งคู่ต้องมาก่อน nat outbound)",
+    "ref": "Book1 Ch10 §10.2.3",
+    "en": {
+      "question": "Arrange the steps to configure NAPT on R1.",
+      "options": {
+        "a": "Create an ACL that permits the internal subnet",
+        "b": "Create a `nat address-group` of public IPs",
+        "c": "Enter the outbound interface",
+        "d": "Run `nat outbound <acl> address-group <id>`"
+      }
+    }
+  },
+  {
+    "id": "m9-pick-020",
+    "module": "M9",
+    "topic": "NAT types",
+    "type": "single",
+    "difficulty": 2,
+    "question": "องค์กรมี public IP 8 address และ server ภายใน 3 ตัวที่ต้องให้คนภายนอกเข้าถึง **ทุกพอร์ต** ด้วย IP ประจำตัว ควรใช้วิธีใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "Static NAT สำหรับแต่ละ server"
+      },
+      {
+        "id": "b",
+        "text": "Easy IP"
+      },
+      {
+        "id": "c",
+        "text": "Dynamic NAT"
+      },
+      {
+        "id": "d",
+        "text": "NAPT"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ต้องการ public IP ประจำต่อ server และเข้าถึงได้ทุกพอร์ต → **Static NAT** 1:1 · ถ้าต้องการเฉพาะบางพอร์ตจะใช้ NAT Server ประหยัดกว่า",
+    "ref": "Book1 Ch10 §10.2.1",
+    "en": {
+      "question": "An organization has 8 public IPs and 3 internal servers that external users must reach on **all ports**, each with its own fixed IP. Which method should be used?",
+      "options": {
+        "a": "Static NAT for each server",
+        "b": "Easy IP",
+        "c": "Dynamic NAT",
+        "d": "NAPT"
+      }
+    }
+  },
+  {
+    "id": "m9-private-001",
+    "module": "M9",
+    "topic": "Private address",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "address ใดเป็น **private IPv4** ตาม RFC 1918 (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "10.200.1.1"
+      },
+      {
+        "id": "b",
+        "text": "172.31.255.1"
+      },
+      {
+        "id": "c",
+        "text": "192.168.100.5"
+      },
+      {
+        "id": "d",
+        "text": "172.32.0.1"
+      },
+      {
+        "id": "e",
+        "text": "100.64.0.1"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "private: 10.0.0.0/8, **172.16.0.0/12 (172.16–172.31)**, 192.168.0.0/16 · 172.32.0.1 อยู่นอกช่วง /12 · 100.64.0.0/10 เป็น shared address space สำหรับ CGN ไม่ใช่ RFC 1918",
+    "ref": "Book1 Ch10 §10.1",
+    "en": {
+      "question": "Which addresses are **private IPv4** addresses according to RFC 1918? (Choose all that apply.)",
+      "options": {
+        "a": "10.200.1.1",
+        "b": "172.31.255.1",
+        "c": "192.168.100.5",
+        "d": "172.32.0.1",
+        "e": "100.64.0.1"
+      }
+    }
+  },
+  {
+    "id": "m9-route-013",
+    "module": "M9",
+    "topic": "Troubleshooting",
+    "type": "single",
+    "difficulty": 3,
+    "question": "R1 ใช้ NAPT ด้วย address-group 203.0.113.0/28 ซึ่ง **คนละ subnet** กับ IP ของ interface ขาออก (202.1.1.1/24) packet ออกไปถึง server แล้วแต่ไม่มีคำตอบกลับมา สาเหตุที่น่าจะเป็นคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ISP ไม่มี route ของ 203.0.113.0/28 ชี้กลับมาที่ R1"
+      },
+      {
+        "id": "b",
+        "text": "ACL ผิด"
+      },
+      {
+        "id": "c",
+        "text": "R1 ไม่มี default route"
+      },
+      {
+        "id": "d",
+        "text": "ต้องใช้ no-pat"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "เมื่อ pool อยู่นอก subnet ของ interface ฝั่ง ISP ต้องให้ ISP มี **route ของ pool ชี้กลับมาที่ R1** มิฉะนั้น reply ไปไม่ถึง · ถ้าไม่มี default route packet จะออกไปไม่ถึง server ตั้งแต่แรก",
+    "ref": "Book1 Ch10 §10.3",
+    "en": {
+      "question": "R1 uses NAPT with address-group 203.0.113.0/28, which is in a **different subnet** from the outbound interface IP (202.1.1.1/24). Packets reach the server, but no replies come back. What is the likely cause?",
+      "options": {
+        "a": "The ISP has no route for 203.0.113.0/28 pointing back to R1",
+        "b": "The ACL is wrong",
+        "c": "R1 has no default route",
+        "d": "no-pat must be used"
+      }
+    }
+  },
+  {
+    "id": "m9-server-004",
+    "module": "M9",
+    "topic": "NAT Server",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ต้องการให้ผู้ใช้อินเทอร์เน็ตเข้าถึง web server ภายใน (192.168.1.100) ผ่าน public IP ของบริษัท ควรใช้ฟีเจอร์ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "Easy IP"
+      },
+      {
+        "id": "b",
+        "text": "NAPT"
+      },
+      {
+        "id": "c",
+        "text": "NAT Server"
+      },
+      {
+        "id": "d",
+        "text": "Dynamic NAT"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "**NAT Server** แมป public IP:port ไปยัง server ภายใน ให้ฝั่งนอกเริ่มการเชื่อมต่อเข้ามาได้ · Easy IP/NAPT/Dynamic NAT รองรับเฉพาะการเชื่อมต่อที่เริ่มจากภายใน",
+    "ref": "Book1 Ch10 §10.2.5",
+    "en": {
+      "question": "Internet users need to reach an internal web server (192.168.1.100) through the company's public IP. Which feature should be used?",
+      "options": {
+        "a": "Easy IP",
+        "b": "NAPT",
+        "c": "NAT Server",
+        "d": "Dynamic NAT"
+      }
+    }
+  },
+  {
+    "id": "m9-session-010",
+    "module": "M9",
+    "topic": "Verification",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก output ข้อใดถูกต้อง\n\n```vrp\n<R1>display nat session all\n  Protocol          : TCP(6)\n  SrcAddr  Port Vpn : 192.168.1.11 51022\n  DestAddr Port Vpn : 8.8.8.8 443\n  NAT-Info\n    New SrcAddr     : 202.1.1.1\n    New SrcPort     : 10241\n    New DestAddr    : ----\n    New DestPort    : ----\n```",
+    "diagram": "m9-nat",
+    "options": [
+      {
+        "id": "a",
+        "text": "เป็น Static NAT ของ 8.8.8.8"
+      },
+      {
+        "id": "b",
+        "text": "PC 192.168.1.11 ออกไป HTTPS โดย source ถูกแปลงเป็น 202.1.1.1:10241"
+      },
+      {
+        "id": "c",
+        "text": "destination ถูกแปลงเป็น 202.1.1.1"
+      },
+      {
+        "id": "d",
+        "text": "เป็น NAT Server"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "เปลี่ยนเฉพาะ source (IP และ port) — เป็น NAPT/Easy IP ขาออก (202.1.1.1 คือ IP ของ G0/0/1 จึงน่าจะเป็น Easy IP) · destination ไม่ถูกเปลี่ยน (----)",
+    "ref": "Book1 Ch10 §10.3",
+    "en": {
+      "question": "Refer to the output. Which statement is correct?\n\n```vrp\n<R1>display nat session all\n  Protocol          : TCP(6)\n  SrcAddr  Port Vpn : 192.168.1.11 51022\n  DestAddr Port Vpn : 8.8.8.8 443\n  NAT-Info\n    New SrcAddr     : 202.1.1.1\n    New SrcPort     : 10241\n    New DestAddr    : ----\n    New DestPort    : ----\n```",
+      "options": {
+        "a": "It is static NAT for 8.8.8.8",
+        "b": "PC 192.168.1.11 accesses HTTPS, and its source is translated to 202.1.1.1:10241",
+        "c": "The destination is translated to 202.1.1.1",
+        "d": "It is NAT Server"
+      }
+    }
+  },
+  {
+    "id": "m9-static-008",
+    "module": "M9",
+    "topic": "Static NAT",
+    "type": "single",
+    "difficulty": 2,
+    "question": "คำสั่ง `nat static global 202.1.1.10 inside 192.168.1.10` บน G0/0/1 มีผลอย่างไร",
+    "diagram": "m9-nat",
+    "options": [
+      {
+        "id": "a",
+        "text": "แปลงเฉพาะขาออก ฝั่งนอกเริ่มการเชื่อมต่อเข้ามาไม่ได้"
+      },
+      {
+        "id": "b",
+        "text": "แปลง 1:1 ถาวรทั้งสองทิศ ฝั่งนอกเชื่อมต่อเข้ามาที่ 202.1.1.10 แล้วถึง 192.168.1.10 ได้"
+      },
+      {
+        "id": "c",
+        "text": "แปลงทุก host ใน 192.168.1.0/24"
+      },
+      {
+        "id": "d",
+        "text": "แปลงเฉพาะ TCP port 10"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Static NAT ผูก private ↔ public แบบ **1:1 ถาวร** ใช้ได้ทั้งขาออกและขาเข้า แต่ใช้ public IP หนึ่งตัวต่อ host หนึ่งตัว",
+    "ref": "Book1 Ch10 §10.2.1",
+    "en": {
+      "question": "What is the effect of `nat static global 202.1.1.10 inside 192.168.1.10` on G0/0/1?",
+      "options": {
+        "a": "Translates outbound only; external hosts cannot initiate connections",
+        "b": "Permanent 1:1 translation in both directions; external hosts can connect to 202.1.1.10 and reach 192.168.1.10",
+        "c": "Translates all hosts in 192.168.1.0/24",
+        "d": "Translates only TCP port 10"
+      }
+    }
+  },
+  {
+    "id": "m9-trouble-012",
+    "module": "M9",
+    "topic": "Troubleshooting",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ตั้ง Easy IP ครบแล้วแต่ PC ภายในยัง ping 8.8.8.8 ไม่ได้ ตรวจพบว่า `display nat session all` ไม่มี session เลย และ R1 ping 8.8.8.8 เองได้ สาเหตุใดน่าเป็นไปได้มากที่สุด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ISP ไม่มี route กลับ"
+      },
+      {
+        "id": "b",
+        "text": "ACL ที่ใช้กับ nat outbound ไม่ permit subnet ของ PC หรือคำสั่ง nat outbound อยู่บน interface ฝั่ง LAN"
+      },
+      {
+        "id": "c",
+        "text": "PC ใช้ IPv6"
+      },
+      {
+        "id": "d",
+        "text": "DNS ผิด"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "R1 ออกอินเทอร์เน็ตได้ = มี route ไป ISP และ ISP ตอบกลับได้ · ไม่มี session เลย = packet ไม่ถูกแปลง ปกติเกิดจาก **ACL ไม่ match** หรือใส่ `nat outbound` ผิด interface (ต้องเป็นขาออกไป ISP) · DNS ไม่เกี่ยวเพราะ ping ด้วย IP",
+    "ref": "Book1 Ch10 §10.3",
+    "en": {
+      "question": "Easy IP is fully configured, but internal PCs still cannot ping 8.8.8.8. `display nat session all` shows no sessions, and R1 itself can ping 8.8.8.8. What is the most likely cause?",
+      "options": {
+        "a": "The ISP has no return route",
+        "b": "The ACL used with nat outbound does not permit the PC subnet, or the nat outbound command is on the LAN-side interface",
+        "c": "The PCs are using IPv6",
+        "d": "DNS is misconfigured"
+      }
+    }
+  },
+  {
+    "id": "m9-type-003",
+    "module": "M9",
+    "topic": "NAT types",
+    "type": "single",
+    "difficulty": 1,
+    "question": "บริษัทมี public IP เพียง **1 address** (ได้จาก ISP ผ่าน PPPoE และเปลี่ยนได้) ต้องการให้ผู้ใช้ 200 คนออกอินเทอร์เน็ต ควรใช้ NAT แบบใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "Static NAT"
+      },
+      {
+        "id": "b",
+        "text": "Dynamic NAT (no-pat)"
+      },
+      {
+        "id": "c",
+        "text": "Easy IP"
+      },
+      {
+        "id": "d",
+        "text": "NAT Server"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "**Easy IP** คือ NAPT ที่ใช้ IP ของ interface ขาออก ไม่ต้องรู้ IP ล่วงหน้า เหมาะกับ IP แบบ dynamic · Static/no-pat ต้องใช้ IP 1:1 · NAT Server ใช้ให้คนข้างนอกเข้ามา",
+    "ref": "Book1 Ch10 §10.2.4",
+    "en": {
+      "question": "A company has only **one** public IP address (obtained from the ISP via PPPoE, and it may change) and wants 200 users to access the Internet. Which NAT type should be used?",
+      "options": {
+        "a": "Static NAT",
+        "b": "Dynamic NAT (no-pat)",
+        "c": "Easy IP",
+        "d": "NAT Server"
+      }
+    }
+  },
+  {
+    "id": "m9-why-002",
+    "module": "M9",
+    "topic": "NAT concepts",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "ข้อใดเป็นผลจากการใช้ NAT (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "ประหยัด public IPv4 address"
+      },
+      {
+        "id": "b",
+        "text": "ซ่อนโครงสร้างเครือข่ายภายใน"
+      },
+      {
+        "id": "c",
+        "text": "ทำให้การสื่อสารแบบ end-to-end ยากขึ้น"
+      },
+      {
+        "id": "d",
+        "text": "บางโปรโตคอลที่ฝัง IP ใน payload ต้องใช้ ALG"
+      },
+      {
+        "id": "e",
+        "text": "เพิ่มความเร็วในการ forward packet"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "NAT ประหยัด IP และซ่อนภายใน แต่ทำลาย end-to-end, ต้องใช้ ALG กับโปรโตคอลอย่าง FTP และ **เพิ่มภาระประมวลผล** ให้ router ไม่ได้เร็วขึ้น",
+    "ref": "Book1 Ch10 §10.1",
+    "en": {
+      "question": "Which of the following are results of using NAT? (Choose all that apply.)",
+      "options": {
+        "a": "Conserves public IPv4 addresses",
+        "b": "Hides the internal network structure",
+        "c": "Makes end-to-end communication harder",
+        "d": "Some protocols that embed IP addresses in the payload need an ALG",
+        "e": "Increases packet forwarding speed"
+      }
+    }
+  }
 ]

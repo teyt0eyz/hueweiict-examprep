@@ -1,476 +1,606 @@
 [
- {
-  "id": "m16-arch-011",
-  "module": "M16",
-  "topic": "NFV architecture",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ในสถาปัตยกรรม ETSI NFV ส่วนใดคือ **ฮาร์ดแวร์และ virtualization layer** ที่ VNF รันอยู่",
-  "options": [
-   {
-    "id": "a",
-    "text": "VNF"
-   },
-   {
-    "id": "b",
-    "text": "NFVI"
-   },
-   {
-    "id": "c",
-    "text": "NFVO"
-   },
-   {
-    "id": "d",
-    "text": "OSS/BSS"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**NFVI** = compute, storage, network + hypervisor · VNF คือฟังก์ชันเครือข่ายที่เป็นซอฟต์แวร์ · NFVO เป็นส่วนหนึ่งของ MANO",
-  "ref": "Book1 Ch17 §17.3.4"
- },
- {
-  "id": "m16-concept-003",
-  "module": "M16",
-  "topic": "SDN concepts",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "แนวคิดหลักของ **SDN** คือข้อใด (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "แยก control plane ออกจาก forwarding plane"
-   },
-   {
-    "id": "b",
-    "text": "ควบคุมแบบรวมศูนย์ผ่าน controller"
-   },
-   {
-    "id": "c",
-    "text": "เปิดให้โปรแกรมควบคุมเครือข่ายได้ผ่าน open interface"
-   },
-   {
-    "id": "d",
-    "text": "ย้ายฟังก์ชันเครือข่ายจากฮาร์ดแวร์เฉพาะไปเป็น VM"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "SDN = แยก control/forwarding + รวมศูนย์ + programmable · การย้ายฟังก์ชันไปเป็นซอฟต์แวร์บน server มาตรฐานคือแนวคิดของ **NFV**",
-  "ref": "Book1 Ch17 §17.2.1"
- },
- {
-  "id": "m16-ctrl-014",
-  "module": "M16",
-  "topic": "SDN architecture",
-  "type": "single",
-  "difficulty": 1,
-  "question": "อุปกรณ์/ซอฟต์แวร์ใดใน SDN ที่มีมุมมองทั้งเครือข่ายและคำนวณเส้นทางให้อุปกรณ์ forwarding",
-  "diagram": "m16-sdn",
-  "options": [
-   {
-    "id": "a",
-    "text": "SDN controller"
-   },
-   {
-    "id": "b",
-    "text": "Access switch"
-   },
-   {
-    "id": "c",
-    "text": "NMS ที่ใช้ SNMPv1 เท่านั้น"
-   },
-   {
-    "id": "d",
-    "text": "DHCP server"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "**SDN controller** อยู่ใน control layer เป็นศูนย์กลางควบคุม (เช่น Huawei iMaster NCE) แล้วสั่งอุปกรณ์ผ่าน SBI",
-  "ref": "Book1 Ch17 §17.2.4"
- },
- {
-  "id": "m16-flow-006",
-  "module": "M16",
-  "topic": "OpenFlow",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ส่วนประกอบใดอยู่ใน **flow entry** ของ OpenFlow (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "Match fields"
-   },
-   {
-    "id": "b",
-    "text": "Priority"
-   },
-   {
-    "id": "c",
-    "text": "Counters"
-   },
-   {
-    "id": "d",
-    "text": "Instructions"
-   },
-   {
-    "id": "e",
-    "text": "Spanning tree cost"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "flow entry มี match fields, priority, counters, instructions, timeouts และ cookie · STP cost ไม่เกี่ยวข้อง",
-  "ref": "Book1 Ch17 §17.2.3"
- },
- {
-  "id": "m16-mano-012",
-  "module": "M16",
-  "topic": "NFV architecture",
-  "type": "single",
-  "difficulty": 3,
-  "question": "ใน NFV MANO ส่วนใดทำหน้าที่ **จัดการวงจรชีวิตของ VNF** (สร้าง ขยาย ลบ)",
-  "options": [
-   {
-    "id": "a",
-    "text": "NFVO"
-   },
-   {
-    "id": "b",
-    "text": "VNFM"
-   },
-   {
-    "id": "c",
-    "text": "VIM"
-   },
-   {
-    "id": "d",
-    "text": "EMS"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**VNFM** ดูแลวงจรชีวิตของ VNF · **NFVO** orchestrate บริการและทรัพยากรภาพรวม · **VIM** (เช่น OpenStack) จัดการทรัพยากรของ NFVI",
-  "ref": "Book1 Ch17 §17.3.4"
- },
- {
-  "id": "m16-miss-007",
-  "module": "M16",
-  "topic": "OpenFlow",
-  "type": "single",
-  "difficulty": 2,
-  "question": "packet เข้าสู่ OpenFlow switch แต่ไม่ match flow entry ใดเลย switch จะทำอย่างไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "ทำตาม table-miss entry (priority 0) ซึ่งมักส่ง packet ไปให้ controller หรือทิ้ง"
-   },
-   {
-    "id": "b",
-    "text": "flood ออกทุกพอร์ตเสมอ"
-   },
-   {
-    "id": "c",
-    "text": "ใช้ OSPF คำนวณเส้นทางเอง"
-   },
-   {
-    "id": "d",
-    "text": "ส่ง ICMP unreachable เสมอ"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "**table-miss entry** กำหนดการจัดการ packet ที่ไม่ match — โดยทั่วไปส่ง Packet-In ไปถาม controller ซึ่งจะติดตั้ง flow entry ใหม่ หรือทิ้ง packet",
-  "ref": "Book1 Ch17 §17.2.3"
- },
- {
-  "id": "m16-nbi-004",
-  "module": "M16",
-  "topic": "SDN architecture",
-  "type": "single",
-  "difficulty": 2,
-  "question": "interface ระหว่าง **application layer กับ SDN controller** เรียกว่าอะไร และมักใช้รูปแบบใด",
-  "diagram": "m16-sdn",
-  "options": [
-   {
-    "id": "a",
-    "text": "SBI — OpenFlow"
-   },
-   {
-    "id": "b",
-    "text": "NBI — RESTful API"
-   },
-   {
-    "id": "c",
-    "text": "SBI — NETCONF"
-   },
-   {
-    "id": "d",
-    "text": "NBI — SNMP trap"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**Northbound interface (NBI)** เชื่อม application กับ controller มักเป็น RESTful API · **Southbound interface (SBI)** เชื่อม controller กับอุปกรณ์ เช่น OpenFlow, NETCONF",
-  "ref": "Book1 Ch17 §17.2.4"
- },
- {
-  "id": "m16-nfv-009",
-  "module": "M16",
-  "topic": "NFV concepts",
-  "type": "single",
-  "difficulty": 1,
-  "question": "**NFV** มีเป้าหมายหลักคืออะไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "แยก control plane ออกจาก forwarding plane"
-   },
-   {
-    "id": "b",
-    "text": "ทำฟังก์ชันเครือข่าย (เช่น router, firewall) ให้เป็นซอฟต์แวร์ที่รันบน server มาตรฐาน"
-   },
-   {
-    "id": "c",
-    "text": "เพิ่มความเร็วของ Wi-Fi"
-   },
-   {
-    "id": "d",
-    "text": "แทนที่ IPv4 ด้วย IPv6"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "NFV แยกซอฟต์แวร์ออกจากฮาร์ดแวร์เฉพาะ ใช้ virtualization/cloud บนฮาร์ดแวร์ทั่วไป ทำให้ลดต้นทุนและเปิดบริการได้เร็ว",
-  "ref": "Book1 Ch17 §17.3.1"
- },
- {
-  "id": "m16-origin-015",
-  "module": "M16",
-  "topic": "SDN vs NFV",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ข้อใดจับคู่ได้ถูกต้อง",
-  "options": [
-   {
-    "id": "a",
-    "text": "SDN — เปลี่ยนวิธีควบคุมเครือข่าย · NFV — เปลี่ยนรูปแบบของอุปกรณ์เครือข่ายให้เป็นซอฟต์แวร์"
-   },
-   {
-    "id": "b",
-    "text": "SDN — ทำ VNF · NFV — ใช้ OpenFlow"
-   },
-   {
-    "id": "c",
-    "text": "SDN — มาจาก ETSI · NFV — มาจากงานวิจัย OpenFlow"
-   },
-   {
-    "id": "d",
-    "text": "ทั้งสองแนวคิดเหมือนกันทุกประการ"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "SDN มุ่งที่การรวมศูนย์และ programmability ของการควบคุม (เริ่มจากงานวิจัย OpenFlow) · NFV มุ่งที่การ virtualize ฟังก์ชันเครือข่าย (ริเริ่มโดยผู้ให้บริการผ่าน ETSI)",
-  "ref": "Book1 Ch17 §17.3"
- },
- {
-  "id": "m16-plane-001",
-  "module": "M16",
-  "topic": "Traditional networks",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ในอุปกรณ์เครือข่ายแบบดั้งเดิม การคำนวณเส้นทางด้วย OSPF เป็นงานของ plane ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "Management plane"
-   },
-   {
-    "id": "b",
-    "text": "Control plane"
-   },
-   {
-    "id": "c",
-    "text": "Data (forwarding) plane"
-   },
-   {
-    "id": "d",
-    "text": "Application plane"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**control plane** ตัดสินใจและสร้างตาราง (OSPF, STP, ARP) · data plane ส่ง packet ตามตาราง · management plane ใช้ตั้งค่าและเฝ้าระวัง",
-  "ref": "Book1 Ch17 §17.1.1"
- },
- {
-  "id": "m16-priority-008",
-  "module": "M16",
-  "topic": "OpenFlow",
-  "type": "single",
-  "difficulty": 2,
-  "question": "packet หนึ่ง match flow entry สองรายการในตารางเดียวกัน switch จะเลือกรายการใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "รายการที่ถูกติดตั้งก่อน"
-   },
-   {
-    "id": "b",
-    "text": "รายการที่มี priority สูงกว่า"
-   },
-   {
-    "id": "c",
-    "text": "รายการที่มี counter มากกว่า"
-   },
-   {
-    "id": "d",
-    "text": "สุ่มเลือก"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "ใน OpenFlow flow table entry ที่ **priority สูงกว่า** ถูกเลือก — ต่างจาก ACL ของ VRP ที่ใช้ rule ID น้อยกว่าก่อน",
-  "ref": "Book1 Ch17 §17.2.3"
- },
- {
-  "id": "m16-problem-002",
-  "module": "M16",
-  "topic": "Traditional networks",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ข้อใดเป็นปัญหาของเครือข่ายแบบดั้งเดิมที่ control plane กระจายอยู่ในทุกอุปกรณ์ (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "ต้องตั้งค่าทีละเครื่อง ใช้เวลานานและผิดพลาดง่าย"
-   },
-   {
-    "id": "b",
-    "text": "ยากที่จะมองภาพรวมและปรับเส้นทางตามสภาพ traffic จริง"
-   },
-   {
-    "id": "c",
-    "text": "เพิ่มบริการใหม่ได้ช้าเพราะต้องรอฟีเจอร์จากผู้ผลิต"
-   },
-   {
-    "id": "d",
-    "text": "ไม่สามารถส่ง packet ได้เลย"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "การควบคุมแบบกระจายทำให้จัดการยาก ขาดมุมมองทั้งเครือข่าย และไม่ยืดหยุ่น แต่ยังส่งข้อมูลได้ตามปกติ",
-  "ref": "Book1 Ch17 §17.1.2"
- },
- {
-  "id": "m16-relation-013",
-  "module": "M16",
-  "topic": "SDN vs NFV",
-  "type": "truefalse",
-  "difficulty": 2,
-  "question": "SDN และ NFV ต้องใช้งานร่วมกันเสมอ ใช้แยกกันไม่ได้",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "SDN และ NFV **เป็นอิสระต่อกัน** แต่เสริมกัน — ใช้ NFV โดยไม่มี SDN ก็ได้ และ SDN ควบคุมอุปกรณ์ฮาร์ดแวร์ก็ได้",
-  "ref": "Book1 Ch17 §17.3"
- },
- {
-  "id": "m16-sbi-005",
-  "module": "M16",
-  "topic": "SDN architecture",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "โปรโตคอลใดใช้เป็น **southbound interface** ระหว่าง controller กับอุปกรณ์ได้ (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "OpenFlow"
-   },
-   {
-    "id": "b",
-    "text": "NETCONF"
-   },
-   {
-    "id": "c",
-    "text": "BGP-LS / PCEP"
-   },
-   {
-    "id": "d",
-    "text": "HTTP ระหว่าง browser ของผู้ใช้กับเว็บไซต์"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "SBI ได้แก่ OpenFlow, NETCONF, BGP-LS, PCEP, SNMP ฯลฯ · HTTP ของผู้ใช้ทั่วไปไม่ใช่ interface ควบคุมเครือข่าย",
-  "ref": "Book1 Ch17 §17.2.4"
- },
- {
-  "id": "m16-value-010",
-  "module": "M16",
-  "topic": "NFV concepts",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ประโยชน์ของ NFV คือข้อใด (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "ลดต้นทุนฮาร์ดแวร์และพลังงานด้วย server มาตรฐาน"
-   },
-   {
-    "id": "b",
-    "text": "เปิดบริการใหม่และขยายขนาดได้รวดเร็ว"
-   },
-   {
-    "id": "c",
-    "text": "ลดการผูกติดกับผู้ผลิตฮาร์ดแวร์รายเดียว"
-   },
-   {
-    "id": "d",
-    "text": "ทำให้ไม่ต้องมีการบริหารจัดการใด ๆ"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "NFV ทำให้ยืดหยุ่นและประหยัด แต่ยังต้องมีระบบจัดการ (MANO) ที่ซับซ้อนขึ้นด้วย",
-  "ref": "Book1 Ch17 §17.3.2"
- }
+  {
+    "id": "m16-arch-011",
+    "module": "M16",
+    "topic": "NFV architecture",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ในสถาปัตยกรรม ETSI NFV ส่วนใดคือ **ฮาร์ดแวร์และ virtualization layer** ที่ VNF รันอยู่",
+    "options": [
+      {
+        "id": "a",
+        "text": "VNF"
+      },
+      {
+        "id": "b",
+        "text": "NFVI"
+      },
+      {
+        "id": "c",
+        "text": "NFVO"
+      },
+      {
+        "id": "d",
+        "text": "OSS/BSS"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**NFVI** = compute, storage, network + hypervisor · VNF คือฟังก์ชันเครือข่ายที่เป็นซอฟต์แวร์ · NFVO เป็นส่วนหนึ่งของ MANO",
+    "ref": "Book1 Ch17 §17.3.4",
+    "en": {
+      "question": "In the ETSI NFV architecture, which component is the **hardware and virtualization layer** on which VNFs run?",
+      "options": {
+        "a": "VNF",
+        "b": "NFVI",
+        "c": "NFVO",
+        "d": "OSS/BSS"
+      }
+    }
+  },
+  {
+    "id": "m16-concept-003",
+    "module": "M16",
+    "topic": "SDN concepts",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "แนวคิดหลักของ **SDN** คือข้อใด (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "แยก control plane ออกจาก forwarding plane"
+      },
+      {
+        "id": "b",
+        "text": "ควบคุมแบบรวมศูนย์ผ่าน controller"
+      },
+      {
+        "id": "c",
+        "text": "เปิดให้โปรแกรมควบคุมเครือข่ายได้ผ่าน open interface"
+      },
+      {
+        "id": "d",
+        "text": "ย้ายฟังก์ชันเครือข่ายจากฮาร์ดแวร์เฉพาะไปเป็น VM"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "SDN = แยก control/forwarding + รวมศูนย์ + programmable · การย้ายฟังก์ชันไปเป็นซอฟต์แวร์บน server มาตรฐานคือแนวคิดของ **NFV**",
+    "ref": "Book1 Ch17 §17.2.1",
+    "en": {
+      "question": "What are the core concepts of **SDN**? (Choose all that apply.)",
+      "options": {
+        "a": "Separating the control plane from the forwarding plane",
+        "b": "Centralized control through a controller",
+        "c": "Programmable network control through open interfaces",
+        "d": "Moving network functions from dedicated hardware to VMs"
+      }
+    }
+  },
+  {
+    "id": "m16-ctrl-014",
+    "module": "M16",
+    "topic": "SDN architecture",
+    "type": "single",
+    "difficulty": 1,
+    "question": "อุปกรณ์/ซอฟต์แวร์ใดใน SDN ที่มีมุมมองทั้งเครือข่ายและคำนวณเส้นทางให้อุปกรณ์ forwarding",
+    "diagram": "m16-sdn",
+    "options": [
+      {
+        "id": "a",
+        "text": "SDN controller"
+      },
+      {
+        "id": "b",
+        "text": "Access switch"
+      },
+      {
+        "id": "c",
+        "text": "NMS ที่ใช้ SNMPv1 เท่านั้น"
+      },
+      {
+        "id": "d",
+        "text": "DHCP server"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "**SDN controller** อยู่ใน control layer เป็นศูนย์กลางควบคุม (เช่น Huawei iMaster NCE) แล้วสั่งอุปกรณ์ผ่าน SBI",
+    "ref": "Book1 Ch17 §17.2.4",
+    "en": {
+      "question": "In SDN, which device/software has a network-wide view and computes paths for the forwarding devices?",
+      "options": {
+        "a": "SDN controller",
+        "b": "Access switch",
+        "c": "An NMS using only SNMPv1",
+        "d": "DHCP server"
+      }
+    }
+  },
+  {
+    "id": "m16-flow-006",
+    "module": "M16",
+    "topic": "OpenFlow",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ส่วนประกอบใดอยู่ใน **flow entry** ของ OpenFlow (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "Match fields"
+      },
+      {
+        "id": "b",
+        "text": "Priority"
+      },
+      {
+        "id": "c",
+        "text": "Counters"
+      },
+      {
+        "id": "d",
+        "text": "Instructions"
+      },
+      {
+        "id": "e",
+        "text": "Spanning tree cost"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "flow entry มี match fields, priority, counters, instructions, timeouts และ cookie · STP cost ไม่เกี่ยวข้อง",
+    "ref": "Book1 Ch17 §17.2.3",
+    "en": {
+      "question": "Which components are part of an OpenFlow **flow entry**? (Choose all that apply.)",
+      "options": {
+        "a": "Match fields",
+        "b": "Priority",
+        "c": "Counters",
+        "d": "Instructions",
+        "e": "Spanning tree cost"
+      }
+    }
+  },
+  {
+    "id": "m16-mano-012",
+    "module": "M16",
+    "topic": "NFV architecture",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ใน NFV MANO ส่วนใดทำหน้าที่ **จัดการวงจรชีวิตของ VNF** (สร้าง ขยาย ลบ)",
+    "options": [
+      {
+        "id": "a",
+        "text": "NFVO"
+      },
+      {
+        "id": "b",
+        "text": "VNFM"
+      },
+      {
+        "id": "c",
+        "text": "VIM"
+      },
+      {
+        "id": "d",
+        "text": "EMS"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**VNFM** ดูแลวงจรชีวิตของ VNF · **NFVO** orchestrate บริการและทรัพยากรภาพรวม · **VIM** (เช่น OpenStack) จัดการทรัพยากรของ NFVI",
+    "ref": "Book1 Ch17 §17.3.4",
+    "en": {
+      "question": "In NFV MANO, which component **manages the VNF lifecycle** (instantiate, scale, terminate)?",
+      "options": {
+        "a": "NFVO",
+        "b": "VNFM",
+        "c": "VIM",
+        "d": "EMS"
+      }
+    }
+  },
+  {
+    "id": "m16-miss-007",
+    "module": "M16",
+    "topic": "OpenFlow",
+    "type": "single",
+    "difficulty": 2,
+    "question": "packet เข้าสู่ OpenFlow switch แต่ไม่ match flow entry ใดเลย switch จะทำอย่างไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "ทำตาม table-miss entry (priority 0) ซึ่งมักส่ง packet ไปให้ controller หรือทิ้ง"
+      },
+      {
+        "id": "b",
+        "text": "flood ออกทุกพอร์ตเสมอ"
+      },
+      {
+        "id": "c",
+        "text": "ใช้ OSPF คำนวณเส้นทางเอง"
+      },
+      {
+        "id": "d",
+        "text": "ส่ง ICMP unreachable เสมอ"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "**table-miss entry** กำหนดการจัดการ packet ที่ไม่ match — โดยทั่วไปส่ง Packet-In ไปถาม controller ซึ่งจะติดตั้ง flow entry ใหม่ หรือทิ้ง packet",
+    "ref": "Book1 Ch17 §17.2.3",
+    "en": {
+      "question": "A packet enters an OpenFlow switch but matches no flow entry. What does the switch do?",
+      "options": {
+        "a": "Follows the table-miss entry (priority 0), which usually sends the packet to the controller or drops it",
+        "b": "Always floods it out all ports",
+        "c": "Computes a path itself using OSPF",
+        "d": "Always sends ICMP unreachable"
+      }
+    }
+  },
+  {
+    "id": "m16-nbi-004",
+    "module": "M16",
+    "topic": "SDN architecture",
+    "type": "single",
+    "difficulty": 2,
+    "question": "interface ระหว่าง **application layer กับ SDN controller** เรียกว่าอะไร และมักใช้รูปแบบใด",
+    "diagram": "m16-sdn",
+    "options": [
+      {
+        "id": "a",
+        "text": "SBI — OpenFlow"
+      },
+      {
+        "id": "b",
+        "text": "NBI — RESTful API"
+      },
+      {
+        "id": "c",
+        "text": "SBI — NETCONF"
+      },
+      {
+        "id": "d",
+        "text": "NBI — SNMP trap"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**Northbound interface (NBI)** เชื่อม application กับ controller มักเป็น RESTful API · **Southbound interface (SBI)** เชื่อม controller กับอุปกรณ์ เช่น OpenFlow, NETCONF",
+    "ref": "Book1 Ch17 §17.2.4",
+    "en": {
+      "question": "What is the interface between the **application layer and the SDN controller** called, and what form does it usually take?",
+      "options": {
+        "a": "SBI — OpenFlow",
+        "b": "NBI — RESTful API",
+        "c": "SBI — NETCONF",
+        "d": "NBI — SNMP trap"
+      }
+    }
+  },
+  {
+    "id": "m16-nfv-009",
+    "module": "M16",
+    "topic": "NFV concepts",
+    "type": "single",
+    "difficulty": 1,
+    "question": "**NFV** มีเป้าหมายหลักคืออะไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "แยก control plane ออกจาก forwarding plane"
+      },
+      {
+        "id": "b",
+        "text": "ทำฟังก์ชันเครือข่าย (เช่น router, firewall) ให้เป็นซอฟต์แวร์ที่รันบน server มาตรฐาน"
+      },
+      {
+        "id": "c",
+        "text": "เพิ่มความเร็วของ Wi-Fi"
+      },
+      {
+        "id": "d",
+        "text": "แทนที่ IPv4 ด้วย IPv6"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "NFV แยกซอฟต์แวร์ออกจากฮาร์ดแวร์เฉพาะ ใช้ virtualization/cloud บนฮาร์ดแวร์ทั่วไป ทำให้ลดต้นทุนและเปิดบริการได้เร็ว",
+    "ref": "Book1 Ch17 §17.3.1",
+    "en": {
+      "question": "What is the main goal of **NFV**?",
+      "options": {
+        "a": "Separating the control plane from the forwarding plane",
+        "b": "Turning network functions (e.g., routers, firewalls) into software running on standard servers",
+        "c": "Increasing Wi-Fi speed",
+        "d": "Replacing IPv4 with IPv6"
+      }
+    }
+  },
+  {
+    "id": "m16-origin-015",
+    "module": "M16",
+    "topic": "SDN vs NFV",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ข้อใดจับคู่ได้ถูกต้อง",
+    "options": [
+      {
+        "id": "a",
+        "text": "SDN — เปลี่ยนวิธีควบคุมเครือข่าย · NFV — เปลี่ยนรูปแบบของอุปกรณ์เครือข่ายให้เป็นซอฟต์แวร์"
+      },
+      {
+        "id": "b",
+        "text": "SDN — ทำ VNF · NFV — ใช้ OpenFlow"
+      },
+      {
+        "id": "c",
+        "text": "SDN — มาจาก ETSI · NFV — มาจากงานวิจัย OpenFlow"
+      },
+      {
+        "id": "d",
+        "text": "ทั้งสองแนวคิดเหมือนกันทุกประการ"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "SDN มุ่งที่การรวมศูนย์และ programmability ของการควบคุม (เริ่มจากงานวิจัย OpenFlow) · NFV มุ่งที่การ virtualize ฟังก์ชันเครือข่าย (ริเริ่มโดยผู้ให้บริการผ่าน ETSI)",
+    "ref": "Book1 Ch17 §17.3",
+    "en": {
+      "question": "Which pairing is correct?",
+      "options": {
+        "a": "SDN — changes how the network is controlled · NFV — changes the form of network devices into software",
+        "b": "SDN — implements VNFs · NFV — uses OpenFlow",
+        "c": "SDN — originated from ETSI · NFV — originated from OpenFlow research",
+        "d": "The two concepts are exactly the same"
+      }
+    }
+  },
+  {
+    "id": "m16-plane-001",
+    "module": "M16",
+    "topic": "Traditional networks",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ในอุปกรณ์เครือข่ายแบบดั้งเดิม การคำนวณเส้นทางด้วย OSPF เป็นงานของ plane ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "Management plane"
+      },
+      {
+        "id": "b",
+        "text": "Control plane"
+      },
+      {
+        "id": "c",
+        "text": "Data (forwarding) plane"
+      },
+      {
+        "id": "d",
+        "text": "Application plane"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**control plane** ตัดสินใจและสร้างตาราง (OSPF, STP, ARP) · data plane ส่ง packet ตามตาราง · management plane ใช้ตั้งค่าและเฝ้าระวัง",
+    "ref": "Book1 Ch17 §17.1.1",
+    "en": {
+      "question": "In a traditional network device, computing routes with OSPF is the job of which plane?",
+      "options": {
+        "a": "Management plane",
+        "b": "Control plane",
+        "c": "Data (forwarding) plane",
+        "d": "Application plane"
+      }
+    }
+  },
+  {
+    "id": "m16-priority-008",
+    "module": "M16",
+    "topic": "OpenFlow",
+    "type": "single",
+    "difficulty": 2,
+    "question": "packet หนึ่ง match flow entry สองรายการในตารางเดียวกัน switch จะเลือกรายการใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "รายการที่ถูกติดตั้งก่อน"
+      },
+      {
+        "id": "b",
+        "text": "รายการที่มี priority สูงกว่า"
+      },
+      {
+        "id": "c",
+        "text": "รายการที่มี counter มากกว่า"
+      },
+      {
+        "id": "d",
+        "text": "สุ่มเลือก"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "ใน OpenFlow flow table entry ที่ **priority สูงกว่า** ถูกเลือก — ต่างจาก ACL ของ VRP ที่ใช้ rule ID น้อยกว่าก่อน",
+    "ref": "Book1 Ch17 §17.2.3",
+    "en": {
+      "question": "A packet matches two flow entries in the same table. Which entry does the switch choose?",
+      "options": {
+        "a": "The one installed first",
+        "b": "The one with the higher priority",
+        "c": "The one with the larger counter",
+        "d": "A random one"
+      }
+    }
+  },
+  {
+    "id": "m16-problem-002",
+    "module": "M16",
+    "topic": "Traditional networks",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ข้อใดเป็นปัญหาของเครือข่ายแบบดั้งเดิมที่ control plane กระจายอยู่ในทุกอุปกรณ์ (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "ต้องตั้งค่าทีละเครื่อง ใช้เวลานานและผิดพลาดง่าย"
+      },
+      {
+        "id": "b",
+        "text": "ยากที่จะมองภาพรวมและปรับเส้นทางตามสภาพ traffic จริง"
+      },
+      {
+        "id": "c",
+        "text": "เพิ่มบริการใหม่ได้ช้าเพราะต้องรอฟีเจอร์จากผู้ผลิต"
+      },
+      {
+        "id": "d",
+        "text": "ไม่สามารถส่ง packet ได้เลย"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "การควบคุมแบบกระจายทำให้จัดการยาก ขาดมุมมองทั้งเครือข่าย และไม่ยืดหยุ่น แต่ยังส่งข้อมูลได้ตามปกติ",
+    "ref": "Book1 Ch17 §17.1.2",
+    "en": {
+      "question": "Which are problems of traditional networks where the control plane is distributed across every device? (Choose all that apply.)",
+      "options": {
+        "a": "Devices must be configured one by one, which is slow and error-prone",
+        "b": "It is hard to see the big picture and adjust paths according to actual traffic",
+        "c": "New services are slow to roll out because they depend on vendor features",
+        "d": "Packets cannot be forwarded at all"
+      }
+    }
+  },
+  {
+    "id": "m16-relation-013",
+    "module": "M16",
+    "topic": "SDN vs NFV",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "SDN และ NFV ต้องใช้งานร่วมกันเสมอ ใช้แยกกันไม่ได้",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "SDN และ NFV **เป็นอิสระต่อกัน** แต่เสริมกัน — ใช้ NFV โดยไม่มี SDN ก็ได้ และ SDN ควบคุมอุปกรณ์ฮาร์ดแวร์ก็ได้",
+    "ref": "Book1 Ch17 §17.3",
+    "en": {
+      "question": "SDN and NFV must always be used together; they cannot be used separately."
+    }
+  },
+  {
+    "id": "m16-sbi-005",
+    "module": "M16",
+    "topic": "SDN architecture",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "โปรโตคอลใดใช้เป็น **southbound interface** ระหว่าง controller กับอุปกรณ์ได้ (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "OpenFlow"
+      },
+      {
+        "id": "b",
+        "text": "NETCONF"
+      },
+      {
+        "id": "c",
+        "text": "BGP-LS / PCEP"
+      },
+      {
+        "id": "d",
+        "text": "HTTP ระหว่าง browser ของผู้ใช้กับเว็บไซต์"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "SBI ได้แก่ OpenFlow, NETCONF, BGP-LS, PCEP, SNMP ฯลฯ · HTTP ของผู้ใช้ทั่วไปไม่ใช่ interface ควบคุมเครือข่าย",
+    "ref": "Book1 Ch17 §17.2.4",
+    "en": {
+      "question": "Which protocols can be used as the **southbound interface** between the controller and devices? (Choose all that apply.)",
+      "options": {
+        "a": "OpenFlow",
+        "b": "NETCONF",
+        "c": "BGP-LS / PCEP",
+        "d": "HTTP between a user's browser and a website"
+      }
+    }
+  },
+  {
+    "id": "m16-value-010",
+    "module": "M16",
+    "topic": "NFV concepts",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ประโยชน์ของ NFV คือข้อใด (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "ลดต้นทุนฮาร์ดแวร์และพลังงานด้วย server มาตรฐาน"
+      },
+      {
+        "id": "b",
+        "text": "เปิดบริการใหม่และขยายขนาดได้รวดเร็ว"
+      },
+      {
+        "id": "c",
+        "text": "ลดการผูกติดกับผู้ผลิตฮาร์ดแวร์รายเดียว"
+      },
+      {
+        "id": "d",
+        "text": "ทำให้ไม่ต้องมีการบริหารจัดการใด ๆ"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "NFV ทำให้ยืดหยุ่นและประหยัด แต่ยังต้องมีระบบจัดการ (MANO) ที่ซับซ้อนขึ้นด้วย",
+    "ref": "Book1 Ch17 §17.3.2",
+    "en": {
+      "question": "What are the benefits of NFV? (Choose all that apply.)",
+      "options": {
+        "a": "Lower hardware and power costs by using standard servers",
+        "b": "Fast service rollout and scaling",
+        "c": "Less lock-in to a single hardware vendor",
+        "d": "No management is needed at all"
+      }
+    }
+  }
 ]

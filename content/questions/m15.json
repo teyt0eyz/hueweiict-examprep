@@ -20,7 +20,10 @@
       "F"
     ],
     "explanation": "community string ของ v1/v2c ส่งแบบ **plaintext** — ควรใช้ SNMPv3 หรืออย่างน้อยจำกัด NMS ที่อนุญาตด้วย ACL",
-    "ref": "Book1 Ch16 §16.2.6"
+    "ref": "Book1 Ch16 §16.2.6",
+    "en": {
+      "question": "In SNMPv2c, the community string is encrypted in transit, so it is secure even if someone is eavesdropping."
+    }
   },
   {
     "id": "m15-comp-002",
@@ -51,7 +54,16 @@
       "c"
     ],
     "explanation": "**MIB** เก็บนิยามของ object ซึ่งแต่ละตัวระบุด้วย OID · agent เป็น process บนอุปกรณ์ · NMS เป็นซอฟต์แวร์จัดการ",
-    "ref": "Book1 Ch16 §16.2.2"
+    "ref": "Book1 Ch16 §16.2.2",
+    "en": {
+      "question": "In SNMP, which component is the tree-structured database describing the manageable objects on a device?",
+      "options": {
+        "a": "NMS",
+        "b": "Agent",
+        "c": "MIB",
+        "d": "Trap"
+      }
+    }
   },
   {
     "id": "m15-display-015",
@@ -82,7 +94,16 @@
       "b"
     ],
     "explanation": "status synchronized และ reference 10.0.0.1 แปลว่า SW1 ได้เวลาจาก 10.0.0.1 ซึ่งต้องอยู่ที่ stratum 2",
-    "ref": "Book1 Ch16 §16.3.5"
+    "ref": "Book1 Ch16 §16.3.5",
+    "en": {
+      "question": "Based on the output, which conclusion is correct?\n\n```vrp\n<SW1>display ntp-service status\n clock status: synchronized\n clock stratum: 3\n reference clock ID: 10.0.0.1\n```",
+      "options": {
+        "a": "SW1 is not synchronized yet",
+        "b": "SW1 is synchronized with 10.0.0.1 and is at stratum 3 (its time source is at stratum 2)",
+        "c": "SW1 is the primary reference clock",
+        "d": "10.0.0.1 is the NMS"
+      }
+    }
   },
   {
     "id": "m15-getnext-004",
@@ -113,7 +134,16 @@
       "b"
     ],
     "explanation": "GetNext ขอ object ถัดไปตามลำดับ OID ทำให้ไล่ทั้งตารางได้ · GetBulk อ่านหลาย object ในคำขอเดียวช่วยลดจำนวน packet",
-    "ref": "Book1 Ch16 §16.2.3"
+    "ref": "Book1 Ch16 §16.2.3",
+    "en": {
+      "question": "An NMS needs to read every row of an interface table without knowing the number of rows in advance (SNMP walk). Which operation should it use repeatedly?",
+      "options": {
+        "a": "Set",
+        "b": "GetNext (or GetBulk in v2c+)",
+        "c": "Trap",
+        "d": "Inform"
+      }
+    }
   },
   {
     "id": "m15-mode-014",
@@ -151,7 +181,17 @@
       "d"
     ],
     "explanation": "NTP มีโหมด client/server, symmetric (active/passive) peer, broadcast และ multicast · trap เป็นของ SNMP",
-    "ref": "Book1 Ch16 §16.3.4"
+    "ref": "Book1 Ch16 §16.3.4",
+    "en": {
+      "question": "Which are valid NTP operating modes? (Choose all that apply.)",
+      "options": {
+        "a": "Client/Server (unicast)",
+        "b": "Symmetric peer",
+        "c": "Broadcast",
+        "d": "Multicast",
+        "e": "Trap mode"
+      }
+    }
   },
   {
     "id": "m15-ntpclient-011",
@@ -183,7 +223,16 @@
       "c"
     ],
     "explanation": "R1 ใช้นาฬิกาของตัวเองเป็นแหล่งอ้างอิงที่ stratum 2 · client ที่ sync จาก R1 จึงเป็น **stratum 3**",
-    "ref": "Book1 Ch16 §16.3.5"
+    "ref": "Book1 Ch16 §16.3.5",
+    "en": {
+      "question": "What stratum will SW1 have after synchronizing with R1, which is configured with `ntp-service refclock-master 2`?",
+      "options": {
+        "a": "1",
+        "b": "2",
+        "c": "3",
+        "d": "16"
+      }
+    }
   },
   {
     "id": "m15-ntpcmd-012",
@@ -214,7 +263,16 @@
       "a"
     ],
     "explanation": "VRP ใช้ `ntp-service unicast-server <ip>` ใน system view · `ntp server` เป็นรูปแบบของ Cisco · `refclock-master` ใช้ทำให้ตัวเองเป็นแหล่งเวลา",
-    "ref": "Book1 Ch16 §16.3.5"
+    "ref": "Book1 Ch16 §16.3.5",
+    "en": {
+      "question": "Which command makes a Huawei device synchronize time from NTP server 10.0.0.1 in client/server mode?",
+      "options": {
+        "a": "`ntp-service unicast-server 10.0.0.1`",
+        "b": "`ntp server 10.0.0.1`",
+        "c": "`clock timezone 10.0.0.1`",
+        "d": "`ntp-service refclock-master 10.0.0.1`"
+      }
+    }
   },
   {
     "id": "m15-ntpport-009",
@@ -245,7 +303,16 @@
       "b"
     ],
     "explanation": "NTP ใช้ **UDP 123** ทั้งฝั่ง client และ server · TCP ไม่ใช้กับ NTP · UDP 161 เป็นของ SNMP agent · TCP 23 เป็นของ Telnet",
-    "ref": "Book1 Ch16 §16.3.1"
+    "ref": "Book1 Ch16 §16.3.1",
+    "en": {
+      "question": "Which protocol and port does NTP use?",
+      "options": {
+        "a": "TCP 123",
+        "b": "UDP 123",
+        "c": "UDP 161",
+        "d": "TCP 23"
+      }
+    }
   },
   {
     "id": "m15-offset-013",
@@ -276,7 +343,16 @@
       "b"
     ],
     "explanation": "delay = (T4 − T1) − (T3 − T2) = 0.300 − 0.100 = **0.2 วินาที** (offset = ((T2−T1)+(T3−T4))/2 = (5.1 + 4.9)/2 = 5.0 วินาที — นาฬิกา client ช้ากว่า server 5 วินาที)",
-    "ref": "Book1 Ch16 §16.3.2"
+    "ref": "Book1 Ch16 §16.3.2",
+    "en": {
+      "question": "A client sends a request at T1 = 10:00:00.000 (client time). The server receives it at T2 = 10:00:05.100 and replies at T3 = 10:00:05.200 (server time). The client receives the reply at T4 = 10:00:00.300. What is the **round-trip delay**?",
+      "options": {
+        "a": "0.1 seconds",
+        "b": "0.2 seconds",
+        "c": "0.3 seconds",
+        "d": "5.0 seconds"
+      }
+    }
   },
   {
     "id": "m15-oid-008",
@@ -307,7 +383,16 @@
       "b"
     ],
     "explanation": "**OID (Object Identifier)** เป็นลำดับตัวเลขตามกิ่งของต้นไม้ MIB ที่ระบุ object หนึ่ง ๆ อย่างไม่ซ้ำ",
-    "ref": "Book1 Ch16 §16.2.2"
+    "ref": "Book1 Ch16 §16.2.2",
+    "en": {
+      "question": "What is an OID?",
+      "options": {
+        "a": "The NMS password",
+        "b": "An identifier of an object's position in the MIB tree, e.g., 1.3.6.1.2.1.1.5",
+        "c": "The SNMP port number",
+        "d": "The community name"
+      }
+    }
   },
   {
     "id": "m15-port-001",
@@ -338,7 +423,16 @@
       "b"
     ],
     "explanation": "SNMP ใช้ **UDP**: agent ฟังที่ **161**, NMS รับ trap ที่ **162** · UDP 123 = NTP, UDP 514 = syslog",
-    "ref": "Book1 Ch16 §16.2.1"
+    "ref": "Book1 Ch16 §16.2.1",
+    "en": {
+      "question": "On which ports does an SNMP agent receive get/set requests and an NMS receive traps, respectively?",
+      "options": {
+        "a": "TCP 161 / TCP 162",
+        "b": "UDP 161 / UDP 162",
+        "c": "UDP 162 / UDP 161",
+        "d": "UDP 123 / UDP 514"
+      }
+    }
   },
   {
     "id": "m15-snmpcfg-007",
@@ -377,7 +471,17 @@
       "d"
     ],
     "explanation": "ต้องเลือกเวอร์ชัน, community สำหรับอ่าน, ปลายทาง trap และเปิดการส่ง trap · คำสั่ง NTP ไม่เกี่ยวกับ SNMP",
-    "ref": "Book1 Ch16 §16.2.6"
+    "ref": "Book1 Ch16 §16.2.6",
+    "en": {
+      "question": "R1 should answer SNMPv2c read-only requests and send traps to NMS 10.0.0.100. What must be configured? (Choose all that apply.)",
+      "options": {
+        "a": "`snmp-agent sys-info version v2c`",
+        "b": "`snmp-agent community read cipher <string>`",
+        "c": "`snmp-agent target-host trap address udp-domain 10.0.0.100 params securityname <string> v2c`",
+        "d": "`snmp-agent trap enable`",
+        "e": "`ntp-service unicast-server 10.0.0.100`"
+      }
+    }
   },
   {
     "id": "m15-stratum-010",
@@ -408,7 +512,16 @@
       "b"
     ],
     "explanation": "stratum เพิ่มขึ้นทีละ 1 ตามจำนวนชั้นจากแหล่งเวลา · ค่าที่ใช้ได้ 1–15 · **16 = unsynchronized** · client จะมี stratum มากกว่า server ที่ตนใช้ 1",
-    "ref": "Book1 Ch16 §16.3.3"
+    "ref": "Book1 Ch16 §16.3.3",
+    "en": {
+      "question": "Which statement about NTP **stratum** is correct?",
+      "options": {
+        "a": "A higher stratum = more accurate",
+        "b": "Stratum 1 is a server directly connected to a reference clock, and stratum 16 means unsynchronized",
+        "c": "The highest usable stratum value is 255",
+        "d": "The client must have the same stratum as the server"
+      }
+    }
   },
   {
     "id": "m15-trap-003",
@@ -439,7 +552,16 @@
       "b"
     ],
     "explanation": "Trap แจ้งเหตุการณ์แบบไม่ต้องตอบรับ อาจสูญหายได้ · **Inform** (v2c ขึ้นไป) ต้องได้รับ response จาก NMS ถ้าไม่ได้จะส่งซ้ำ",
-    "ref": "Book1 Ch16 §16.2.5"
+    "ref": "Book1 Ch16 §16.2.5",
+    "en": {
+      "question": "Which correctly describes the difference between **Trap** and **Inform**?",
+      "options": {
+        "a": "Traps are sent from the NMS to the agent, while Informs are sent from the agent",
+        "b": "Both are sent from the agent to the NMS, but an Inform must be acknowledged by the NMS while a Trap does not",
+        "c": "Traps use TCP while Informs use UDP",
+        "d": "Informs exist only in SNMPv1"
+      }
+    }
   },
   {
     "id": "m15-version-005",
@@ -470,6 +592,15 @@
       "c"
     ],
     "explanation": "v1/v2c ใช้ community string แบบ plaintext · **SNMPv3** มี USM รองรับ authentication (MD5/SHA) และ privacy (DES/AES) และ VACM ควบคุมสิทธิ์",
-    "ref": "Book1 Ch16 §16.2.1"
+    "ref": "Book1 Ch16 §16.2.1",
+    "en": {
+      "question": "Which SNMP version provides both message **authentication and encryption**?",
+      "options": {
+        "a": "SNMPv1",
+        "b": "SNMPv2c",
+        "c": "SNMPv3",
+        "d": "All versions"
+      }
+    }
   }
 ]

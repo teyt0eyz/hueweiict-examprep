@@ -1,462 +1,589 @@
 [
- {
-  "id": "m13-auth-008",
-  "module": "M13",
-  "topic": "PPP authentication",
-  "type": "truefalse",
-  "difficulty": 1,
-  "question": "การ authentication ใน PPP เป็นขั้นตอนที่ไม่บังคับ — ถ้าไม่กำหนด ลิงก์จะข้ามไปยังขั้น NCP หลัง LCP เปิดแล้ว",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "T"
-  ],
-  "explanation": "authentication เป็น optional phase ซึ่งจะเกิดขึ้นเฉพาะเมื่อมีการกำหนดให้ตรวจสอบระหว่างการเจรจา LCP",
-  "ref": "Book1 Ch14 §14.2.3"
- },
- {
-  "id": "m13-chap-004",
-  "module": "M13",
-  "topic": "PAP vs CHAP",
-  "type": "ordering",
-  "difficulty": 2,
-  "question": "เรียงลำดับ message ของ **CHAP**",
-  "options": [
-   {
-    "id": "a",
-    "text": "ผู้ตรวจสอบส่ง Challenge (ค่าสุ่ม)"
-   },
-   {
-    "id": "b",
-    "text": "ผู้ถูกตรวจสอบส่ง Response ที่เป็น hash ของ ID + password + challenge"
-   },
-   {
-    "id": "c",
-    "text": "ผู้ตรวจสอบคำนวณเทียบแล้วตอบ Success หรือ Failure"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "CHAP เป็น 3-way handshake ที่ **ไม่ส่ง password บนสาย** ทั้งสองฝั่งคำนวณ hash (MD5) ด้วย password ที่รู้ร่วมกัน",
-  "ref": "Book1 Ch14 §14.2.4"
- },
- {
-  "id": "m13-chapcfg-005",
-  "module": "M13",
-  "topic": "PPP configuration",
-  "type": "single",
-  "difficulty": 2,
-  "question": "R2 ต้องการให้ R1 ยืนยันตัวด้วย CHAP คำสั่ง `ppp authentication-mode chap` ต้องใส่ที่ใด",
-  "diagram": "m13-ppp",
-  "options": [
-   {
-    "id": "a",
-    "text": "interface ของ R1"
-   },
-   {
-    "id": "b",
-    "text": "interface ของ R2 (ฝั่งผู้ตรวจสอบ)"
-   },
-   {
-    "id": "c",
-    "text": "ทั้งสองฝั่งเสมอ"
-   },
-   {
-    "id": "d",
-    "text": "aaa view ของ R1"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "`ppp authentication-mode` ตั้งที่ฝั่ง **ผู้ตรวจสอบ** (authenticator) ซึ่งต้องมี local-user ที่ service-type ppp ใน AAA ส่วน R1 ตั้ง `ppp chap user` และ `ppp chap password`",
-  "ref": "Book1 Ch14 §14.2.6"
- },
- {
-  "id": "m13-dialer-013",
-  "module": "M13",
-  "topic": "PPPoE client",
-  "type": "single",
-  "difficulty": 3,
-  "question": "บน AR router ที่เป็น PPPoE client คำสั่งใดผูก physical interface G0/0/1 เข้ากับ Dialer interface ที่ใช้ `dialer bundle 1`",
-  "diagram": "m13-pppoe",
-  "options": [
-   {
-    "id": "a",
-    "text": "`pppoe-client dial-bundle-number 1`"
-   },
-   {
-    "id": "b",
-    "text": "`pppoe-server bind virtual-template 1`"
-   },
-   {
-    "id": "c",
-    "text": "`link-protocol ppp`"
-   },
-   {
-    "id": "d",
-    "text": "`ip address ppp-negotiate`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "ใน G0/0/1 ใช้ `pppoe-client dial-bundle-number 1` ให้ dial ตาม Dialer ที่มี bundle 1 · `pppoe-server bind` ใช้ฝั่ง server · `ip address ppp-negotiate` อยู่ใน Dialer เพื่อรับ IP จาก ISP",
-  "ref": "Book1 Ch14 §14.3"
- },
- {
-  "id": "m13-ipcp-007",
-  "module": "M13",
-  "topic": "IPCP",
-  "type": "single",
-  "difficulty": 3,
-  "question": "R1 (10.0.12.1/24) และ R2 (10.0.13.2/24) ต่อกันด้วย PPP แบบ serial ซึ่ง IP อยู่คนละ subnet ผลที่ได้คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "ping กันไม่ได้แน่นอน เพราะคนละ subnet"
-   },
-   {
-    "id": "b",
-    "text": "ping กันได้ เพราะ IPCP แลก IP กันและติดตั้ง host route /32 ของปลายทางให้"
-   },
-   {
-    "id": "c",
-    "text": "ลิงก์ไม่ขึ้นเพราะ LCP ล้มเหลว"
-   },
-   {
-    "id": "d",
-    "text": "ต้องใช้ PAP เท่านั้น"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "PPP เป็นลิงก์ point-to-point — IPCP ทำให้แต่ละฝั่งรู้ IP ของอีกฝั่งและสร้าง route /32 ไปหา จึงสื่อสารกันได้แม้คนละ subnet (ต่างจาก Ethernet)",
-  "ref": "Book1 Ch14 §14.2.7"
- },
- {
-  "id": "m13-lcp-002",
-  "module": "M13",
-  "topic": "LCP",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน LCP ค่า **magic number** มีไว้เพื่ออะไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "เข้ารหัสข้อมูล"
-   },
-   {
-    "id": "b",
-    "text": "ตรวจจับลิงก์ที่วนกลับมาหาตัวเอง (loopback) และความผิดปกติของลิงก์"
-   },
-   {
-    "id": "c",
-    "text": "กำหนด IP address"
-   },
-   {
-    "id": "d",
-    "text": "เลือกวิธี authentication"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "แต่ละฝั่งสุ่ม magic number ถ้าได้รับ Configure-Request ที่มีค่าเดียวกับของตัวเอง แปลว่าลิงก์วนกลับ (loop)",
-  "ref": "Book1 Ch14 §14.2.4"
- },
- {
-  "id": "m13-mtu-011",
-  "module": "M13",
-  "topic": "PPPoE",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ทำไม MTU ของ interface PPPoE จึงมักเป็น **1492** byte",
-  "options": [
-   {
-    "id": "a",
-    "text": "เพราะ Ethernet รองรับได้แค่ 1492"
-   },
-   {
-    "id": "b",
-    "text": "เพราะต้องหัก PPPoE header 6 byte และ PPP protocol field 2 byte ออกจาก 1500"
-   },
-   {
-    "id": "c",
-    "text": "เพราะ IPv6"
-   },
-   {
-    "id": "d",
-    "text": "เพราะ CHAP ใช้ 8 byte"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Ethernet payload สูงสุด 1500 byte − PPPoE header (6) − PPP protocol (2) = **1492**",
-  "ref": "Book1 Ch14 §14.3.2"
- },
- {
-  "id": "m13-nat-014",
-  "module": "M13",
-  "topic": "PPPoE client",
-  "type": "single",
-  "difficulty": 2,
-  "question": "router ได้ public IP จาก ISP ผ่าน PPPoE ซึ่งเปลี่ยนได้ทุกครั้งที่ dial ใหม่ ควรใช้ NAT แบบใดให้ผู้ใช้ภายในออกอินเทอร์เน็ต",
-  "options": [
-   {
-    "id": "a",
-    "text": "Static NAT"
-   },
-   {
-    "id": "b",
-    "text": "Easy IP บน Dialer interface"
-   },
-   {
-    "id": "c",
-    "text": "Dynamic NAT ด้วย address-group"
-   },
-   {
-    "id": "d",
-    "text": "NAT Server"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Easy IP ใช้ IP ปัจจุบันของ interface ขาออก (Dialer) อัตโนมัติ ไม่ต้องรู้ IP ล่วงหน้า (ดู M9)",
-  "ref": "Book1 Ch10 §10.2.4"
- },
- {
-  "id": "m13-pap-003",
-  "module": "M13",
-  "topic": "PAP vs CHAP",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ข้อใดถูกต้องเกี่ยวกับ **PAP**",
-  "options": [
-   {
-    "id": "a",
-    "text": "ส่ง password เป็น hash แบบ MD5"
-   },
-   {
-    "id": "b",
-    "text": "เป็นการจับมือ 2 ครั้ง และส่ง username/password แบบ plaintext"
-   },
-   {
-    "id": "c",
-    "text": "ผู้ตรวจสอบส่ง challenge ก่อน"
-   },
-   {
-    "id": "d",
-    "text": "ปลอดภัยกว่า CHAP"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "PAP: ผู้ถูกตรวจสอบส่ง username + password **plaintext** (2-way handshake) · CHAP ใช้ challenge (3-way) และส่งเฉพาะ hash",
-  "ref": "Book1 Ch14 §14.2.4"
- },
- {
-  "id": "m13-papcfg-006",
-  "module": "M13",
-  "topic": "PPP configuration",
-  "type": "single",
-  "difficulty": 2,
-  "question": "คำสั่งใดตั้งข้อมูลที่ R1 (ฝั่งถูกตรวจสอบ) ใช้ส่งให้ผู้ตรวจสอบเมื่อใช้ **PAP**",
-  "options": [
-   {
-    "id": "a",
-    "text": "`ppp pap local-user r1user password cipher Huawei@123`"
-   },
-   {
-    "id": "b",
-    "text": "`ppp chap user r1user`"
-   },
-   {
-    "id": "c",
-    "text": "`local-user r1user service-type ppp`"
-   },
-   {
-    "id": "d",
-    "text": "`ppp authentication-mode pap`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "ฝั่งถูกตรวจสอบใช้ `ppp pap local-user <user> password cipher <pwd>` · `ppp authentication-mode pap` และ `local-user ... service-type ppp` ตั้งที่ผู้ตรวจสอบ",
-  "ref": "Book1 Ch14 §14.2.5"
- },
- {
-  "id": "m13-phase-001",
-  "module": "M13",
-  "topic": "PPP phases",
-  "type": "ordering",
-  "difficulty": 1,
-  "question": "เรียงขั้นตอนการสร้างลิงก์ PPP",
-  "options": [
-   {
-    "id": "a",
-    "text": "Link establishment ด้วย LCP"
-   },
-   {
-    "id": "b",
-    "text": "Authentication (PAP/CHAP) ถ้ามีการกำหนด"
-   },
-   {
-    "id": "c",
-    "text": "Network layer negotiation ด้วย NCP (เช่น IPCP)"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "LCP ต้องเปิดลิงก์และเจรจาวิธี authentication ก่อน จากนั้นยืนยันตัวตน แล้วจึงใช้ NCP/IPCP เจรจาพารามิเตอร์ของ network layer",
-  "ref": "Book1 Ch14 §14.2.3"
- },
- {
-  "id": "m13-pppoe-009",
-  "module": "M13",
-  "topic": "PPPoE discovery",
-  "type": "ordering",
-  "difficulty": 2,
-  "question": "เรียงลำดับ packet ใน **PPPoE Discovery stage**",
-  "options": [
-   {
-    "id": "a",
-    "text": "PADI"
-   },
-   {
-    "id": "b",
-    "text": "PADO"
-   },
-   {
-    "id": "c",
-    "text": "PADR"
-   },
-   {
-    "id": "d",
-    "text": "PADS"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "PADI (client broadcast หา server) → PADO (server เสนอ) → PADR (client ขอจาก server ที่เลือก) → PADS (server ยืนยันและกำหนด Session ID) · PADT ใช้ปิด session",
-  "ref": "Book1 Ch14 §14.3.3"
- },
- {
-  "id": "m13-pppoe-010",
-  "module": "M13",
-  "topic": "PPPoE",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน PPPoE ค่าใดที่ server กำหนดใน **PADS** และใช้ระบุ session ตลอดการเชื่อมต่อ",
-  "options": [
-   {
-    "id": "a",
-    "text": "Magic number"
-   },
-   {
-    "id": "b",
-    "text": "Session ID"
-   },
-   {
-    "id": "c",
-    "text": "VLAN ID"
-   },
-   {
-    "id": "d",
-    "text": "Challenge"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "PADS มี **Session ID** ซึ่งร่วมกับ MAC ของทั้งสองฝั่งใช้แยกแต่ละ session ใน Session stage",
-  "ref": "Book1 Ch14 §14.3.2"
- },
- {
-  "id": "m13-wan-015",
-  "module": "M13",
-  "topic": "WAN basics",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ข้อใดเป็นข้อแตกต่างสำคัญระหว่าง data link ของลิงก์ serial แบบ point-to-point (PPP) กับ Ethernet",
-  "options": [
-   {
-    "id": "a",
-    "text": "PPP ต้องใช้ MAC address เพื่อระบุปลายทาง"
-   },
-   {
-    "id": "b",
-    "text": "PPP ไม่ต้องระบุ MAC address ของปลายทางเพราะลิงก์มีปลายทางเพียงตัวเดียว"
-   },
-   {
-    "id": "c",
-    "text": "Ethernet รองรับ authentication ในตัว"
-   },
-   {
-    "id": "d",
-    "text": "PPP ใช้ได้เฉพาะ IPv6"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "ลิงก์ point-to-point มีอุปกรณ์แค่สองฝั่ง จึงไม่ต้องใช้ address ชั้น 2 แบบ Ethernet (field Address ของ PPP เป็นค่าคงที่ 0xFF)",
-  "ref": "Book1 Ch14 §14.2.2"
- },
- {
-  "id": "m13-why-012",
-  "module": "M13",
-  "topic": "PPPoE",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ISP ใช้ PPPoE กับผู้ใช้ broadband เพราะเหตุผลใด (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "ยืนยันตัวตนผู้ใช้แต่ละรายได้ (PAP/CHAP)"
-   },
-   {
-    "id": "b",
-    "text": "แจก IP ให้ผู้ใช้ผ่าน IPCP"
-   },
-   {
-    "id": "c",
-    "text": "ทำ accounting ต่อผู้ใช้ได้"
-   },
-   {
-    "id": "d",
-    "text": "ทำให้ Ethernet มีความเร็วสูงขึ้น"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "PPPoE นำ authentication, การกำหนด IP และ accounting ของ PPP มาใช้บนเครือข่าย Ethernet — ไม่ได้เพิ่มความเร็ว (ยังทำให้ MTU ลดลงด้วย)",
-  "ref": "Book1 Ch14 §14.3.1"
- }
+  {
+    "id": "m13-auth-008",
+    "module": "M13",
+    "topic": "PPP authentication",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "การ authentication ใน PPP เป็นขั้นตอนที่ไม่บังคับ — ถ้าไม่กำหนด ลิงก์จะข้ามไปยังขั้น NCP หลัง LCP เปิดแล้ว",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "authentication เป็น optional phase ซึ่งจะเกิดขึ้นเฉพาะเมื่อมีการกำหนดให้ตรวจสอบระหว่างการเจรจา LCP",
+    "ref": "Book1 Ch14 §14.2.3",
+    "en": {
+      "question": "Authentication in PPP is optional — if it is not configured, the link proceeds to the NCP phase after LCP is open."
+    }
+  },
+  {
+    "id": "m13-chap-004",
+    "module": "M13",
+    "topic": "PAP vs CHAP",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงลำดับ message ของ **CHAP**",
+    "options": [
+      {
+        "id": "a",
+        "text": "ผู้ตรวจสอบส่ง Challenge (ค่าสุ่ม)"
+      },
+      {
+        "id": "b",
+        "text": "ผู้ถูกตรวจสอบส่ง Response ที่เป็น hash ของ ID + password + challenge"
+      },
+      {
+        "id": "c",
+        "text": "ผู้ตรวจสอบคำนวณเทียบแล้วตอบ Success หรือ Failure"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "CHAP เป็น 3-way handshake ที่ **ไม่ส่ง password บนสาย** ทั้งสองฝั่งคำนวณ hash (MD5) ด้วย password ที่รู้ร่วมกัน",
+    "ref": "Book1 Ch14 §14.2.4",
+    "en": {
+      "question": "Arrange the **CHAP** messages in order.",
+      "options": {
+        "a": "The authenticator sends a Challenge (random value)",
+        "b": "The peer sends a Response that is a hash of ID + password + challenge",
+        "c": "The authenticator computes and compares, then replies Success or Failure"
+      }
+    }
+  },
+  {
+    "id": "m13-chapcfg-005",
+    "module": "M13",
+    "topic": "PPP configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "R2 ต้องการให้ R1 ยืนยันตัวด้วย CHAP คำสั่ง `ppp authentication-mode chap` ต้องใส่ที่ใด",
+    "diagram": "m13-ppp",
+    "options": [
+      {
+        "id": "a",
+        "text": "interface ของ R1"
+      },
+      {
+        "id": "b",
+        "text": "interface ของ R2 (ฝั่งผู้ตรวจสอบ)"
+      },
+      {
+        "id": "c",
+        "text": "ทั้งสองฝั่งเสมอ"
+      },
+      {
+        "id": "d",
+        "text": "aaa view ของ R1"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "`ppp authentication-mode` ตั้งที่ฝั่ง **ผู้ตรวจสอบ** (authenticator) ซึ่งต้องมี local-user ที่ service-type ppp ใน AAA ส่วน R1 ตั้ง `ppp chap user` และ `ppp chap password`",
+    "ref": "Book1 Ch14 §14.2.6",
+    "en": {
+      "question": "R2 wants R1 to authenticate using CHAP. Where must `ppp authentication-mode chap` be configured?",
+      "options": {
+        "a": "On R1's interface",
+        "b": "On R2's interface (the authenticator side)",
+        "c": "Always on both sides",
+        "d": "In R1's aaa view"
+      }
+    }
+  },
+  {
+    "id": "m13-dialer-013",
+    "module": "M13",
+    "topic": "PPPoE client",
+    "type": "single",
+    "difficulty": 3,
+    "question": "บน AR router ที่เป็น PPPoE client คำสั่งใดผูก physical interface G0/0/1 เข้ากับ Dialer interface ที่ใช้ `dialer bundle 1`",
+    "diagram": "m13-pppoe",
+    "options": [
+      {
+        "id": "a",
+        "text": "`pppoe-client dial-bundle-number 1`"
+      },
+      {
+        "id": "b",
+        "text": "`pppoe-server bind virtual-template 1`"
+      },
+      {
+        "id": "c",
+        "text": "`link-protocol ppp`"
+      },
+      {
+        "id": "d",
+        "text": "`ip address ppp-negotiate`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ใน G0/0/1 ใช้ `pppoe-client dial-bundle-number 1` ให้ dial ตาม Dialer ที่มี bundle 1 · `pppoe-server bind` ใช้ฝั่ง server · `ip address ppp-negotiate` อยู่ใน Dialer เพื่อรับ IP จาก ISP",
+    "ref": "Book1 Ch14 §14.3",
+    "en": {
+      "question": "On an AR router acting as a PPPoE client, which command binds physical interface G0/0/1 to the Dialer interface that uses `dialer bundle 1`?",
+      "options": {
+        "a": "`pppoe-client dial-bundle-number 1`",
+        "b": "`pppoe-server bind virtual-template 1`",
+        "c": "`link-protocol ppp`",
+        "d": "`ip address ppp-negotiate`"
+      }
+    }
+  },
+  {
+    "id": "m13-ipcp-007",
+    "module": "M13",
+    "topic": "IPCP",
+    "type": "single",
+    "difficulty": 3,
+    "question": "R1 (10.0.12.1/24) และ R2 (10.0.13.2/24) ต่อกันด้วย PPP แบบ serial ซึ่ง IP อยู่คนละ subnet ผลที่ได้คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ping กันไม่ได้แน่นอน เพราะคนละ subnet"
+      },
+      {
+        "id": "b",
+        "text": "ping กันได้ เพราะ IPCP แลก IP กันและติดตั้ง host route /32 ของปลายทางให้"
+      },
+      {
+        "id": "c",
+        "text": "ลิงก์ไม่ขึ้นเพราะ LCP ล้มเหลว"
+      },
+      {
+        "id": "d",
+        "text": "ต้องใช้ PAP เท่านั้น"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "PPP เป็นลิงก์ point-to-point — IPCP ทำให้แต่ละฝั่งรู้ IP ของอีกฝั่งและสร้าง route /32 ไปหา จึงสื่อสารกันได้แม้คนละ subnet (ต่างจาก Ethernet)",
+    "ref": "Book1 Ch14 §14.2.7",
+    "en": {
+      "question": "R1 (10.0.12.1/24) and R2 (10.0.13.2/24) are connected by a PPP serial link, with IPs in different subnets. What is the result?",
+      "options": {
+        "a": "They definitely cannot ping each other because they are in different subnets",
+        "b": "They can ping each other because IPCP exchanges IPs and installs a /32 host route to the peer",
+        "c": "The link does not come up because LCP fails",
+        "d": "Only PAP can be used"
+      }
+    }
+  },
+  {
+    "id": "m13-lcp-002",
+    "module": "M13",
+    "topic": "LCP",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน LCP ค่า **magic number** มีไว้เพื่ออะไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "เข้ารหัสข้อมูล"
+      },
+      {
+        "id": "b",
+        "text": "ตรวจจับลิงก์ที่วนกลับมาหาตัวเอง (loopback) และความผิดปกติของลิงก์"
+      },
+      {
+        "id": "c",
+        "text": "กำหนด IP address"
+      },
+      {
+        "id": "d",
+        "text": "เลือกวิธี authentication"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "แต่ละฝั่งสุ่ม magic number ถ้าได้รับ Configure-Request ที่มีค่าเดียวกับของตัวเอง แปลว่าลิงก์วนกลับ (loop)",
+    "ref": "Book1 Ch14 §14.2.4",
+    "en": {
+      "question": "In LCP, what is the **magic number** used for?",
+      "options": {
+        "a": "Encrypting data",
+        "b": "Detecting looped-back links and link anomalies",
+        "c": "Assigning IP addresses",
+        "d": "Choosing the authentication method"
+      }
+    }
+  },
+  {
+    "id": "m13-mtu-011",
+    "module": "M13",
+    "topic": "PPPoE",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ทำไม MTU ของ interface PPPoE จึงมักเป็น **1492** byte",
+    "options": [
+      {
+        "id": "a",
+        "text": "เพราะ Ethernet รองรับได้แค่ 1492"
+      },
+      {
+        "id": "b",
+        "text": "เพราะต้องหัก PPPoE header 6 byte และ PPP protocol field 2 byte ออกจาก 1500"
+      },
+      {
+        "id": "c",
+        "text": "เพราะ IPv6"
+      },
+      {
+        "id": "d",
+        "text": "เพราะ CHAP ใช้ 8 byte"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Ethernet payload สูงสุด 1500 byte − PPPoE header (6) − PPP protocol (2) = **1492**",
+    "ref": "Book1 Ch14 §14.3.2",
+    "en": {
+      "question": "Why is the MTU of a PPPoE interface usually **1492** bytes?",
+      "options": {
+        "a": "Because Ethernet supports only 1492",
+        "b": "Because the 6-byte PPPoE header and 2-byte PPP protocol field are subtracted from 1500",
+        "c": "Because of IPv6",
+        "d": "Because CHAP uses 8 bytes"
+      }
+    }
+  },
+  {
+    "id": "m13-nat-014",
+    "module": "M13",
+    "topic": "PPPoE client",
+    "type": "single",
+    "difficulty": 2,
+    "question": "router ได้ public IP จาก ISP ผ่าน PPPoE ซึ่งเปลี่ยนได้ทุกครั้งที่ dial ใหม่ ควรใช้ NAT แบบใดให้ผู้ใช้ภายในออกอินเทอร์เน็ต",
+    "options": [
+      {
+        "id": "a",
+        "text": "Static NAT"
+      },
+      {
+        "id": "b",
+        "text": "Easy IP บน Dialer interface"
+      },
+      {
+        "id": "c",
+        "text": "Dynamic NAT ด้วย address-group"
+      },
+      {
+        "id": "d",
+        "text": "NAT Server"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Easy IP ใช้ IP ปัจจุบันของ interface ขาออก (Dialer) อัตโนมัติ ไม่ต้องรู้ IP ล่วงหน้า (ดู M9)",
+    "ref": "Book1 Ch10 §10.2.4",
+    "en": {
+      "question": "A router gets its public IP from the ISP via PPPoE, and it may change every time it redials. Which NAT type should be used so internal users can access the Internet?",
+      "options": {
+        "a": "Static NAT",
+        "b": "Easy IP on the Dialer interface",
+        "c": "Dynamic NAT with an address-group",
+        "d": "NAT Server"
+      }
+    }
+  },
+  {
+    "id": "m13-pap-003",
+    "module": "M13",
+    "topic": "PAP vs CHAP",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ข้อใดถูกต้องเกี่ยวกับ **PAP**",
+    "options": [
+      {
+        "id": "a",
+        "text": "ส่ง password เป็น hash แบบ MD5"
+      },
+      {
+        "id": "b",
+        "text": "เป็นการจับมือ 2 ครั้ง และส่ง username/password แบบ plaintext"
+      },
+      {
+        "id": "c",
+        "text": "ผู้ตรวจสอบส่ง challenge ก่อน"
+      },
+      {
+        "id": "d",
+        "text": "ปลอดภัยกว่า CHAP"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "PAP: ผู้ถูกตรวจสอบส่ง username + password **plaintext** (2-way handshake) · CHAP ใช้ challenge (3-way) และส่งเฉพาะ hash",
+    "ref": "Book1 Ch14 §14.2.4",
+    "en": {
+      "question": "Which statement about **PAP** is correct?",
+      "options": {
+        "a": "It sends the password as an MD5 hash",
+        "b": "It is a two-way handshake and sends the username/password in plaintext",
+        "c": "The authenticator sends a challenge first",
+        "d": "It is more secure than CHAP"
+      }
+    }
+  },
+  {
+    "id": "m13-papcfg-006",
+    "module": "M13",
+    "topic": "PPP configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "คำสั่งใดตั้งข้อมูลที่ R1 (ฝั่งถูกตรวจสอบ) ใช้ส่งให้ผู้ตรวจสอบเมื่อใช้ **PAP**",
+    "options": [
+      {
+        "id": "a",
+        "text": "`ppp pap local-user r1user password cipher Huawei@123`"
+      },
+      {
+        "id": "b",
+        "text": "`ppp chap user r1user`"
+      },
+      {
+        "id": "c",
+        "text": "`local-user r1user service-type ppp`"
+      },
+      {
+        "id": "d",
+        "text": "`ppp authentication-mode pap`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ฝั่งถูกตรวจสอบใช้ `ppp pap local-user <user> password cipher <pwd>` · `ppp authentication-mode pap` และ `local-user ... service-type ppp` ตั้งที่ผู้ตรวจสอบ",
+    "ref": "Book1 Ch14 §14.2.5",
+    "en": {
+      "question": "When using **PAP**, which command sets the credentials that R1 (the authenticated side) sends to the authenticator?",
+      "options": {
+        "a": "`ppp pap local-user r1user password cipher Huawei@123`",
+        "b": "`ppp chap user r1user`",
+        "c": "`local-user r1user service-type ppp`",
+        "d": "`ppp authentication-mode pap`"
+      }
+    }
+  },
+  {
+    "id": "m13-phase-001",
+    "module": "M13",
+    "topic": "PPP phases",
+    "type": "ordering",
+    "difficulty": 1,
+    "question": "เรียงขั้นตอนการสร้างลิงก์ PPP",
+    "options": [
+      {
+        "id": "a",
+        "text": "Link establishment ด้วย LCP"
+      },
+      {
+        "id": "b",
+        "text": "Authentication (PAP/CHAP) ถ้ามีการกำหนด"
+      },
+      {
+        "id": "c",
+        "text": "Network layer negotiation ด้วย NCP (เช่น IPCP)"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "LCP ต้องเปิดลิงก์และเจรจาวิธี authentication ก่อน จากนั้นยืนยันตัวตน แล้วจึงใช้ NCP/IPCP เจรจาพารามิเตอร์ของ network layer",
+    "ref": "Book1 Ch14 §14.2.3",
+    "en": {
+      "question": "Arrange the phases of establishing a PPP link.",
+      "options": {
+        "a": "Link establishment with LCP",
+        "b": "Authentication (PAP/CHAP), if configured",
+        "c": "Network layer negotiation with NCP (e.g., IPCP)"
+      }
+    }
+  },
+  {
+    "id": "m13-pppoe-009",
+    "module": "M13",
+    "topic": "PPPoE discovery",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงลำดับ packet ใน **PPPoE Discovery stage**",
+    "options": [
+      {
+        "id": "a",
+        "text": "PADI"
+      },
+      {
+        "id": "b",
+        "text": "PADO"
+      },
+      {
+        "id": "c",
+        "text": "PADR"
+      },
+      {
+        "id": "d",
+        "text": "PADS"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "PADI (client broadcast หา server) → PADO (server เสนอ) → PADR (client ขอจาก server ที่เลือก) → PADS (server ยืนยันและกำหนด Session ID) · PADT ใช้ปิด session",
+    "ref": "Book1 Ch14 §14.3.3",
+    "en": {
+      "question": "Arrange the packets of the **PPPoE Discovery stage** in order.",
+      "options": {
+        "a": "PADI",
+        "b": "PADO",
+        "c": "PADR",
+        "d": "PADS"
+      }
+    }
+  },
+  {
+    "id": "m13-pppoe-010",
+    "module": "M13",
+    "topic": "PPPoE",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน PPPoE ค่าใดที่ server กำหนดใน **PADS** และใช้ระบุ session ตลอดการเชื่อมต่อ",
+    "options": [
+      {
+        "id": "a",
+        "text": "Magic number"
+      },
+      {
+        "id": "b",
+        "text": "Session ID"
+      },
+      {
+        "id": "c",
+        "text": "VLAN ID"
+      },
+      {
+        "id": "d",
+        "text": "Challenge"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "PADS มี **Session ID** ซึ่งร่วมกับ MAC ของทั้งสองฝั่งใช้แยกแต่ละ session ใน Session stage",
+    "ref": "Book1 Ch14 §14.3.2",
+    "en": {
+      "question": "In PPPoE, which value does the server assign in the **PADS** to identify the session for the whole connection?",
+      "options": {
+        "a": "Magic number",
+        "b": "Session ID",
+        "c": "VLAN ID",
+        "d": "Challenge"
+      }
+    }
+  },
+  {
+    "id": "m13-wan-015",
+    "module": "M13",
+    "topic": "WAN basics",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ข้อใดเป็นข้อแตกต่างสำคัญระหว่าง data link ของลิงก์ serial แบบ point-to-point (PPP) กับ Ethernet",
+    "options": [
+      {
+        "id": "a",
+        "text": "PPP ต้องใช้ MAC address เพื่อระบุปลายทาง"
+      },
+      {
+        "id": "b",
+        "text": "PPP ไม่ต้องระบุ MAC address ของปลายทางเพราะลิงก์มีปลายทางเพียงตัวเดียว"
+      },
+      {
+        "id": "c",
+        "text": "Ethernet รองรับ authentication ในตัว"
+      },
+      {
+        "id": "d",
+        "text": "PPP ใช้ได้เฉพาะ IPv6"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "ลิงก์ point-to-point มีอุปกรณ์แค่สองฝั่ง จึงไม่ต้องใช้ address ชั้น 2 แบบ Ethernet (field Address ของ PPP เป็นค่าคงที่ 0xFF)",
+    "ref": "Book1 Ch14 §14.2.2",
+    "en": {
+      "question": "What is a key difference between the data link of a point-to-point serial link (PPP) and Ethernet?",
+      "options": {
+        "a": "PPP requires a MAC address to identify the destination",
+        "b": "PPP does not need the destination MAC address because the link has only one peer",
+        "c": "Ethernet has built-in authentication",
+        "d": "PPP works only with IPv6"
+      }
+    }
+  },
+  {
+    "id": "m13-why-012",
+    "module": "M13",
+    "topic": "PPPoE",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ISP ใช้ PPPoE กับผู้ใช้ broadband เพราะเหตุผลใด (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "ยืนยันตัวตนผู้ใช้แต่ละรายได้ (PAP/CHAP)"
+      },
+      {
+        "id": "b",
+        "text": "แจก IP ให้ผู้ใช้ผ่าน IPCP"
+      },
+      {
+        "id": "c",
+        "text": "ทำ accounting ต่อผู้ใช้ได้"
+      },
+      {
+        "id": "d",
+        "text": "ทำให้ Ethernet มีความเร็วสูงขึ้น"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "PPPoE นำ authentication, การกำหนด IP และ accounting ของ PPP มาใช้บนเครือข่าย Ethernet — ไม่ได้เพิ่มความเร็ว (ยังทำให้ MTU ลดลงด้วย)",
+    "ref": "Book1 Ch14 §14.3.1",
+    "en": {
+      "question": "Why do ISPs use PPPoE for broadband users? (Choose all that apply.)",
+      "options": {
+        "a": "It can authenticate each user (PAP/CHAP)",
+        "b": "It assigns IPs to users via IPCP",
+        "c": "It enables per-user accounting",
+        "d": "It makes Ethernet faster"
+      }
+    }
+  }
 ]

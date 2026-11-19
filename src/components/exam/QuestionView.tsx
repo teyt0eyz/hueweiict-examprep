@@ -3,7 +3,9 @@
 import Topology from "@/components/Topology";
 import { isCorrect } from "@/lib/exam";
 import { MODULES } from "@/lib/modules";
+import { writeStore } from "@/lib/storage";
 import type { QItem } from "@/lib/types";
+import { useStore } from "@/lib/useStore";
 
 const LETTERS = "ABCDEFGHIJ";
 const TYPE_LABEL: Record<QItem["type"], string> = {
@@ -12,7 +14,31 @@ const TYPE_LABEL: Record<QItem["type"], string> = {
   truefalse: "ถูก / ผิด",
   ordering: "เรียงลำดับให้ถูกต้อง (ใช้ปุ่ม ↑ ↓)",
 };
+const TYPE_LABEL_EN: Record<QItem["type"], string> = {
+  single: "Choose 1 answer",
+  multiple: "Choose all that apply (all correct options are required)",
+  truefalse: "True / False",
+  ordering: "Arrange in the correct order (use ↑ ↓)",
+};
 const DIFF = ["", "ง่าย", "กลาง", "ยาก"];
+
+export type Lang = "en" | "th";
+/** Question language (real exam is English). Explanations stay Thai. */
+export const useLang = () => useStore<Lang>("lang", "en");
+export const setLang = (l: Lang) => writeStore("lang", l);
+
+export function LangToggle({ className = "" }: { className?: string }) {
+  const lang = useLang();
+  return (
+    <span role="group" aria-label="ภาษาของโจทย์" className={`inline-flex overflow-hidden rounded-md border border-border text-xs ${className}`}>
+      {(["en", "th"] as Lang[]).map((l) => (
+        <button key={l} type="button" aria-pressed={lang === l} onClick={() => setLang(l)} className={`px-2 py-0.5 font-medium ${lang === l ? "bg-accent text-accent-fg" : "hover:bg-surface-2"}`}>
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </span>
+  );
+}
 
 export function Html({ html, className = "" }: { html: string; className?: string }) {
   return <div className={`q-html ${className}`} dangerouslySetInnerHTML={{ __html: html }} />;
@@ -32,7 +58,10 @@ type Props = {
 };
 
 export default function QuestionView({ q, number, total, order, answer, onAnswer, revealed = false, showMeta = true, bookmarked, onBookmark }: Props) {
+  const lang = useLang();
+  const en = lang === "en" && !!q.qEn;
   const optMap = new Map(q.options.map((o) => [o.id, o]));
+  const optHtml = (o: QItem["options"][number] | undefined) => (o ? (en && o.htmlEn ? o.htmlEn : o.html) : "");
   const locked = revealed || !onAnswer;
   const chosen = answer ?? [];
   const mod = MODULES.find((m) => m.id === q.module);
@@ -72,19 +101,20 @@ export default function QuestionView({ q, number, total, order, answer, onAnswer
             <span>· {DIFF[q.difficulty]}</span>
           </>
         )}
+        {q.qEn && <LangToggle className="ml-auto" />}
         {onBookmark && (
-          <button type="button" onClick={onBookmark} aria-pressed={bookmarked} className={`ml-auto rounded-md border px-2 py-0.5 ${bookmarked ? "border-warning text-warning" : "border-border hover:text-fg"}`}>
+          <button type="button" onClick={onBookmark} aria-pressed={bookmarked} className={`${q.qEn ? "" : "ml-auto "} rounded-md border px-2 py-0.5 ${bookmarked ? "border-warning text-warning" : "border-border hover:text-fg"}`}>
             {bookmarked ? "★ Bookmarked" : "☆ Bookmark"}
           </button>
         )}
       </header>
 
       <div id={`q-${q.id}`}>
-        <Html html={q.q} className="text-[1.02rem]" />
+        <Html html={en ? q.qEn! : q.q} className="text-[1.02rem]" />
       </div>
       {q.diagram && <Topology name={q.diagram} />}
 
-      <p className="mb-2 mt-4 text-xs font-medium text-muted">{TYPE_LABEL[q.type]}</p>
+      <p className="mb-2 mt-4 text-xs font-medium text-muted">{(en ? TYPE_LABEL_EN : TYPE_LABEL)[q.type]}</p>
 
       {q.type === "ordering" ? (
         <ol className="space-y-2">
@@ -95,7 +125,7 @@ export default function QuestionView({ q, number, total, order, answer, onAnswer
             return (
               <li key={id} className={`flex items-center gap-3 rounded-lg border p-3 ${revealed ? (right ? "border-success" : "border-danger") : "border-border"}`}>
                 <span className="w-6 shrink-0 text-center font-mono text-sm text-muted">{i + 1}</span>
-                <Html html={o.html} className="min-w-0 flex-1" />
+                <Html html={optHtml(o)} className="min-w-0 flex-1" />
                 {!locked && (
                   <span className="flex shrink-0 gap-1">
                     <button type="button" aria-label="เลื่อนขึ้น" disabled={i === 0} onClick={() => move(i, -1)} className="h-8 w-8 rounded-md border border-border disabled:opacity-30">↑</button>
@@ -136,7 +166,7 @@ export default function QuestionView({ q, number, total, order, answer, onAnswer
                   >
                     {LETTERS[i]}
                   </span>
-                  <Html html={o.html} className="min-w-0 flex-1" />
+                  <Html html={optHtml(o)} className="min-w-0 flex-1" />
                   {revealed && isAns && <span className="shrink-0 text-sm text-success" aria-label="คำตอบที่ถูก">✓</span>}
                   {revealed && isChosen && !isAns && <span className="shrink-0 text-sm text-danger" aria-label="คำตอบที่เลือกผิด">✗</span>}
                 </button>
@@ -161,7 +191,7 @@ export default function QuestionView({ q, number, total, order, answer, onAnswer
             <ol className="mb-3 list-decimal space-y-1 pl-5 text-sm">
               {q.answer.map((id) => (
                 <li key={id}>
-                  <Html html={optMap.get(id)?.html ?? id} />
+                  <Html html={optHtml(optMap.get(id)) || id} />
                 </li>
               ))}
             </ol>

@@ -1,800 +1,1023 @@
 [
- {
-  "id": "m12-broadcast-008",
-  "module": "M12",
-  "topic": "Address types",
-  "type": "truefalse",
-  "difficulty": 1,
-  "question": "IPv6 ยังมี broadcast address สำหรับส่งถึงทุก host ใน link เหมือน IPv4",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "IPv6 **ไม่มี broadcast** ใช้ multicast แทน เช่น FF02::1 (all nodes) และ solicited-node multicast แทน ARP broadcast",
-  "ref": "Book1 Ch13 §13.3"
- },
- {
-  "id": "m12-compress-003",
-  "module": "M12",
-  "topic": "Address notation",
-  "type": "single",
-  "difficulty": 1,
-  "question": "รูปย่อที่ถูกต้องของ `2001:0DB8:0000:0000:0000:0000:0000:0001` คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "2001:DB8::1"
-   },
-   {
-    "id": "b",
-    "text": "2001:DB8:0::0:1::"
-   },
-   {
-    "id": "c",
-    "text": "2001:DB8::0001::"
-   },
-   {
-    "id": "d",
-    "text": "21:DB8::1"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "ตัด 0 นำหน้า (0DB8 → DB8, 0001 → 1) และแทนกลุ่ม 0 ที่ติดกันด้วย `::` ครั้งเดียว → **2001:DB8::1** · ตัด 0 ท้ายกลุ่มไม่ได้ (2001 → 21 ผิด)",
-  "ref": "Book1 Ch13 §13.2"
- },
- {
-  "id": "m12-dad-015",
-  "module": "M12",
-  "topic": "DAD",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ในการทำ **DAD** host ส่ง NS โดยใช้ source address ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "link-local ของตัวเอง"
-   },
-   {
-    "id": "b",
-    "text": "address ที่กำลังทดสอบ"
-   },
-   {
-    "id": "c",
-    "text": "unspecified address (::)"
-   },
-   {
-    "id": "d",
-    "text": "FF02::1"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "ระหว่าง DAD address ยังไม่ผ่านการตรวจจึงใช้ไม่ได้ host ส่ง NS ด้วย source **::** ไปยัง solicited-node multicast ของ address ที่จะใช้ ถ้ามี NA ตอบ = ซ้ำ",
-  "ref": "Book1 Ch13 §13.5"
- },
- {
-  "id": "m12-display-023",
-  "module": "M12",
-  "topic": "Verification",
-  "type": "single",
-  "difficulty": 2,
-  "question": "จาก output ข้อใดถูกต้อง\n\n```vrp\n<R1>display ipv6 interface brief\n*down: administratively down\n(l): loopback\n(s): spoofing\nInterface                         Physical  Protocol\nGigabitEthernet0/0/0              up        up\n[IPv6 Address] 2001:DB8:1::1\nGigabitEthernet0/0/1              up        down\n[IPv6 Address] Unassigned\n```",
-  "options": [
-   {
-    "id": "a",
-    "text": "G0/0/1 ยังไม่มี IPv6 address (protocol down)"
-   },
-   {
-    "id": "b",
-    "text": "G0/0/0 ถูก shutdown"
-   },
-   {
-    "id": "c",
-    "text": "G0/0/1 ถูก shutdown ด้วยคำสั่ง"
-   },
-   {
-    "id": "d",
-    "text": "ทั้งสอง interface ใช้ IPv6 ได้"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "G0/0/1 physical up แต่ IPv6 protocol down และ address = **Unassigned** — ยังไม่ได้เปิด `ipv6 enable`/กำหนด address · ถ้าถูก shutdown จะเห็น *down",
-  "ref": "Book1 Ch13 §13.7"
- },
- {
-  "id": "m12-enable-018",
-  "module": "M12",
-  "topic": "IPv6 configuration",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ขั้นตอนใด **จำเป็น** ก่อนที่ interface ของ Huawei router จะใช้ IPv6 address ได้ (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "`ipv6` ใน system view"
-   },
-   {
-    "id": "b",
-    "text": "`ipv6 enable` ใน interface view"
-   },
-   {
-    "id": "c",
-    "text": "`ipv6 address ...` บน interface"
-   },
-   {
-    "id": "d",
-    "text": "`dhcp enable`"
-   },
-   {
-    "id": "e",
-    "text": "`ospfv3 1`"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "VRP ต้องเปิด IPv6 ทั้งระดับระบบ (`ipv6`) และระดับ interface (`ipv6 enable`) แล้วจึงกำหนด address · DHCP และ OSPFv3 เป็นฟีเจอร์เสริม",
-  "ref": "Book1 Ch13 §13.7"
- },
- {
-  "id": "m12-eui-011",
-  "module": "M12",
-  "topic": "EUI-64",
-  "type": "single",
-  "difficulty": 2,
-  "question": "MAC address `00E0-FC12-3456` สร้าง interface ID แบบ EUI-64 ได้เป็นข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "02E0:FCFF:FE12:3456"
-   },
-   {
-    "id": "b",
-    "text": "00E0:FCFF:FE12:3456"
-   },
-   {
-    "id": "c",
-    "text": "02E0:FC12:FFFE:3456"
-   },
-   {
-    "id": "d",
-    "text": "00E0:FC12:3456:FFFE"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "แบ่ง MAC เป็น 00E0FC | 123456 แทรก FFFE → 00E0:FCFF:FE12:3456 แล้วกลับ bit ที่ 7 ของ byte แรก: 0x00 → **0x02** → 02E0:FCFF:FE12:3456",
-  "ref": "Book1 Ch13 §13.4"
- },
- {
-  "id": "m12-eui-012",
-  "module": "M12",
-  "topic": "EUI-64",
-  "type": "single",
-  "difficulty": 3,
-  "question": "MAC `5489-98AB-CDEF` สร้าง interface ID แบบ EUI-64 ได้เป็นข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "5489:98FF:FEAB:CDEF"
-   },
-   {
-    "id": "b",
-    "text": "5689:98FF:FEAB:CDEF"
-   },
-   {
-    "id": "c",
-    "text": "5489:98AB:FFFE:CDEF"
-   },
-   {
-    "id": "d",
-    "text": "5689:98AB:CDEF:FFFE"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "0x54 = 0101 0100 กลับ bit ที่ 7 (bit ค่า 2) → 0101 0110 = **0x56** แล้วแทรก FFFE ตรงกลาง → 5689:98FF:FEAB:CDEF",
-  "ref": "Book1 Ch13 §13.4"
- },
- {
-  "id": "m12-expand-005",
-  "module": "M12",
-  "topic": "Address notation",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ขยาย `FE80::2E0:FCFF:FE12:3456` เป็นรูปเต็มได้ข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "FE80:0000:0000:0000:02E0:FCFF:FE12:3456"
-   },
-   {
-    "id": "b",
-    "text": "FE80:0000:0000:2E00:FCFF:FE12:3456:0000"
-   },
-   {
-    "id": "c",
-    "text": "FE80:0000:0000:0000:0000:02E0:FCFF:FE12"
-   },
-   {
-    "id": "d",
-    "text": "FE80:02E0:FCFF:FE12:3456:0000:0000:0000"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "มี 5 กลุ่มที่เขียนไว้ (FE80, 2E0, FCFF, FE12, 3456) ดังนั้น `::` แทน 8 − 5 = **3 กลุ่ม** และเติม 0 นำหน้า 2E0 → 02E0",
-  "ref": "Book1 Ch13 §13.2"
- },
- {
-  "id": "m12-header-002",
-  "module": "M12",
-  "topic": "IPv6 header",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ข้อใดถูกต้องเกี่ยวกับ **IPv6 base header** (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "มีขนาดคงที่ 40 byte"
-   },
-   {
-    "id": "b",
-    "text": "Hop Limit ทำหน้าที่แทน TTL"
-   },
-   {
-    "id": "c",
-    "text": "ไม่มี header checksum"
-   },
-   {
-    "id": "d",
-    "text": "router ระหว่างทางทำ fragmentation ได้เหมือน IPv4"
-   },
-   {
-    "id": "e",
-    "text": "ใช้ field Next Header ชี้ไปยัง extension header หรือโปรโตคอลชั้นบน"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "e"
-  ],
-  "explanation": "IPv6 ตัด checksum ออกและ **ไม่ให้ router ระหว่างทาง fragment** — เฉพาะต้นทางทำได้ผ่าน Fragment extension header (ใช้ PMTUD หาขนาด)",
-  "ref": "Book1 Ch13 §13.1"
- },
- {
-  "id": "m12-invalid-004",
-  "module": "M12",
-  "topic": "Address notation",
-  "type": "single",
-  "difficulty": 2,
-  "question": "address ใด **เขียนผิดรูปแบบ**",
-  "options": [
-   {
-    "id": "a",
-    "text": "FE80::1"
-   },
-   {
-    "id": "b",
-    "text": "2001:DB8:0:1::A"
-   },
-   {
-    "id": "c",
-    "text": "2001::25DE::CADE"
-   },
-   {
-    "id": "d",
-    "text": "::1"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "`::` ใช้ได้ **เพียงครั้งเดียว** — 2001::25DE::CADE ใช้สองครั้งจึงไม่รู้ว่าแต่ละช่วงมี 0 กี่กลุ่ม",
-  "ref": "Book1 Ch13 §13.2"
- },
- {
-  "id": "m12-len-001",
-  "module": "M12",
-  "topic": "IPv6 basics",
-  "type": "single",
-  "difficulty": 1,
-  "question": "IPv6 address มีความยาวกี่ bit",
-  "options": [
-   {
-    "id": "a",
-    "text": "32"
-   },
-   {
-    "id": "b",
-    "text": "64"
-   },
-   {
-    "id": "c",
-    "text": "128"
-   },
-   {
-    "id": "d",
-    "text": "256"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "IPv6 address ยาว **128 bit** เขียนเป็น 8 กลุ่ม กลุ่มละ 16 bit",
-  "ref": "Book1 Ch13 §13.2"
- },
- {
-  "id": "m12-lla-020",
-  "module": "M12",
-  "topic": "Address types",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ทำไม routing protocol ของ IPv6 (เช่น OSPFv3) จึงใช้ **link-local address** เป็น next hop",
-  "options": [
-   {
-    "id": "a",
-    "text": "เพราะ link-local มีเสมอบนทุก interface ที่เปิด IPv6 และไม่เปลี่ยนเมื่อ renumber global prefix"
-   },
-   {
-    "id": "b",
-    "text": "เพราะ link-local route ข้ามอินเทอร์เน็ตได้"
-   },
-   {
-    "id": "c",
-    "text": "เพราะ link-local มีความยาว 32 bit"
-   },
-   {
-    "id": "d",
-    "text": "เพราะ global address ใช้กับ router ไม่ได้"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "link-local มีอยู่เสมอและใช้ได้เฉพาะใน link ซึ่งตรงกับขอบเขตของ neighbor — next hop จึงไม่ต้องเปลี่ยนเมื่อเปลี่ยน global prefix",
-  "ref": "Book1 Ch13 §13.3"
- },
- {
-  "id": "m12-mcast-009",
-  "module": "M12",
-  "topic": "Multicast",
-  "type": "single",
-  "difficulty": 2,
-  "question": "multicast address ใดหมายถึง **ทุก router บน link** (all-routers)",
-  "options": [
-   {
-    "id": "a",
-    "text": "FF02::1"
-   },
-   {
-    "id": "b",
-    "text": "FF02::2"
-   },
-   {
-    "id": "c",
-    "text": "FF02::5"
-   },
-   {
-    "id": "d",
-    "text": "FF02::1:FF00:1"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "FF02::1 = all nodes · **FF02::2 = all routers** · FF02::5 = OSPFv3 all SPF routers · FF02::1:FFxx:xxxx = solicited-node",
-  "ref": "Book1 Ch13 §13.3"
- },
- {
-  "id": "m12-ndp-013",
-  "module": "M12",
-  "topic": "NDP",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ใน IPv6 ข้อความใดทำหน้าที่แทน **ARP request** เพื่อหา MAC ของ neighbor",
-  "options": [
-   {
-    "id": "a",
-    "text": "Router Solicitation (RS)"
-   },
-   {
-    "id": "b",
-    "text": "Router Advertisement (RA)"
-   },
-   {
-    "id": "c",
-    "text": "Neighbor Solicitation (NS)"
-   },
-   {
-    "id": "d",
-    "text": "Neighbor Advertisement (NA)"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "**NS (ICMPv6 type 135)** ส่งไปที่ solicited-node multicast ของเป้าหมายเพื่อถาม MAC ส่วน NA (136) เป็นคำตอบ (แทน ARP reply)",
-  "ref": "Book1 Ch13 §13.5"
- },
- {
-  "id": "m12-ndp-025",
-  "module": "M12",
-  "topic": "NDP",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ข้อมูลใดที่ host ได้รับจาก **Router Advertisement** (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "prefix ของ link สำหรับ SLAAC"
-   },
-   {
-    "id": "b",
-    "text": "default gateway (link-local ของ router ที่ส่ง RA)"
-   },
-   {
-    "id": "c",
-    "text": "flag M และ O บอกวิธีกำหนด address"
-   },
-   {
-    "id": "d",
-    "text": "MAC address ของทุก host ใน link"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "RA ประกาศ prefix, router lifetime (ใช้ router เป็น default gateway ผ่าน source link-local), MTU และ flag M/O · MAC ของ host อื่นได้จาก NS/NA ไม่ใช่ RA",
-  "ref": "Book1 Ch13 §13.5"
- },
- {
-  "id": "m12-ndptype-014",
-  "module": "M12",
-  "topic": "NDP",
-  "type": "ordering",
-  "difficulty": 2,
-  "question": "เรียง ICMPv6 type ของ NDP message จาก **ค่าน้อยไปมาก**",
-  "options": [
-   {
-    "id": "a",
-    "text": "Router Solicitation (133)"
-   },
-   {
-    "id": "b",
-    "text": "Router Advertisement (134)"
-   },
-   {
-    "id": "c",
-    "text": "Neighbor Solicitation (135)"
-   },
-   {
-    "id": "d",
-    "text": "Neighbor Advertisement (136)"
-   },
-   {
-    "id": "e",
-    "text": "Redirect (137)"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d",
-   "e"
-  ],
-  "explanation": "RS 133 → RA 134 → NS 135 → NA 136 → Redirect 137",
-  "ref": "Book1 Ch13 §13.5"
- },
- {
-  "id": "m12-ospfv3-021",
-  "module": "M12",
-  "topic": "OSPFv3",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ข้อใดถูกต้องเกี่ยวกับ OSPFv3 บน Huawei VRP",
-  "options": [
-   {
-    "id": "a",
-    "text": "ใช้ router ID แบบ IPv6 128 bit"
-   },
-   {
-    "id": "b",
-    "text": "ยังใช้ router ID 32 bit (รูปแบบ IPv4) และเปิดที่ interface ด้วย `ospfv3 <process> area <area>`"
-   },
-   {
-    "id": "c",
-    "text": "ใช้คำสั่ง `network` เหมือน OSPFv2"
-   },
-   {
-    "id": "d",
-    "text": "ทำงานบน UDP 89"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "OSPFv3 ใช้ **router ID 32 bit** (ต้องตั้งเองถ้าไม่มี IPv4) และเปิดที่ interface ไม่ใช้คำสั่ง network · OSPF ใช้ IP protocol 89 ไม่ใช่ UDP",
-  "ref": "Book1 Ch13 §13.7"
- },
- {
-  "id": "m12-prefix-024",
-  "module": "M12",
-  "topic": "Address notation",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ISP ให้ prefix **2001:DB8:AB00::/48** แก่องค์กร ถ้าทุก LAN ใช้ /64 จะสร้าง subnet ได้กี่วง",
-  "options": [
-   {
-    "id": "a",
-    "text": "256"
-   },
-   {
-    "id": "b",
-    "text": "4,096"
-   },
-   {
-    "id": "c",
-    "text": "65,536"
-   },
-   {
-    "id": "d",
-    "text": "16,777,216"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "จาก /48 ไป /64 มี subnet bit = 64 − 48 = 16 bit → 2^16 = **65,536** subnet",
-  "ref": "Book1 Ch13 §13.2"
- },
- {
-  "id": "m12-ra-017",
-  "module": "M12",
-  "topic": "Address configuration",
-  "type": "single",
-  "difficulty": 3,
-  "question": "ตั้ง `ipv6 address 2001:db8:1::1 64` บน R1 G0/0/0 แล้ว PC ที่ใช้ SLAAC ยังไม่ได้ global address สาเหตุที่น่าเป็นที่สุดบน Huawei AR คือข้อใด",
-  "diagram": "m12-ipv6",
-  "options": [
-   {
-    "id": "a",
-    "text": "ไม่ได้สั่ง `undo ipv6 nd ra halt` บน interface ทำให้ router ไม่ส่ง RA"
-   },
-   {
-    "id": "b",
-    "text": "prefix /64 ใช้กับ SLAAC ไม่ได้"
-   },
-   {
-    "id": "c",
-    "text": "ต้องเปิด DHCPv6 เสมอ"
-   },
-   {
-    "id": "d",
-    "text": "ลืมตั้ง OSPFv3"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "SLAAC ต้องได้ prefix จาก **RA** และบน AR ค่า default คือ RA ถูก halt ต้องสั่ง `undo ipv6 nd ra halt` · SLAAC ต้องใช้ prefix **/64** อยู่แล้ว",
-  "ref": "Book1 Ch13 §13.7"
- },
- {
-  "id": "m12-route-019",
-  "module": "M12",
-  "topic": "IPv6 routing",
-  "type": "single",
-  "difficulty": 2,
-  "question": "คำสั่งใดสร้าง **IPv6 default route** ชี้ไป next hop 2001:db8:12::2",
-  "diagram": "m12-ipv6",
-  "options": [
-   {
-    "id": "a",
-    "text": "`ipv6 route-static :: 0 2001:db8:12::2`"
-   },
-   {
-    "id": "b",
-    "text": "`ip route-static 0.0.0.0 0 2001:db8:12::2`"
-   },
-   {
-    "id": "c",
-    "text": "`ipv6 route-static ::/0 2001:db8:12::2 default`"
-   },
-   {
-    "id": "d",
-    "text": "`ipv6 default-route 2001:db8:12::2`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "รูปแบบ `ipv6 route-static <prefix> <length> <next-hop>` — default route คือ prefix `::` ความยาว 0",
-  "ref": "Book1 Ch13 §13.7"
- },
- {
-  "id": "m12-slaac-016",
-  "module": "M12",
-  "topic": "Address configuration",
-  "type": "single",
-  "difficulty": 2,
-  "question": "RA มี flag **M = 0, O = 1** host จะได้ address และ DNS จากที่ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "address และ DNS จาก DHCPv6 ทั้งหมด"
-   },
-   {
-    "id": "b",
-    "text": "address จาก SLAAC (prefix ใน RA) และ DNS จาก stateless DHCPv6"
-   },
-   {
-    "id": "c",
-    "text": "address จาก DHCPv6 และ DNS จาก RA"
-   },
-   {
-    "id": "d",
-    "text": "ต้องตั้ง static ทั้งหมด"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "M = 1 → stateful DHCPv6 (แจก address) · **M = 0, O = 1 → stateless DHCPv6**: address จาก SLAAC ส่วนข้อมูลอื่นอย่าง DNS จาก DHCPv6 · M = 0, O = 0 → SLAAC อย่างเดียว",
-  "ref": "Book1 Ch13 §13.6"
- },
- {
-  "id": "m12-snm-010",
-  "module": "M12",
-  "topic": "Multicast",
-  "type": "single",
-  "difficulty": 3,
-  "question": "solicited-node multicast address ของ unicast `2001:DB8::2AA:FF:FE28:9C5A` คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "FF02::1:FF28:9C5A"
-   },
-   {
-    "id": "b",
-    "text": "FF02::1:FFAA:FF"
-   },
-   {
-    "id": "c",
-    "text": "FF02::2:FF28:9C5A"
-   },
-   {
-    "id": "d",
-    "text": "FF05::1:FF28:9C5A"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "ใช้ prefix **FF02::1:FF00:0/104** + **24 bit สุดท้าย** ของ unicast (28:9C5A) → FF02::1:FF28:9C5A",
-  "ref": "Book1 Ch13 §13.3"
- },
- {
-  "id": "m12-type-006",
-  "module": "M12",
-  "topic": "Address types",
-  "type": "single",
-  "difficulty": 1,
-  "question": "address `FE80::1` เป็นชนิดใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "Global unicast"
-   },
-   {
-    "id": "b",
-    "text": "Link-local unicast"
-   },
-   {
-    "id": "c",
-    "text": "Unique local"
-   },
-   {
-    "id": "d",
-    "text": "Multicast"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**FE80::/10 = link-local** ใช้ภายใน link เดียว ทุก interface ที่เปิด IPv6 จะมี · GUA = 2000::/3 · ULA = FC00::/7 · Multicast = FF00::/8",
-  "ref": "Book1 Ch13 §13.3"
- },
- {
-  "id": "m12-type-007",
-  "module": "M12",
-  "topic": "Address types",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "address ใดเป็น **Global Unicast Address** (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "2001:DB8:1::10"
-   },
-   {
-    "id": "b",
-    "text": "3FFE:1::1"
-   },
-   {
-    "id": "c",
-    "text": "FD12:3456::1"
-   },
-   {
-    "id": "d",
-    "text": "FF02::1"
-   },
-   {
-    "id": "e",
-    "text": "2400:CB00::1"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "e"
-  ],
-  "explanation": "GUA อยู่ใน **2000::/3** (ขึ้นต้น 2 หรือ 3 ฐานสิบหก) · FD.. = ULA · FF.. = multicast",
-  "ref": "Book1 Ch13 §13.3"
- },
- {
-  "id": "m12-ula-022",
-  "module": "M12",
-  "topic": "Address types",
-  "type": "single",
-  "difficulty": 2,
-  "question": "องค์กรต้องการ IPv6 address สำหรับใช้ภายในเท่านั้น ไม่ route บนอินเทอร์เน็ต (เทียบ private IPv4) ควรใช้ช่วงใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "2000::/3"
-   },
-   {
-    "id": "b",
-    "text": "FD00::/8 (ภายใต้ FC00::/7)"
-   },
-   {
-    "id": "c",
-    "text": "FE80::/10"
-   },
-   {
-    "id": "d",
-    "text": "FF00::/8"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**ULA FC00::/7** (ใช้จริง FD00::/8 พร้อม global ID แบบสุ่ม) เทียบ private IPv4 · FE80::/10 ใช้ได้แค่ใน link เดียว",
-  "ref": "Book1 Ch13 §13.3"
- }
+  {
+    "id": "m12-broadcast-008",
+    "module": "M12",
+    "topic": "Address types",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "IPv6 ยังมี broadcast address สำหรับส่งถึงทุก host ใน link เหมือน IPv4",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "IPv6 **ไม่มี broadcast** ใช้ multicast แทน เช่น FF02::1 (all nodes) และ solicited-node multicast แทน ARP broadcast",
+    "ref": "Book1 Ch13 §13.3",
+    "en": {
+      "question": "IPv6 still has a broadcast address for sending to all hosts on a link, just like IPv4."
+    }
+  },
+  {
+    "id": "m12-compress-003",
+    "module": "M12",
+    "topic": "Address notation",
+    "type": "single",
+    "difficulty": 1,
+    "question": "รูปย่อที่ถูกต้องของ `2001:0DB8:0000:0000:0000:0000:0000:0001` คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "2001:DB8::1"
+      },
+      {
+        "id": "b",
+        "text": "2001:DB8:0::0:1::"
+      },
+      {
+        "id": "c",
+        "text": "2001:DB8::0001::"
+      },
+      {
+        "id": "d",
+        "text": "21:DB8::1"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ตัด 0 นำหน้า (0DB8 → DB8, 0001 → 1) และแทนกลุ่ม 0 ที่ติดกันด้วย `::` ครั้งเดียว → **2001:DB8::1** · ตัด 0 ท้ายกลุ่มไม่ได้ (2001 → 21 ผิด)",
+    "ref": "Book1 Ch13 §13.2",
+    "en": {
+      "question": "What is the correct compressed form of `2001:0DB8:0000:0000:0000:0000:0000:0001`?",
+      "options": {
+        "a": "2001:DB8::1",
+        "b": "2001:DB8:0::0:1::",
+        "c": "2001:DB8::0001::",
+        "d": "21:DB8::1"
+      }
+    }
+  },
+  {
+    "id": "m12-dad-015",
+    "module": "M12",
+    "topic": "DAD",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ในการทำ **DAD** host ส่ง NS โดยใช้ source address ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "link-local ของตัวเอง"
+      },
+      {
+        "id": "b",
+        "text": "address ที่กำลังทดสอบ"
+      },
+      {
+        "id": "c",
+        "text": "unspecified address (::)"
+      },
+      {
+        "id": "d",
+        "text": "FF02::1"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "ระหว่าง DAD address ยังไม่ผ่านการตรวจจึงใช้ไม่ได้ host ส่ง NS ด้วย source **::** ไปยัง solicited-node multicast ของ address ที่จะใช้ ถ้ามี NA ตอบ = ซ้ำ",
+    "ref": "Book1 Ch13 §13.5",
+    "en": {
+      "question": "When performing **DAD**, which source address does the host use for the NS?",
+      "options": {
+        "a": "Its own link-local address",
+        "b": "The address being tested",
+        "c": "The unspecified address (::)",
+        "d": "FF02::1"
+      }
+    }
+  },
+  {
+    "id": "m12-display-023",
+    "module": "M12",
+    "topic": "Verification",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก output ข้อใดถูกต้อง\n\n```vrp\n<R1>display ipv6 interface brief\n*down: administratively down\n(l): loopback\n(s): spoofing\nInterface                         Physical  Protocol\nGigabitEthernet0/0/0              up        up\n[IPv6 Address] 2001:DB8:1::1\nGigabitEthernet0/0/1              up        down\n[IPv6 Address] Unassigned\n```",
+    "options": [
+      {
+        "id": "a",
+        "text": "G0/0/1 ยังไม่มี IPv6 address (protocol down)"
+      },
+      {
+        "id": "b",
+        "text": "G0/0/0 ถูก shutdown"
+      },
+      {
+        "id": "c",
+        "text": "G0/0/1 ถูก shutdown ด้วยคำสั่ง"
+      },
+      {
+        "id": "d",
+        "text": "ทั้งสอง interface ใช้ IPv6 ได้"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "G0/0/1 physical up แต่ IPv6 protocol down และ address = **Unassigned** — ยังไม่ได้เปิด `ipv6 enable`/กำหนด address · ถ้าถูก shutdown จะเห็น *down",
+    "ref": "Book1 Ch13 §13.7",
+    "en": {
+      "question": "Based on the output, which statement is correct?\n\n```vrp\n<R1>display ipv6 interface brief\n*down: administratively down\n(l): loopback\n(s): spoofing\nInterface                         Physical  Protocol\nGigabitEthernet0/0/0              up        up\n[IPv6 Address] 2001:DB8:1::1\nGigabitEthernet0/0/1              up        down\n[IPv6 Address] Unassigned\n```",
+      "options": {
+        "a": "G0/0/1 has no IPv6 address yet (protocol down)",
+        "b": "G0/0/0 is shut down",
+        "c": "G0/0/1 was shut down by command",
+        "d": "Both interfaces can use IPv6"
+      }
+    }
+  },
+  {
+    "id": "m12-enable-018",
+    "module": "M12",
+    "topic": "IPv6 configuration",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ขั้นตอนใด **จำเป็น** ก่อนที่ interface ของ Huawei router จะใช้ IPv6 address ได้ (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "`ipv6` ใน system view"
+      },
+      {
+        "id": "b",
+        "text": "`ipv6 enable` ใน interface view"
+      },
+      {
+        "id": "c",
+        "text": "`ipv6 address ...` บน interface"
+      },
+      {
+        "id": "d",
+        "text": "`dhcp enable`"
+      },
+      {
+        "id": "e",
+        "text": "`ospfv3 1`"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "VRP ต้องเปิด IPv6 ทั้งระดับระบบ (`ipv6`) และระดับ interface (`ipv6 enable`) แล้วจึงกำหนด address · DHCP และ OSPFv3 เป็นฟีเจอร์เสริม",
+    "ref": "Book1 Ch13 §13.7",
+    "en": {
+      "question": "Which steps are **required** before an interface on a Huawei router can use an IPv6 address? (Choose all that apply.)",
+      "options": {
+        "a": "`ipv6` in the system view",
+        "b": "`ipv6 enable` in the interface view",
+        "c": "`ipv6 address ...` on the interface",
+        "d": "`dhcp enable`",
+        "e": "`ospfv3 1`"
+      }
+    }
+  },
+  {
+    "id": "m12-eui-011",
+    "module": "M12",
+    "topic": "EUI-64",
+    "type": "single",
+    "difficulty": 2,
+    "question": "MAC address `00E0-FC12-3456` สร้าง interface ID แบบ EUI-64 ได้เป็นข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "02E0:FCFF:FE12:3456"
+      },
+      {
+        "id": "b",
+        "text": "00E0:FCFF:FE12:3456"
+      },
+      {
+        "id": "c",
+        "text": "02E0:FC12:FFFE:3456"
+      },
+      {
+        "id": "d",
+        "text": "00E0:FC12:3456:FFFE"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "แบ่ง MAC เป็น 00E0FC | 123456 แทรก FFFE → 00E0:FCFF:FE12:3456 แล้วกลับ bit ที่ 7 ของ byte แรก: 0x00 → **0x02** → 02E0:FCFF:FE12:3456",
+    "ref": "Book1 Ch13 §13.4",
+    "en": {
+      "question": "What EUI-64 interface ID is generated from MAC address `00E0-FC12-3456`?",
+      "options": {
+        "a": "02E0:FCFF:FE12:3456",
+        "b": "00E0:FCFF:FE12:3456",
+        "c": "02E0:FC12:FFFE:3456",
+        "d": "00E0:FC12:3456:FFFE"
+      }
+    }
+  },
+  {
+    "id": "m12-eui-012",
+    "module": "M12",
+    "topic": "EUI-64",
+    "type": "single",
+    "difficulty": 3,
+    "question": "MAC `5489-98AB-CDEF` สร้าง interface ID แบบ EUI-64 ได้เป็นข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "5489:98FF:FEAB:CDEF"
+      },
+      {
+        "id": "b",
+        "text": "5689:98FF:FEAB:CDEF"
+      },
+      {
+        "id": "c",
+        "text": "5489:98AB:FFFE:CDEF"
+      },
+      {
+        "id": "d",
+        "text": "5689:98AB:CDEF:FFFE"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "0x54 = 0101 0100 กลับ bit ที่ 7 (bit ค่า 2) → 0101 0110 = **0x56** แล้วแทรก FFFE ตรงกลาง → 5689:98FF:FEAB:CDEF",
+    "ref": "Book1 Ch13 §13.4",
+    "en": {
+      "question": "What EUI-64 interface ID is generated from MAC `5489-98AB-CDEF`?",
+      "options": {
+        "a": "5489:98FF:FEAB:CDEF",
+        "b": "5689:98FF:FEAB:CDEF",
+        "c": "5489:98AB:FFFE:CDEF",
+        "d": "5689:98AB:CDEF:FFFE"
+      }
+    }
+  },
+  {
+    "id": "m12-expand-005",
+    "module": "M12",
+    "topic": "Address notation",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ขยาย `FE80::2E0:FCFF:FE12:3456` เป็นรูปเต็มได้ข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "FE80:0000:0000:0000:02E0:FCFF:FE12:3456"
+      },
+      {
+        "id": "b",
+        "text": "FE80:0000:0000:2E00:FCFF:FE12:3456:0000"
+      },
+      {
+        "id": "c",
+        "text": "FE80:0000:0000:0000:0000:02E0:FCFF:FE12"
+      },
+      {
+        "id": "d",
+        "text": "FE80:02E0:FCFF:FE12:3456:0000:0000:0000"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "มี 5 กลุ่มที่เขียนไว้ (FE80, 2E0, FCFF, FE12, 3456) ดังนั้น `::` แทน 8 − 5 = **3 กลุ่ม** และเติม 0 นำหน้า 2E0 → 02E0",
+    "ref": "Book1 Ch13 §13.2",
+    "en": {
+      "question": "Which is the fully expanded form of `FE80::2E0:FCFF:FE12:3456`?",
+      "options": {
+        "a": "FE80:0000:0000:0000:02E0:FCFF:FE12:3456",
+        "b": "FE80:0000:0000:2E00:FCFF:FE12:3456:0000",
+        "c": "FE80:0000:0000:0000:0000:02E0:FCFF:FE12",
+        "d": "FE80:02E0:FCFF:FE12:3456:0000:0000:0000"
+      }
+    }
+  },
+  {
+    "id": "m12-header-002",
+    "module": "M12",
+    "topic": "IPv6 header",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ข้อใดถูกต้องเกี่ยวกับ **IPv6 base header** (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "มีขนาดคงที่ 40 byte"
+      },
+      {
+        "id": "b",
+        "text": "Hop Limit ทำหน้าที่แทน TTL"
+      },
+      {
+        "id": "c",
+        "text": "ไม่มี header checksum"
+      },
+      {
+        "id": "d",
+        "text": "router ระหว่างทางทำ fragmentation ได้เหมือน IPv4"
+      },
+      {
+        "id": "e",
+        "text": "ใช้ field Next Header ชี้ไปยัง extension header หรือโปรโตคอลชั้นบน"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "e"
+    ],
+    "explanation": "IPv6 ตัด checksum ออกและ **ไม่ให้ router ระหว่างทาง fragment** — เฉพาะต้นทางทำได้ผ่าน Fragment extension header (ใช้ PMTUD หาขนาด)",
+    "ref": "Book1 Ch13 §13.1",
+    "en": {
+      "question": "Which statements about the **IPv6 base header** are correct? (Choose all that apply.)",
+      "options": {
+        "a": "It has a fixed size of 40 bytes",
+        "b": "Hop Limit replaces TTL",
+        "c": "It has no header checksum",
+        "d": "Intermediate routers can fragment packets just like in IPv4",
+        "e": "The Next Header field points to an extension header or upper-layer protocol"
+      }
+    }
+  },
+  {
+    "id": "m12-invalid-004",
+    "module": "M12",
+    "topic": "Address notation",
+    "type": "single",
+    "difficulty": 2,
+    "question": "address ใด **เขียนผิดรูปแบบ**",
+    "options": [
+      {
+        "id": "a",
+        "text": "FE80::1"
+      },
+      {
+        "id": "b",
+        "text": "2001:DB8:0:1::A"
+      },
+      {
+        "id": "c",
+        "text": "2001::25DE::CADE"
+      },
+      {
+        "id": "d",
+        "text": "::1"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "`::` ใช้ได้ **เพียงครั้งเดียว** — 2001::25DE::CADE ใช้สองครั้งจึงไม่รู้ว่าแต่ละช่วงมี 0 กี่กลุ่ม",
+    "ref": "Book1 Ch13 §13.2",
+    "en": {
+      "question": "Which address is **written in an invalid format**?",
+      "options": {
+        "a": "FE80::1",
+        "b": "2001:DB8:0:1::A",
+        "c": "2001::25DE::CADE",
+        "d": "::1"
+      }
+    }
+  },
+  {
+    "id": "m12-len-001",
+    "module": "M12",
+    "topic": "IPv6 basics",
+    "type": "single",
+    "difficulty": 1,
+    "question": "IPv6 address มีความยาวกี่ bit",
+    "options": [
+      {
+        "id": "a",
+        "text": "32"
+      },
+      {
+        "id": "b",
+        "text": "64"
+      },
+      {
+        "id": "c",
+        "text": "128"
+      },
+      {
+        "id": "d",
+        "text": "256"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "IPv6 address ยาว **128 bit** เขียนเป็น 8 กลุ่ม กลุ่มละ 16 bit",
+    "ref": "Book1 Ch13 §13.2",
+    "en": {
+      "question": "How many bits long is an IPv6 address?",
+      "options": {
+        "a": "32",
+        "b": "64",
+        "c": "128",
+        "d": "256"
+      }
+    }
+  },
+  {
+    "id": "m12-lla-020",
+    "module": "M12",
+    "topic": "Address types",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ทำไม routing protocol ของ IPv6 (เช่น OSPFv3) จึงใช้ **link-local address** เป็น next hop",
+    "options": [
+      {
+        "id": "a",
+        "text": "เพราะ link-local มีเสมอบนทุก interface ที่เปิด IPv6 และไม่เปลี่ยนเมื่อ renumber global prefix"
+      },
+      {
+        "id": "b",
+        "text": "เพราะ link-local route ข้ามอินเทอร์เน็ตได้"
+      },
+      {
+        "id": "c",
+        "text": "เพราะ link-local มีความยาว 32 bit"
+      },
+      {
+        "id": "d",
+        "text": "เพราะ global address ใช้กับ router ไม่ได้"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "link-local มีอยู่เสมอและใช้ได้เฉพาะใน link ซึ่งตรงกับขอบเขตของ neighbor — next hop จึงไม่ต้องเปลี่ยนเมื่อเปลี่ยน global prefix",
+    "ref": "Book1 Ch13 §13.3",
+    "en": {
+      "question": "Why do IPv6 routing protocols (such as OSPFv3) use the **link-local address** as the next hop?",
+      "options": {
+        "a": "Because a link-local address always exists on every IPv6-enabled interface and does not change when the global prefix is renumbered",
+        "b": "Because link-local routes can cross the Internet",
+        "c": "Because link-local addresses are 32 bits long",
+        "d": "Because global addresses cannot be used on routers"
+      }
+    }
+  },
+  {
+    "id": "m12-mcast-009",
+    "module": "M12",
+    "topic": "Multicast",
+    "type": "single",
+    "difficulty": 2,
+    "question": "multicast address ใดหมายถึง **ทุก router บน link** (all-routers)",
+    "options": [
+      {
+        "id": "a",
+        "text": "FF02::1"
+      },
+      {
+        "id": "b",
+        "text": "FF02::2"
+      },
+      {
+        "id": "c",
+        "text": "FF02::5"
+      },
+      {
+        "id": "d",
+        "text": "FF02::1:FF00:1"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "FF02::1 = all nodes · **FF02::2 = all routers** · FF02::5 = OSPFv3 all SPF routers · FF02::1:FFxx:xxxx = solicited-node",
+    "ref": "Book1 Ch13 §13.3",
+    "en": {
+      "question": "Which multicast address means **all routers on the link** (all-routers)?",
+      "options": {
+        "a": "FF02::1",
+        "b": "FF02::2",
+        "c": "FF02::5",
+        "d": "FF02::1:FF00:1"
+      }
+    }
+  },
+  {
+    "id": "m12-ndp-013",
+    "module": "M12",
+    "topic": "NDP",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ใน IPv6 ข้อความใดทำหน้าที่แทน **ARP request** เพื่อหา MAC ของ neighbor",
+    "options": [
+      {
+        "id": "a",
+        "text": "Router Solicitation (RS)"
+      },
+      {
+        "id": "b",
+        "text": "Router Advertisement (RA)"
+      },
+      {
+        "id": "c",
+        "text": "Neighbor Solicitation (NS)"
+      },
+      {
+        "id": "d",
+        "text": "Neighbor Advertisement (NA)"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "**NS (ICMPv6 type 135)** ส่งไปที่ solicited-node multicast ของเป้าหมายเพื่อถาม MAC ส่วน NA (136) เป็นคำตอบ (แทน ARP reply)",
+    "ref": "Book1 Ch13 §13.5",
+    "en": {
+      "question": "In IPv6, which message replaces the **ARP request** for finding a neighbor's MAC address?",
+      "options": {
+        "a": "Router Solicitation (RS)",
+        "b": "Router Advertisement (RA)",
+        "c": "Neighbor Solicitation (NS)",
+        "d": "Neighbor Advertisement (NA)"
+      }
+    }
+  },
+  {
+    "id": "m12-ndp-025",
+    "module": "M12",
+    "topic": "NDP",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ข้อมูลใดที่ host ได้รับจาก **Router Advertisement** (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "prefix ของ link สำหรับ SLAAC"
+      },
+      {
+        "id": "b",
+        "text": "default gateway (link-local ของ router ที่ส่ง RA)"
+      },
+      {
+        "id": "c",
+        "text": "flag M และ O บอกวิธีกำหนด address"
+      },
+      {
+        "id": "d",
+        "text": "MAC address ของทุก host ใน link"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "RA ประกาศ prefix, router lifetime (ใช้ router เป็น default gateway ผ่าน source link-local), MTU และ flag M/O · MAC ของ host อื่นได้จาก NS/NA ไม่ใช่ RA",
+    "ref": "Book1 Ch13 §13.5",
+    "en": {
+      "question": "Which information does a host receive from a **Router Advertisement**? (Choose all that apply.)",
+      "options": {
+        "a": "The link prefix for SLAAC",
+        "b": "The default gateway (the link-local address of the router sending the RA)",
+        "c": "The M and O flags indicating how to configure addresses",
+        "d": "The MAC addresses of all hosts on the link"
+      }
+    }
+  },
+  {
+    "id": "m12-ndptype-014",
+    "module": "M12",
+    "topic": "NDP",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียง ICMPv6 type ของ NDP message จาก **ค่าน้อยไปมาก**",
+    "options": [
+      {
+        "id": "a",
+        "text": "Router Solicitation (133)"
+      },
+      {
+        "id": "b",
+        "text": "Router Advertisement (134)"
+      },
+      {
+        "id": "c",
+        "text": "Neighbor Solicitation (135)"
+      },
+      {
+        "id": "d",
+        "text": "Neighbor Advertisement (136)"
+      },
+      {
+        "id": "e",
+        "text": "Redirect (137)"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e"
+    ],
+    "explanation": "RS 133 → RA 134 → NS 135 → NA 136 → Redirect 137",
+    "ref": "Book1 Ch13 §13.5",
+    "en": {
+      "question": "Arrange the ICMPv6 types of NDP messages from **lowest to highest**.",
+      "options": {
+        "a": "Router Solicitation (133)",
+        "b": "Router Advertisement (134)",
+        "c": "Neighbor Solicitation (135)",
+        "d": "Neighbor Advertisement (136)",
+        "e": "Redirect (137)"
+      }
+    }
+  },
+  {
+    "id": "m12-ospfv3-021",
+    "module": "M12",
+    "topic": "OSPFv3",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ข้อใดถูกต้องเกี่ยวกับ OSPFv3 บน Huawei VRP",
+    "options": [
+      {
+        "id": "a",
+        "text": "ใช้ router ID แบบ IPv6 128 bit"
+      },
+      {
+        "id": "b",
+        "text": "ยังใช้ router ID 32 bit (รูปแบบ IPv4) และเปิดที่ interface ด้วย `ospfv3 <process> area <area>`"
+      },
+      {
+        "id": "c",
+        "text": "ใช้คำสั่ง `network` เหมือน OSPFv2"
+      },
+      {
+        "id": "d",
+        "text": "ทำงานบน UDP 89"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "OSPFv3 ใช้ **router ID 32 bit** (ต้องตั้งเองถ้าไม่มี IPv4) และเปิดที่ interface ไม่ใช้คำสั่ง network · OSPF ใช้ IP protocol 89 ไม่ใช่ UDP",
+    "ref": "Book1 Ch13 §13.7",
+    "en": {
+      "question": "Which statement about OSPFv3 on Huawei VRP is correct?",
+      "options": {
+        "a": "It uses a 128-bit IPv6 router ID",
+        "b": "It still uses a 32-bit router ID (IPv4 format) and is enabled on interfaces with `ospfv3 <process> area <area>`",
+        "c": "It uses the `network` command like OSPFv2",
+        "d": "It runs over UDP 89"
+      }
+    }
+  },
+  {
+    "id": "m12-prefix-024",
+    "module": "M12",
+    "topic": "Address notation",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ISP ให้ prefix **2001:DB8:AB00::/48** แก่องค์กร ถ้าทุก LAN ใช้ /64 จะสร้าง subnet ได้กี่วง",
+    "options": [
+      {
+        "id": "a",
+        "text": "256"
+      },
+      {
+        "id": "b",
+        "text": "4,096"
+      },
+      {
+        "id": "c",
+        "text": "65,536"
+      },
+      {
+        "id": "d",
+        "text": "16,777,216"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "จาก /48 ไป /64 มี subnet bit = 64 − 48 = 16 bit → 2^16 = **65,536** subnet",
+    "ref": "Book1 Ch13 §13.2",
+    "en": {
+      "question": "An ISP assigns the prefix **2001:DB8:AB00::/48** to an organization. If every LAN uses /64, how many subnets can be created?",
+      "options": {
+        "a": "256",
+        "b": "4,096",
+        "c": "65,536",
+        "d": "16,777,216"
+      }
+    }
+  },
+  {
+    "id": "m12-ra-017",
+    "module": "M12",
+    "topic": "Address configuration",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ตั้ง `ipv6 address 2001:db8:1::1 64` บน R1 G0/0/0 แล้ว PC ที่ใช้ SLAAC ยังไม่ได้ global address สาเหตุที่น่าเป็นที่สุดบน Huawei AR คือข้อใด",
+    "diagram": "m12-ipv6",
+    "options": [
+      {
+        "id": "a",
+        "text": "ไม่ได้สั่ง `undo ipv6 nd ra halt` บน interface ทำให้ router ไม่ส่ง RA"
+      },
+      {
+        "id": "b",
+        "text": "prefix /64 ใช้กับ SLAAC ไม่ได้"
+      },
+      {
+        "id": "c",
+        "text": "ต้องเปิด DHCPv6 เสมอ"
+      },
+      {
+        "id": "d",
+        "text": "ลืมตั้ง OSPFv3"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "SLAAC ต้องได้ prefix จาก **RA** และบน AR ค่า default คือ RA ถูก halt ต้องสั่ง `undo ipv6 nd ra halt` · SLAAC ต้องใช้ prefix **/64** อยู่แล้ว",
+    "ref": "Book1 Ch13 §13.7",
+    "en": {
+      "question": "`ipv6 address 2001:db8:1::1 64` is configured on R1 G0/0/0, but PCs using SLAAC still do not get a global address. What is the most likely cause on a Huawei AR?",
+      "options": {
+        "a": "`undo ipv6 nd ra halt` was not configured on the interface, so the router does not send RAs",
+        "b": "A /64 prefix cannot be used with SLAAC",
+        "c": "DHCPv6 must always be enabled",
+        "d": "OSPFv3 was not configured"
+      }
+    }
+  },
+  {
+    "id": "m12-route-019",
+    "module": "M12",
+    "topic": "IPv6 routing",
+    "type": "single",
+    "difficulty": 2,
+    "question": "คำสั่งใดสร้าง **IPv6 default route** ชี้ไป next hop 2001:db8:12::2",
+    "diagram": "m12-ipv6",
+    "options": [
+      {
+        "id": "a",
+        "text": "`ipv6 route-static :: 0 2001:db8:12::2`"
+      },
+      {
+        "id": "b",
+        "text": "`ip route-static 0.0.0.0 0 2001:db8:12::2`"
+      },
+      {
+        "id": "c",
+        "text": "`ipv6 route-static ::/0 2001:db8:12::2 default`"
+      },
+      {
+        "id": "d",
+        "text": "`ipv6 default-route 2001:db8:12::2`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "รูปแบบ `ipv6 route-static <prefix> <length> <next-hop>` — default route คือ prefix `::` ความยาว 0",
+    "ref": "Book1 Ch13 §13.7",
+    "en": {
+      "question": "Which command creates an **IPv6 default route** pointing to next hop 2001:db8:12::2?",
+      "options": {
+        "a": "`ipv6 route-static :: 0 2001:db8:12::2`",
+        "b": "`ip route-static 0.0.0.0 0 2001:db8:12::2`",
+        "c": "`ipv6 route-static ::/0 2001:db8:12::2 default`",
+        "d": "`ipv6 default-route 2001:db8:12::2`"
+      }
+    }
+  },
+  {
+    "id": "m12-slaac-016",
+    "module": "M12",
+    "topic": "Address configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "RA มี flag **M = 0, O = 1** host จะได้ address และ DNS จากที่ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "address และ DNS จาก DHCPv6 ทั้งหมด"
+      },
+      {
+        "id": "b",
+        "text": "address จาก SLAAC (prefix ใน RA) และ DNS จาก stateless DHCPv6"
+      },
+      {
+        "id": "c",
+        "text": "address จาก DHCPv6 และ DNS จาก RA"
+      },
+      {
+        "id": "d",
+        "text": "ต้องตั้ง static ทั้งหมด"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "M = 1 → stateful DHCPv6 (แจก address) · **M = 0, O = 1 → stateless DHCPv6**: address จาก SLAAC ส่วนข้อมูลอื่นอย่าง DNS จาก DHCPv6 · M = 0, O = 0 → SLAAC อย่างเดียว",
+    "ref": "Book1 Ch13 §13.6",
+    "en": {
+      "question": "An RA has flags **M = 0, O = 1**. Where does the host get its address and DNS?",
+      "options": {
+        "a": "Both address and DNS from DHCPv6",
+        "b": "Address from SLAAC (prefix in the RA) and DNS from stateless DHCPv6",
+        "c": "Address from DHCPv6 and DNS from the RA",
+        "d": "Everything must be configured statically"
+      }
+    }
+  },
+  {
+    "id": "m12-snm-010",
+    "module": "M12",
+    "topic": "Multicast",
+    "type": "single",
+    "difficulty": 3,
+    "question": "solicited-node multicast address ของ unicast `2001:DB8::2AA:FF:FE28:9C5A` คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "FF02::1:FF28:9C5A"
+      },
+      {
+        "id": "b",
+        "text": "FF02::1:FFAA:FF"
+      },
+      {
+        "id": "c",
+        "text": "FF02::2:FF28:9C5A"
+      },
+      {
+        "id": "d",
+        "text": "FF05::1:FF28:9C5A"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ใช้ prefix **FF02::1:FF00:0/104** + **24 bit สุดท้าย** ของ unicast (28:9C5A) → FF02::1:FF28:9C5A",
+    "ref": "Book1 Ch13 §13.3",
+    "en": {
+      "question": "What is the solicited-node multicast address of unicast `2001:DB8::2AA:FF:FE28:9C5A`?",
+      "options": {
+        "a": "FF02::1:FF28:9C5A",
+        "b": "FF02::1:FFAA:FF",
+        "c": "FF02::2:FF28:9C5A",
+        "d": "FF05::1:FF28:9C5A"
+      }
+    }
+  },
+  {
+    "id": "m12-type-006",
+    "module": "M12",
+    "topic": "Address types",
+    "type": "single",
+    "difficulty": 1,
+    "question": "address `FE80::1` เป็นชนิดใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "Global unicast"
+      },
+      {
+        "id": "b",
+        "text": "Link-local unicast"
+      },
+      {
+        "id": "c",
+        "text": "Unique local"
+      },
+      {
+        "id": "d",
+        "text": "Multicast"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**FE80::/10 = link-local** ใช้ภายใน link เดียว ทุก interface ที่เปิด IPv6 จะมี · GUA = 2000::/3 · ULA = FC00::/7 · Multicast = FF00::/8",
+    "ref": "Book1 Ch13 §13.3",
+    "en": {
+      "question": "What type of address is `FE80::1`?",
+      "options": {
+        "a": "Global unicast",
+        "b": "Link-local unicast",
+        "c": "Unique local",
+        "d": "Multicast"
+      }
+    }
+  },
+  {
+    "id": "m12-type-007",
+    "module": "M12",
+    "topic": "Address types",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "address ใดเป็น **Global Unicast Address** (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "2001:DB8:1::10"
+      },
+      {
+        "id": "b",
+        "text": "3FFE:1::1"
+      },
+      {
+        "id": "c",
+        "text": "FD12:3456::1"
+      },
+      {
+        "id": "d",
+        "text": "FF02::1"
+      },
+      {
+        "id": "e",
+        "text": "2400:CB00::1"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "e"
+    ],
+    "explanation": "GUA อยู่ใน **2000::/3** (ขึ้นต้น 2 หรือ 3 ฐานสิบหก) · FD.. = ULA · FF.. = multicast",
+    "ref": "Book1 Ch13 §13.3",
+    "en": {
+      "question": "Which addresses are **Global Unicast Addresses**? (Choose all that apply.)",
+      "options": {
+        "a": "2001:DB8:1::10",
+        "b": "3FFE:1::1",
+        "c": "FD12:3456::1",
+        "d": "FF02::1",
+        "e": "2400:CB00::1"
+      }
+    }
+  },
+  {
+    "id": "m12-ula-022",
+    "module": "M12",
+    "topic": "Address types",
+    "type": "single",
+    "difficulty": 2,
+    "question": "องค์กรต้องการ IPv6 address สำหรับใช้ภายในเท่านั้น ไม่ route บนอินเทอร์เน็ต (เทียบ private IPv4) ควรใช้ช่วงใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "2000::/3"
+      },
+      {
+        "id": "b",
+        "text": "FD00::/8 (ภายใต้ FC00::/7)"
+      },
+      {
+        "id": "c",
+        "text": "FE80::/10"
+      },
+      {
+        "id": "d",
+        "text": "FF00::/8"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**ULA FC00::/7** (ใช้จริง FD00::/8 พร้อม global ID แบบสุ่ม) เทียบ private IPv4 · FE80::/10 ใช้ได้แค่ใน link เดียว",
+    "ref": "Book1 Ch13 §13.3",
+    "en": {
+      "question": "An organization needs IPv6 addresses for internal use only, not routed on the Internet (comparable to private IPv4). Which range should it use?",
+      "options": {
+        "a": "2000::/3",
+        "b": "FD00::/8 (within FC00::/7)",
+        "c": "FE80::/10",
+        "d": "FF00::/8"
+      }
+    }
+  }
 ]

@@ -1,922 +1,1176 @@
 [
- {
-  "id": "m3-assign-013",
-  "module": "M3",
-  "topic": "Valid host",
-  "type": "multiple",
-  "difficulty": 3,
-  "question": "IP/prefix ใดต่อไปนี้ **ไม่สามารถ** กำหนดให้เป็น IP ของ host ได้ (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "`192.168.1.255/23`"
-   },
-   {
-    "id": "b",
-    "text": "`192.168.1.0/23`"
-   },
-   {
-    "id": "c",
-    "text": "`10.0.0.255/16`"
-   },
-   {
-    "id": "d",
-    "text": "`172.16.0.0/15`"
-   },
-   {
-    "id": "e",
-    "text": "`172.18.255.255/15`"
-   }
-  ],
-  "answer": [
-   "a",
-   "d"
-  ],
-  "explanation": "- `192.168.1.255/23` → subnet 192.168.0.0–192.168.1.255 นี่คือ **broadcast** ❌\n- `192.168.1.0/23` → อยู่กลาง subnet 192.168.0.0/23 จึงเป็น host ได้ ✓\n- `10.0.0.255/16` → host ปกติใน 10.0.0.0/16 ✓\n- `172.16.0.0/15` → subnet 172.16.0.0–172.17.255.255 นี่คือ **network address** ❌\n- `172.18.255.255/15` → subnet 172.18.0.0–172.19.255.255 จึงเป็น host ปกติ ✓",
-  "ref": "Book1 Ch4 §4.6"
- },
- {
-  "id": "m3-belong-021",
-  "module": "M3",
-  "topic": "Which subnet",
-  "type": "single",
-  "difficulty": 2,
-  "question": "IP ใดอยู่ใน subnet `10.10.10.0/28`",
-  "options": [
-   {
-    "id": "a",
-    "text": "10.10.10.14"
-   },
-   {
-    "id": "b",
-    "text": "10.10.10.16"
-   },
-   {
-    "id": "c",
-    "text": "10.10.10.20"
-   },
-   {
-    "id": "d",
-    "text": "10.10.11.1"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "/28 block 16 → ช่วง 10.10.10.0–10.10.10.15 (host .1–.14)\n\n.16 คือ network ของ subnet ถัดไป",
-  "ref": "Book1 Ch4 §4.6"
- },
- {
-  "id": "m3-binary-018",
-  "module": "M3",
-  "topic": "Binary conversion",
-  "type": "single",
-  "difficulty": 1,
-  "question": "เลขฐานสอง `11001010` มีค่าเท่าใดในฐานสิบ",
-  "options": [
-   {
-    "id": "a",
-    "text": "198"
-   },
-   {
-    "id": "b",
-    "text": "202"
-   },
-   {
-    "id": "c",
-    "text": "204"
-   },
-   {
-    "id": "d",
-    "text": "210"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "128 + 64 + 0 + 0 + 8 + 0 + 2 + 0 = **202**",
-  "ref": "Book1 Ch4 §4.1"
- },
- {
-  "id": "m3-borrow-017",
-  "module": "M3",
-  "topic": "FLSM",
-  "type": "single",
-  "difficulty": 1,
-  "question": "แบ่ง `192.168.1.0/24` โดยยืม host bit มา **3 bit** จะได้กี่ subnet และแต่ละ subnet มี host ใช้ได้กี่ตัว",
-  "options": [
-   {
-    "id": "a",
-    "text": "8 subnet, 30 host"
-   },
-   {
-    "id": "b",
-    "text": "8 subnet, 32 host"
-   },
-   {
-    "id": "c",
-    "text": "6 subnet, 30 host"
-   },
-   {
-    "id": "d",
-    "text": "3 subnet, 62 host"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "ยืม 3 bit → 2³ = **8 subnet** (/27) เหลือ host bit 5 → 2⁵ − 2 = **30 host**",
-  "ref": "Book1 Ch4 §4.4.2"
- },
- {
-  "id": "m3-broadcast-009",
-  "module": "M3",
-  "topic": "Subnet calculation",
-  "type": "single",
-  "difficulty": 2,
-  "question": "host มี IP `10.20.77.200/21` ข้อใดคือ **broadcast address** ของ subnet นี้",
-  "options": [
-   {
-    "id": "a",
-    "text": "10.20.77.255"
-   },
-   {
-    "id": "b",
-    "text": "10.20.79.255"
-   },
-   {
-    "id": "c",
-    "text": "10.20.72.255"
-   },
-   {
-    "id": "d",
-    "text": "10.20.95.255"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "/21 → octet ที่ 3 มี mask 248 → block size 8 → subnet: …, 72, 80, …\n\n77 อยู่ในช่วง 72–79 → network `10.20.72.0`, broadcast `10.20.79.255`\n\n`10.20.77.255` และ `10.20.72.255` เป็น host ธรรมดาใน /21 นี้",
-  "ref": "Book1 Ch4 §4.4"
- },
- {
-  "id": "m3-class-011",
-  "module": "M3",
-  "topic": "Address classes",
-  "type": "single",
-  "difficulty": 1,
-  "question": "IP `191.10.0.1` จัดอยู่ใน class ใดตามการแบ่งแบบ classful",
-  "options": [
-   {
-    "id": "a",
-    "text": "Class A"
-   },
-   {
-    "id": "b",
-    "text": "Class B"
-   },
-   {
-    "id": "c",
-    "text": "Class C"
-   },
-   {
-    "id": "d",
-    "text": "Class D"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "octet แรก 128–191 = **Class B** (default mask /16)\n\nA = 1–126, C = 192–223, D (multicast) = 224–239",
-  "ref": "Book1 Ch4 §4.2.5"
- },
- {
-  "id": "m3-classes-003",
-  "module": "M3",
-  "topic": "Private addresses",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "ข้อใดเป็น **private IPv4 address** ตาม RFC 1918 (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "`10.255.0.1`"
-   },
-   {
-    "id": "b",
-    "text": "`172.32.1.1`"
-   },
-   {
-    "id": "c",
-    "text": "`192.168.100.5`"
-   },
-   {
-    "id": "d",
-    "text": "`172.20.8.8`"
-   },
-   {
-    "id": "e",
-    "text": "`169.254.1.1`"
-   }
-  ],
-  "answer": [
-   "a",
-   "c",
-   "d"
-  ],
-  "explanation": "ช่วง private ตาม RFC 1918 มี 3 ช่วง: `10.0.0.0/8`, `172.16.0.0/12` (172.16.0.0–172.31.255.255) และ `192.168.0.0/16`\n\n- `172.32.1.1` อยู่นอกช่วง /12 (สูงสุดคือ 172.31.x.x) จึงเป็น public\n- `169.254.1.1` เป็น link-local (APIPA) ที่ host ตั้งให้ตัวเองเมื่อขอ DHCP ไม่ได้ ไม่ใช่ private ตาม RFC 1918",
-  "ref": "Book1 Ch4 §4.3.2"
- },
- {
-  "id": "m3-flsm-008",
-  "module": "M3",
-  "topic": "FLSM",
-  "type": "single",
-  "difficulty": 2,
-  "question": "แบ่ง `10.0.0.0/8` ด้วย prefix **/12** จะได้กี่ subnet และแต่ละ subnet มี host ใช้ได้กี่ตัว",
-  "options": [
-   {
-    "id": "a",
-    "text": "16 subnet, 1,048,574 host"
-   },
-   {
-    "id": "b",
-    "text": "16 subnet, 1,048,576 host"
-   },
-   {
-    "id": "c",
-    "text": "4 subnet, 4,194,302 host"
-   },
-   {
-    "id": "d",
-    "text": "4,096 subnet, 4,094 host"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "ยืม 12 − 8 = 4 bit → 2⁴ = **16 subnet**\n\nhost bits = 32 − 12 = 20 → 2²⁰ − 2 = **1,048,574** (ต้องหัก network และ broadcast)",
-  "ref": "Book1 Ch4 §4.4.2"
- },
- {
-  "id": "m3-gateway-016",
-  "module": "M3",
-  "topic": "Gateway",
-  "type": "single",
-  "difficulty": 2,
-  "question": "PC ตั้งค่า IP `192.168.10.70/26` gateway `192.168.10.62` แล้ว ping เครื่องใน subnet เดียวกันได้ แต่ออกนอก subnet ไม่ได้ สาเหตุคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "mask /26 ใช้กับ private address ไม่ได้"
-   },
-   {
-    "id": "b",
-    "text": "gateway อยู่คนละ subnet กับ PC"
-   },
-   {
-    "id": "c",
-    "text": "IP .70 เป็น broadcast address"
-   },
-   {
-    "id": "d",
-    "text": "ต้องใช้ gateway เป็น IP สุดท้ายของ subnet เสมอ"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "/26 block 64 → PC อยู่ subnet .64–.127 แต่ gateway .62 อยู่ subnet .0–.63 PC จึง ARP หา gateway ไม่ได้\n\ngateway เป็น IP ใดก็ได้ใน subnet เดียวกัน (ไม่จำเป็นต้องเป็นตัวแรกหรือตัวสุดท้าย)",
-  "ref": "Book1 Ch4 §4.2.2"
- },
- {
-  "id": "m3-host-007",
-  "module": "M3",
-  "topic": "Valid host",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ข้อใดเป็น IP ของ host ที่ใช้งานได้ใน subnet `192.168.5.64/27`",
-  "options": [
-   {
-    "id": "a",
-    "text": "192.168.5.64"
-   },
-   {
-    "id": "b",
-    "text": "192.168.5.80"
-   },
-   {
-    "id": "c",
-    "text": "192.168.5.95"
-   },
-   {
-    "id": "d",
-    "text": "192.168.5.96"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "/27 block size 32 → subnet `.64` มีช่วง .64–.95\n\n- .64 = network address\n- .95 = broadcast address\n- .96 = อยู่ subnet ถัดไป (.96/27)\n- **.80** อยู่ในช่วง host .65–.94",
-  "ref": "Book1 Ch4 §4.4.2"
- },
- {
-  "id": "m3-hosts-019",
-  "module": "M3",
-  "topic": "Usable hosts",
-  "type": "single",
-  "difficulty": 1,
-  "question": "subnet `/22` มี host ที่ใช้ได้สูงสุดกี่ตัว",
-  "options": [
-   {
-    "id": "a",
-    "text": "510"
-   },
-   {
-    "id": "b",
-    "text": "1022"
-   },
-   {
-    "id": "c",
-    "text": "1024"
-   },
-   {
-    "id": "d",
-    "text": "2046"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "host bits = 32 − 22 = 10 → 2¹⁰ − 2 = **1022**",
-  "ref": "Book1 Ch4 §4.4"
- },
- {
-  "id": "m3-hosts-025",
-  "module": "M3",
-  "topic": "Usable hosts",
-  "type": "single",
-  "difficulty": 2,
-  "question": "แผนกหนึ่งต้องการ IP สำหรับ **500 host** ใน subnet เดียว prefix ที่เหมาะสมที่สุดคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "/22"
-   },
-   {
-    "id": "b",
-    "text": "/23"
-   },
-   {
-    "id": "c",
-    "text": "/24"
-   },
-   {
-    "id": "d",
-    "text": "/25"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "/24 = 254 host (ไม่พอ) · **/23 = 510 host** (พอและเล็กที่สุด) · /22 = 1022 host (เปลือง)",
-  "ref": "Book1 Ch4 §4.4"
- },
- {
-  "id": "m3-intbrief-024",
-  "module": "M3",
-  "topic": "Interface status",
-  "type": "single",
-  "difficulty": 2,
-  "question": "จาก output ด้านล่าง ทำไม GigabitEthernet0/0/1 จึงใช้งานไม่ได้ และควรแก้อย่างไร\n\n```vrp\n<R1>display ip interface brief\nInterface                  IP Address/Mask      Physical   Protocol\nGigabitEthernet0/0/0       10.0.12.1/24         up         up\nGigabitEthernet0/0/1       192.168.1.1/24       *down      down\nLoopBack0                  1.1.1.1/32           up         up(s)\n```",
-  "options": [
-   {
-    "id": "a",
-    "text": "สายหลุด — ต้องเสียบสายใหม่"
-   },
-   {
-    "id": "b",
-    "text": "interface ถูกปิดด้วย shutdown — ใช้ undo shutdown"
-   },
-   {
-    "id": "c",
-    "text": "IP ทับซ้อนกับ G0/0/0 — ต้องเปลี่ยน IP"
-   },
-   {
-    "id": "d",
-    "text": "OSPF ยังไม่ได้เปิด — ใช้ ospf enable"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "เครื่องหมาย **`*down`** ในคอลัมน์ Physical หมายถึง **administratively down** (ผู้ดูแลสั่ง `shutdown`) แก้ด้วย `undo shutdown` ใน interface view\n\nถ้าสายหลุดจะแสดงเป็น `down` เฉย ๆ ไม่มี `*` ส่วน `up(s)` ของ loopback หมายถึง spoofing (up ตลอด)",
-  "ref": "Book1 Ch4 §4.2"
- },
- {
-  "id": "m3-loopback-029",
-  "module": "M3",
-  "topic": "Special addresses",
-  "type": "single",
-  "difficulty": 1,
-  "question": "การ `ping 127.0.0.1` บน PC สำเร็จบอกอะไรได้",
-  "options": [
-   {
-    "id": "a",
-    "text": "เครื่องเชื่อมต่ออินเทอร์เน็ตได้"
-   },
-   {
-    "id": "b",
-    "text": "TCP/IP stack ของเครื่องทำงาน"
-   },
-   {
-    "id": "c",
-    "text": "gateway ทำงานปกติ"
-   },
-   {
-    "id": "d",
-    "text": "DNS ทำงานปกติ"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "127.0.0.0/8 เป็น **loopback** — packet ไม่ออกจากเครื่องเลย จึงยืนยันได้แค่ว่า TCP/IP stack ภายในเครื่องทำงาน ไม่ได้ทดสอบการ์ดแลน สาย gateway หรือ DNS",
-  "ref": "Book1 Ch4 §4.2.6"
- },
- {
-  "id": "m3-mask-006",
-  "module": "M3",
-  "topic": "Subnet mask",
-  "type": "single",
-  "difficulty": 1,
-  "question": "prefix length **/27** ตรงกับ subnet mask แบบ dotted decimal ข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "255.255.255.192"
-   },
-   {
-    "id": "b",
-    "text": "255.255.255.224"
-   },
-   {
-    "id": "c",
-    "text": "255.255.255.240"
-   },
-   {
-    "id": "d",
-    "text": "255.255.255.248"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "/27 = 24 + 3 → octet สุดท้ายมี bit 1 จำนวน 3 ตัว = 128 + 64 + 32 = **224**\n\n/26 = .192, /28 = .240, /29 = .248",
-  "ref": "Book1 Ch4 §4.2.4"
- },
- {
-  "id": "m3-mask-020",
-  "module": "M3",
-  "topic": "Subnet mask",
-  "type": "single",
-  "difficulty": 1,
-  "question": "subnet mask `255.255.254.0` ตรงกับ prefix length ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "/22"
-   },
-   {
-    "id": "b",
-    "text": "/23"
-   },
-   {
-    "id": "c",
-    "text": "/24"
-   },
-   {
-    "id": "d",
-    "text": "/25"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "254 = 11111110 มี bit 1 จำนวน 7 → 8 + 8 + 7 = **/23**",
-  "ref": "Book1 Ch4 §4.2.4"
- },
- {
-  "id": "m3-multicast-023",
-  "module": "M3",
-  "topic": "Address classes",
-  "type": "single",
-  "difficulty": 1,
-  "question": "address ใดเป็น **multicast** address",
-  "options": [
-   {
-    "id": "a",
-    "text": "223.255.255.1"
-   },
-   {
-    "id": "b",
-    "text": "239.255.255.250"
-   },
-   {
-    "id": "c",
-    "text": "240.0.0.1"
-   },
-   {
-    "id": "d",
-    "text": "255.255.255.255"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "multicast (class D) คือ 224.0.0.0–**239**.255.255.255\n\n- 223.x = class C unicast\n- 240.x = class E (สงวน)\n- 255.255.255.255 = limited broadcast",
-  "ref": "Book1 Ch4 §4.2.5"
- },
- {
-  "id": "m3-network-026",
-  "module": "M3",
-  "topic": "Subnet calculation",
-  "type": "single",
-  "difficulty": 1,
-  "question": "IP `192.168.100.77/29` อยู่ใน network ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "192.168.100.64"
-   },
-   {
-    "id": "b",
-    "text": "192.168.100.72"
-   },
-   {
-    "id": "c",
-    "text": "192.168.100.76"
-   },
-   {
-    "id": "d",
-    "text": "192.168.100.80"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "/29 block 8 → subnet: …64, **72**, 80… → 77 อยู่ในช่วง .72–.79 (host .73–.78, broadcast .79)",
-  "ref": "Book1 Ch4 §4.4"
- },
- {
-  "id": "m3-ordering-005",
-  "module": "M3",
-  "topic": "VLSM procedure",
-  "type": "ordering",
-  "difficulty": 2,
-  "question": "เรียงขั้นตอนการออกแบบ **VLSM** ให้ถูกต้อง",
-  "options": [
-   {
-    "id": "a",
-    "text": "เรียง subnet ตามจำนวน host ที่ต้องการจากมากไปน้อย"
-   },
-   {
-    "id": "b",
-    "text": "หา prefix ที่เล็กที่สุดที่รองรับ host ของ subnet ที่ใหญ่ที่สุด แล้วจัดสรรจากต้น address block"
-   },
-   {
-    "id": "c",
-    "text": "จัดสรร subnet ถัดไปต่อจาก broadcast address ของ subnet ก่อนหน้า"
-   },
-   {
-    "id": "d",
-    "text": "จัดสรร /30 สำหรับลิงก์ point-to-point ระหว่าง router เป็นลำดับท้าย"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "หลักของ VLSM คือ **จัดสรรจากก้อนใหญ่ไปก้อนเล็ก** เพื่อให้ทุก subnet ลงตัวตาม boundary และไม่เกิดช่องว่าง/ทับซ้อน\n\n1. เรียงความต้องการจากมากไปน้อย\n2. subnet ใหญ่สุดได้ address ต้น block\n3. subnet ถัดไปเริ่มจาก address ถัดจาก broadcast ของก้อนก่อน\n4. ลิงก์ P2P (2 host) ใช้ /30 ซึ่งเล็กที่สุด จึงจัดเป็นลำดับท้าย",
-  "ref": "Book1 Ch4 §4.4.4"
- },
- {
-  "id": "m3-overlap-027",
-  "module": "M3",
-  "topic": "Address planning",
-  "type": "truefalse",
-  "difficulty": 3,
-  "question": "บน router ตัวเดียว ตั้ง G0/0/0 = `10.1.1.1/25` และ G0/0/1 = `10.1.1.130/25` แล้ว VRP จะแจ้งว่า IP ทับซ้อน (conflict)",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "/25 แบ่ง 10.1.1.0/24 เป็น `10.1.1.0/25` (.0–.127) และ `10.1.1.128/25` (.128–.255)\n\n.1 อยู่ subnet แรก ส่วน .130 อยู่ subnet ที่สอง — **ไม่ทับซ้อน** จึงตั้งค่าได้ปกติ",
-  "ref": "Book1 Ch4 §4.4"
- },
- {
-  "id": "m3-p2p-028",
-  "module": "M3",
-  "topic": "VLSM",
-  "type": "single",
-  "difficulty": 2,
-  "question": "นำ `10.5.5.0/26` มาแบ่งเป็น subnet /30 สำหรับลิงก์ point-to-point ได้ทั้งหมดกี่ลิงก์",
-  "options": [
-   {
-    "id": "a",
-    "text": "8"
-   },
-   {
-    "id": "b",
-    "text": "16"
-   },
-   {
-    "id": "c",
-    "text": "32"
-   },
-   {
-    "id": "d",
-    "text": "62"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "จาก /26 ไป /30 ยืม 4 bit → 2⁴ = **16** subnet (แต่ละอันมี host ได้ 2 ตัวพอดีสำหรับ P2P)",
-  "ref": "Book1 Ch4 §4.4.4"
- },
- {
-  "id": "m3-private-022",
-  "module": "M3",
-  "topic": "Private addresses",
-  "type": "truefalse",
-  "difficulty": 1,
-  "question": "`172.15.0.1` เป็น private IPv4 address ตาม RFC 1918",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "ช่วง private ใน class B คือ **172.16.0.0 – 172.31.255.255** (172.16.0.0/12) — 172.15.x.x อยู่นอกช่วงจึงเป็น public address",
-  "ref": "Book1 Ch4 §4.3.2"
- },
- {
-  "id": "m3-range-030",
-  "module": "M3",
-  "topic": "Subnet calculation",
-  "type": "single",
-  "difficulty": 2,
-  "question": "host `200.1.1.130` mask `255.255.255.192` มีช่วง IP ที่ใช้ได้ (first–last usable) คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "200.1.1.128 – 200.1.1.191"
-   },
-   {
-    "id": "b",
-    "text": "200.1.1.129 – 200.1.1.190"
-   },
-   {
-    "id": "c",
-    "text": "200.1.1.129 – 200.1.1.191"
-   },
-   {
-    "id": "d",
-    "text": "200.1.1.130 – 200.1.1.190"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "mask .192 = /26 block 64 → network .128 broadcast .191 → host ที่ใช้ได้ **.129–.190**",
-  "ref": "Book1 Ch4 §4.4"
- },
- {
-  "id": "m3-same-010",
-  "module": "M3",
-  "topic": "Same subnet",
-  "type": "truefalse",
-  "difficulty": 2,
-  "question": "host `172.16.10.5/20` และ `172.16.15.200/20` อยู่ใน subnet เดียวกัน",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "T"
-  ],
-  "explanation": "/20 → octet ที่ 3 mask 240 → block size 16 → subnet 172.16.0.0 ครอบคลุม 172.16.0.0–172.16.15.255\n\nทั้ง 10 และ 15 อยู่ในช่วง 0–15 จึงอยู่ subnet `172.16.0.0/20` เดียวกัน",
-  "ref": "Book1 Ch4 §4.6"
- },
- {
-  "id": "m3-special-012",
-  "module": "M3",
-  "topic": "Special addresses",
-  "type": "single",
-  "difficulty": 1,
-  "question": "PC ของผู้ใช้ได้ IP `169.254.23.7` เองโดยอัตโนมัติ สถานการณ์ใดน่าจะเกิดขึ้น",
-  "options": [
-   {
-    "id": "a",
-    "text": "PC ได้ IP จาก DHCP server สำเร็จ"
-   },
-   {
-    "id": "b",
-    "text": "PC ตั้งค่าให้รับ IP อัตโนมัติแต่ติดต่อ DHCP server ไม่ได้"
-   },
-   {
-    "id": "c",
-    "text": "PC ถูกตั้ง IP แบบ static ผิด subnet"
-   },
-   {
-    "id": "d",
-    "text": "PC กำลังใช้ IPv6"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "`169.254.0.0/16` คือ **link-local / APIPA** ที่ระบบปฏิบัติการตั้งให้ตัวเองเมื่อขอ DHCP ไม่สำเร็จ ใช้คุยได้เฉพาะใน link เดียวกัน ไม่สามารถออก router ได้ — เป็นสัญญาณให้ตรวจ DHCP server/relay หรือสายเชื่อมต่อ",
-  "ref": "Book1 Ch4 §4.2.6"
- },
- {
-  "id": "m3-subnet-001",
-  "module": "M3",
-  "topic": "Subnet calculation",
-  "type": "single",
-  "difficulty": 1,
-  "question": "host มี IP `172.16.45.130/26` ข้อใดคือ **network address** และ **broadcast address** ของ subnet นี้",
-  "options": [
-   {
-    "id": "a",
-    "text": "network `172.16.45.128`, broadcast `172.16.45.191`"
-   },
-   {
-    "id": "b",
-    "text": "network `172.16.45.0`, broadcast `172.16.45.255`"
-   },
-   {
-    "id": "c",
-    "text": "network `172.16.45.128`, broadcast `172.16.45.255`"
-   },
-   {
-    "id": "d",
-    "text": "network `172.16.45.130`, broadcast `172.16.45.193`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "/26 → mask 255.255.255.192 → block size ใน octet ที่ 4 = 256 − 192 = **64** ดังนั้น subnet แบ่งเป็น .0, .64, .128, .192\n\n130 อยู่ในช่วง .128–.191 จึงได้ network = `172.16.45.128` และ broadcast = `172.16.45.191` (host ใช้ได้ .129–.190)\n\n- (b) เป็นคำตอบของ /24\n- (c) ใช้ broadcast ของ /25\n- (d) network address ต้องมี host bits เป็น 0 ทั้งหมด 130 จึงไม่ใช่ network address",
-  "ref": "Book1 Ch4 §4.4"
- },
- {
-  "id": "m3-subnet-002",
-  "module": "M3",
-  "topic": "Usable hosts",
-  "type": "single",
-  "difficulty": 1,
-  "question": "subnet ที่ต้องรองรับ host อย่างน้อย **50** เครื่อง และต้องการประหยัด address ให้มากที่สุด ควรใช้ prefix length เท่าใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "/25"
-   },
-   {
-    "id": "b",
-    "text": "/26"
-   },
-   {
-    "id": "c",
-    "text": "/27"
-   },
-   {
-    "id": "d",
-    "text": "/28"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "จำนวน host ที่ใช้ได้ = 2^h − 2 (h = จำนวน host bits)\n\n- /27 → h = 5 → 30 host (ไม่พอ)\n- /26 → h = 6 → **62 host** (พอและเล็กที่สุด)\n- /25 → 126 host (พอแต่เปลือง)\n\nจึงเลือก /26",
-  "ref": "Book1 Ch4 §4.4.2"
- },
- {
-  "id": "m3-summary-004",
-  "module": "M3",
-  "topic": "Route summarization",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ต้องการรวม (summarize) network ต่อไปนี้ให้เป็น route เดียวที่เล็กที่สุดที่ครอบคลุมทั้งหมด\n\n`192.168.8.0/24`, `192.168.9.0/24`, `192.168.10.0/24`, `192.168.11.0/24`",
-  "options": [
-   {
-    "id": "a",
-    "text": "`192.168.8.0/22`"
-   },
-   {
-    "id": "b",
-    "text": "`192.168.8.0/21`"
-   },
-   {
-    "id": "c",
-    "text": "`192.168.0.0/20`"
-   },
-   {
-    "id": "d",
-    "text": "`192.168.8.0/23`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "เขียน octet ที่ 3 เป็น binary:\n\n```\n 8 = 0000 1000\n 9 = 0000 1001\n10 = 0000 1010\n11 = 0000 1011\n```\n\nbit ที่เหมือนกันคือ 6 bit แรก (`000010`) → prefix = 16 + 6 = **/22** ได้ `192.168.8.0/22` (ครอบคลุม .8.0–.11.255 พอดี)\n\n- /23 ครอบคลุมแค่ .8–.9\n- /21 และ /20 ครอบคลุมเกินจำเป็น",
-  "ref": "Book1 Ch4 §4.5"
- },
- {
-  "id": "m3-summary-015",
-  "module": "M3",
-  "topic": "Route summarization",
-  "type": "single",
-  "difficulty": 2,
-  "question": "summary route ที่เล็กที่สุดซึ่งครอบคลุม `172.16.32.0/24` ถึง `172.16.47.0/24` (16 network ต่อเนื่อง) คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "172.16.32.0/19"
-   },
-   {
-    "id": "b",
-    "text": "172.16.32.0/20"
-   },
-   {
-    "id": "c",
-    "text": "172.16.0.0/18"
-   },
-   {
-    "id": "d",
-    "text": "172.16.32.0/21"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "16 network /24 = 2⁴ → prefix สั้นลง 4 bit = **/20**\n\nตรวจ boundary: 32 หารด้วย 16 ลงตัว จึงเริ่มที่ `172.16.32.0/20` ครอบคลุม 32–47 พอดี\n\n/21 ครอบคลุมได้แค่ 8 network ส่วน /19 และ /18 กว้างเกิน",
-  "ref": "Book1 Ch4 §4.5"
- },
- {
-  "id": "m3-vlsm-014",
-  "module": "M3",
-  "topic": "VLSM",
-  "type": "single",
-  "difficulty": 3,
-  "question": "ออกแบบ VLSM จาก `172.16.0.0/24` สำหรับ LAN ที่ต้องการ 60, 28 และ 12 host ตามลำดับ (จัดสรรจากใหญ่ไปเล็กเริ่มที่ต้น block) LAN **12 host** จะได้ subnet ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "172.16.0.64/28"
-   },
-   {
-    "id": "b",
-    "text": "172.16.0.96/28"
-   },
-   {
-    "id": "c",
-    "text": "172.16.0.96/27"
-   },
-   {
-    "id": "d",
-    "text": "172.16.0.80/28"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "- 60 host → /26 → `172.16.0.0/26` (.0–.63)\n- 28 host → /27 → `172.16.0.64/27` (.64–.95)\n- 12 host → /28 (14 host) → เริ่มต่อจาก .95 คือ **`172.16.0.96/28`** (.96–.111)\n\n.80/28 ทับซ้อนกับ .64/27 ส่วน /27 ใหญ่เกินจำเป็น",
-  "ref": "Book1 Ch4 §4.4.4"
- }
+  {
+    "id": "m3-assign-013",
+    "module": "M3",
+    "topic": "Valid host",
+    "type": "multiple",
+    "difficulty": 3,
+    "question": "IP/prefix ใดต่อไปนี้ **ไม่สามารถ** กำหนดให้เป็น IP ของ host ได้ (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "`192.168.1.255/23`"
+      },
+      {
+        "id": "b",
+        "text": "`192.168.1.0/23`"
+      },
+      {
+        "id": "c",
+        "text": "`10.0.0.255/16`"
+      },
+      {
+        "id": "d",
+        "text": "`172.16.0.0/15`"
+      },
+      {
+        "id": "e",
+        "text": "`172.18.255.255/15`"
+      }
+    ],
+    "answer": [
+      "a",
+      "d"
+    ],
+    "explanation": "- `192.168.1.255/23` → subnet 192.168.0.0–192.168.1.255 นี่คือ **broadcast** ❌\n- `192.168.1.0/23` → อยู่กลาง subnet 192.168.0.0/23 จึงเป็น host ได้ ✓\n- `10.0.0.255/16` → host ปกติใน 10.0.0.0/16 ✓\n- `172.16.0.0/15` → subnet 172.16.0.0–172.17.255.255 นี่คือ **network address** ❌\n- `172.18.255.255/15` → subnet 172.18.0.0–172.19.255.255 จึงเป็น host ปกติ ✓",
+    "ref": "Book1 Ch4 §4.6",
+    "en": {
+      "question": "Which of the following IP/prefixes **cannot** be assigned as a host IP? (Choose all that apply.)",
+      "options": {
+        "a": "`192.168.1.255/23`",
+        "b": "`192.168.1.0/23`",
+        "c": "`10.0.0.255/16`",
+        "d": "`172.16.0.0/15`",
+        "e": "`172.18.255.255/15`"
+      }
+    }
+  },
+  {
+    "id": "m3-belong-021",
+    "module": "M3",
+    "topic": "Which subnet",
+    "type": "single",
+    "difficulty": 2,
+    "question": "IP ใดอยู่ใน subnet `10.10.10.0/28`",
+    "options": [
+      {
+        "id": "a",
+        "text": "10.10.10.14"
+      },
+      {
+        "id": "b",
+        "text": "10.10.10.16"
+      },
+      {
+        "id": "c",
+        "text": "10.10.10.20"
+      },
+      {
+        "id": "d",
+        "text": "10.10.11.1"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "/28 block 16 → ช่วง 10.10.10.0–10.10.10.15 (host .1–.14)\n\n.16 คือ network ของ subnet ถัดไป",
+    "ref": "Book1 Ch4 §4.6",
+    "en": {
+      "question": "Which IP is in subnet `10.10.10.0/28`?",
+      "options": {
+        "a": "10.10.10.14",
+        "b": "10.10.10.16",
+        "c": "10.10.10.20",
+        "d": "10.10.11.1"
+      }
+    }
+  },
+  {
+    "id": "m3-binary-018",
+    "module": "M3",
+    "topic": "Binary conversion",
+    "type": "single",
+    "difficulty": 1,
+    "question": "เลขฐานสอง `11001010` มีค่าเท่าใดในฐานสิบ",
+    "options": [
+      {
+        "id": "a",
+        "text": "198"
+      },
+      {
+        "id": "b",
+        "text": "202"
+      },
+      {
+        "id": "c",
+        "text": "204"
+      },
+      {
+        "id": "d",
+        "text": "210"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "128 + 64 + 0 + 0 + 8 + 0 + 2 + 0 = **202**",
+    "ref": "Book1 Ch4 §4.1",
+    "en": {
+      "question": "What is the decimal value of binary `11001010`?",
+      "options": {
+        "a": "198",
+        "b": "202",
+        "c": "204",
+        "d": "210"
+      }
+    }
+  },
+  {
+    "id": "m3-borrow-017",
+    "module": "M3",
+    "topic": "FLSM",
+    "type": "single",
+    "difficulty": 1,
+    "question": "แบ่ง `192.168.1.0/24` โดยยืม host bit มา **3 bit** จะได้กี่ subnet และแต่ละ subnet มี host ใช้ได้กี่ตัว",
+    "options": [
+      {
+        "id": "a",
+        "text": "8 subnet, 30 host"
+      },
+      {
+        "id": "b",
+        "text": "8 subnet, 32 host"
+      },
+      {
+        "id": "c",
+        "text": "6 subnet, 30 host"
+      },
+      {
+        "id": "d",
+        "text": "3 subnet, 62 host"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ยืม 3 bit → 2³ = **8 subnet** (/27) เหลือ host bit 5 → 2⁵ − 2 = **30 host**",
+    "ref": "Book1 Ch4 §4.4.2",
+    "en": {
+      "question": "If `192.168.1.0/24` is subnetted by borrowing **3 host bits**, how many subnets are created and how many usable hosts does each have?",
+      "options": {
+        "a": "8 subnet, 30 host",
+        "b": "8 subnet, 32 host",
+        "c": "6 subnet, 30 host",
+        "d": "3 subnet, 62 host"
+      }
+    }
+  },
+  {
+    "id": "m3-broadcast-009",
+    "module": "M3",
+    "topic": "Subnet calculation",
+    "type": "single",
+    "difficulty": 2,
+    "question": "host มี IP `10.20.77.200/21` ข้อใดคือ **broadcast address** ของ subnet นี้",
+    "options": [
+      {
+        "id": "a",
+        "text": "10.20.77.255"
+      },
+      {
+        "id": "b",
+        "text": "10.20.79.255"
+      },
+      {
+        "id": "c",
+        "text": "10.20.72.255"
+      },
+      {
+        "id": "d",
+        "text": "10.20.95.255"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "/21 → octet ที่ 3 มี mask 248 → block size 8 → subnet: …, 72, 80, …\n\n77 อยู่ในช่วง 72–79 → network `10.20.72.0`, broadcast `10.20.79.255`\n\n`10.20.77.255` และ `10.20.72.255` เป็น host ธรรมดาใน /21 นี้",
+    "ref": "Book1 Ch4 §4.4",
+    "en": {
+      "question": "A host has IP `10.20.77.200/21`. What is the **broadcast address** of this subnet?",
+      "options": {
+        "a": "10.20.77.255",
+        "b": "10.20.79.255",
+        "c": "10.20.72.255",
+        "d": "10.20.95.255"
+      }
+    }
+  },
+  {
+    "id": "m3-class-011",
+    "module": "M3",
+    "topic": "Address classes",
+    "type": "single",
+    "difficulty": 1,
+    "question": "IP `191.10.0.1` จัดอยู่ใน class ใดตามการแบ่งแบบ classful",
+    "options": [
+      {
+        "id": "a",
+        "text": "Class A"
+      },
+      {
+        "id": "b",
+        "text": "Class B"
+      },
+      {
+        "id": "c",
+        "text": "Class C"
+      },
+      {
+        "id": "d",
+        "text": "Class D"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "octet แรก 128–191 = **Class B** (default mask /16)\n\nA = 1–126, C = 192–223, D (multicast) = 224–239",
+    "ref": "Book1 Ch4 §4.2.5",
+    "en": {
+      "question": "Which classful class does IP `191.10.0.1` belong to?",
+      "options": {
+        "a": "Class A",
+        "b": "Class B",
+        "c": "Class C",
+        "d": "Class D"
+      }
+    }
+  },
+  {
+    "id": "m3-classes-003",
+    "module": "M3",
+    "topic": "Private addresses",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "ข้อใดเป็น **private IPv4 address** ตาม RFC 1918 (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "`10.255.0.1`"
+      },
+      {
+        "id": "b",
+        "text": "`172.32.1.1`"
+      },
+      {
+        "id": "c",
+        "text": "`192.168.100.5`"
+      },
+      {
+        "id": "d",
+        "text": "`172.20.8.8`"
+      },
+      {
+        "id": "e",
+        "text": "`169.254.1.1`"
+      }
+    ],
+    "answer": [
+      "a",
+      "c",
+      "d"
+    ],
+    "explanation": "ช่วง private ตาม RFC 1918 มี 3 ช่วง: `10.0.0.0/8`, `172.16.0.0/12` (172.16.0.0–172.31.255.255) และ `192.168.0.0/16`\n\n- `172.32.1.1` อยู่นอกช่วง /12 (สูงสุดคือ 172.31.x.x) จึงเป็น public\n- `169.254.1.1` เป็น link-local (APIPA) ที่ host ตั้งให้ตัวเองเมื่อขอ DHCP ไม่ได้ ไม่ใช่ private ตาม RFC 1918",
+    "ref": "Book1 Ch4 §4.3.2",
+    "en": {
+      "question": "Which are **private IPv4 addresses** according to RFC 1918? (Choose all that apply.)",
+      "options": {
+        "a": "`10.255.0.1`",
+        "b": "`172.32.1.1`",
+        "c": "`192.168.100.5`",
+        "d": "`172.20.8.8`",
+        "e": "`169.254.1.1`"
+      }
+    }
+  },
+  {
+    "id": "m3-flsm-008",
+    "module": "M3",
+    "topic": "FLSM",
+    "type": "single",
+    "difficulty": 2,
+    "question": "แบ่ง `10.0.0.0/8` ด้วย prefix **/12** จะได้กี่ subnet และแต่ละ subnet มี host ใช้ได้กี่ตัว",
+    "options": [
+      {
+        "id": "a",
+        "text": "16 subnet, 1,048,574 host"
+      },
+      {
+        "id": "b",
+        "text": "16 subnet, 1,048,576 host"
+      },
+      {
+        "id": "c",
+        "text": "4 subnet, 4,194,302 host"
+      },
+      {
+        "id": "d",
+        "text": "4,096 subnet, 4,094 host"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ยืม 12 − 8 = 4 bit → 2⁴ = **16 subnet**\n\nhost bits = 32 − 12 = 20 → 2²⁰ − 2 = **1,048,574** (ต้องหัก network และ broadcast)",
+    "ref": "Book1 Ch4 §4.4.2",
+    "en": {
+      "question": "If `10.0.0.0/8` is subnetted with a **/12** prefix, how many subnets are created and how many usable hosts does each have?",
+      "options": {
+        "a": "16 subnet, 1,048,574 host",
+        "b": "16 subnet, 1,048,576 host",
+        "c": "4 subnet, 4,194,302 host",
+        "d": "4,096 subnet, 4,094 host"
+      }
+    }
+  },
+  {
+    "id": "m3-gateway-016",
+    "module": "M3",
+    "topic": "Gateway",
+    "type": "single",
+    "difficulty": 2,
+    "question": "PC ตั้งค่า IP `192.168.10.70/26` gateway `192.168.10.62` แล้ว ping เครื่องใน subnet เดียวกันได้ แต่ออกนอก subnet ไม่ได้ สาเหตุคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "mask /26 ใช้กับ private address ไม่ได้"
+      },
+      {
+        "id": "b",
+        "text": "gateway อยู่คนละ subnet กับ PC"
+      },
+      {
+        "id": "c",
+        "text": "IP .70 เป็น broadcast address"
+      },
+      {
+        "id": "d",
+        "text": "ต้องใช้ gateway เป็น IP สุดท้ายของ subnet เสมอ"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "/26 block 64 → PC อยู่ subnet .64–.127 แต่ gateway .62 อยู่ subnet .0–.63 PC จึง ARP หา gateway ไม่ได้\n\ngateway เป็น IP ใดก็ได้ใน subnet เดียวกัน (ไม่จำเป็นต้องเป็นตัวแรกหรือตัวสุดท้าย)",
+    "ref": "Book1 Ch4 §4.2.2",
+    "en": {
+      "question": "A PC is configured with IP `192.168.10.70/26` and gateway `192.168.10.62`. It can ping hosts in the same subnet but cannot reach other subnets. What is the cause?",
+      "options": {
+        "a": "A /26 mask cannot be used with private addresses",
+        "b": "The gateway is in a different subnet from the PC",
+        "c": "IP .70 is a broadcast address",
+        "d": "The gateway must always be the last IP of the subnet"
+      }
+    }
+  },
+  {
+    "id": "m3-host-007",
+    "module": "M3",
+    "topic": "Valid host",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ข้อใดเป็น IP ของ host ที่ใช้งานได้ใน subnet `192.168.5.64/27`",
+    "options": [
+      {
+        "id": "a",
+        "text": "192.168.5.64"
+      },
+      {
+        "id": "b",
+        "text": "192.168.5.80"
+      },
+      {
+        "id": "c",
+        "text": "192.168.5.95"
+      },
+      {
+        "id": "d",
+        "text": "192.168.5.96"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "/27 block size 32 → subnet `.64` มีช่วง .64–.95\n\n- .64 = network address\n- .95 = broadcast address\n- .96 = อยู่ subnet ถัดไป (.96/27)\n- **.80** อยู่ในช่วง host .65–.94",
+    "ref": "Book1 Ch4 §4.4.2",
+    "en": {
+      "question": "Which is a usable host IP in subnet `192.168.5.64/27`?",
+      "options": {
+        "a": "192.168.5.64",
+        "b": "192.168.5.80",
+        "c": "192.168.5.95",
+        "d": "192.168.5.96"
+      }
+    }
+  },
+  {
+    "id": "m3-hosts-019",
+    "module": "M3",
+    "topic": "Usable hosts",
+    "type": "single",
+    "difficulty": 1,
+    "question": "subnet `/22` มี host ที่ใช้ได้สูงสุดกี่ตัว",
+    "options": [
+      {
+        "id": "a",
+        "text": "510"
+      },
+      {
+        "id": "b",
+        "text": "1022"
+      },
+      {
+        "id": "c",
+        "text": "1024"
+      },
+      {
+        "id": "d",
+        "text": "2046"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "host bits = 32 − 22 = 10 → 2¹⁰ − 2 = **1022**",
+    "ref": "Book1 Ch4 §4.4",
+    "en": {
+      "question": "What is the maximum number of usable hosts in a `/22` subnet?",
+      "options": {
+        "a": "510",
+        "b": "1022",
+        "c": "1024",
+        "d": "2046"
+      }
+    }
+  },
+  {
+    "id": "m3-hosts-025",
+    "module": "M3",
+    "topic": "Usable hosts",
+    "type": "single",
+    "difficulty": 2,
+    "question": "แผนกหนึ่งต้องการ IP สำหรับ **500 host** ใน subnet เดียว prefix ที่เหมาะสมที่สุดคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "/22"
+      },
+      {
+        "id": "b",
+        "text": "/23"
+      },
+      {
+        "id": "c",
+        "text": "/24"
+      },
+      {
+        "id": "d",
+        "text": "/25"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "/24 = 254 host (ไม่พอ) · **/23 = 510 host** (พอและเล็กที่สุด) · /22 = 1022 host (เปลือง)",
+    "ref": "Book1 Ch4 §4.4",
+    "en": {
+      "question": "A department needs IPs for **500 hosts** in a single subnet. What is the most appropriate prefix?",
+      "options": {
+        "a": "/22",
+        "b": "/23",
+        "c": "/24",
+        "d": "/25"
+      }
+    }
+  },
+  {
+    "id": "m3-intbrief-024",
+    "module": "M3",
+    "topic": "Interface status",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก output ด้านล่าง ทำไม GigabitEthernet0/0/1 จึงใช้งานไม่ได้ และควรแก้อย่างไร\n\n```vrp\n<R1>display ip interface brief\nInterface                  IP Address/Mask      Physical   Protocol\nGigabitEthernet0/0/0       10.0.12.1/24         up         up\nGigabitEthernet0/0/1       192.168.1.1/24       *down      down\nLoopBack0                  1.1.1.1/32           up         up(s)\n```",
+    "options": [
+      {
+        "id": "a",
+        "text": "สายหลุด — ต้องเสียบสายใหม่"
+      },
+      {
+        "id": "b",
+        "text": "interface ถูกปิดด้วย shutdown — ใช้ undo shutdown"
+      },
+      {
+        "id": "c",
+        "text": "IP ทับซ้อนกับ G0/0/0 — ต้องเปลี่ยน IP"
+      },
+      {
+        "id": "d",
+        "text": "OSPF ยังไม่ได้เปิด — ใช้ ospf enable"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "เครื่องหมาย **`*down`** ในคอลัมน์ Physical หมายถึง **administratively down** (ผู้ดูแลสั่ง `shutdown`) แก้ด้วย `undo shutdown` ใน interface view\n\nถ้าสายหลุดจะแสดงเป็น `down` เฉย ๆ ไม่มี `*` ส่วน `up(s)` ของ loopback หมายถึง spoofing (up ตลอด)",
+    "ref": "Book1 Ch4 §4.2",
+    "en": {
+      "question": "Based on the output below, why is GigabitEthernet0/0/1 not working, and how should it be fixed?\n\n```vrp\n<R1>display ip interface brief\nInterface                  IP Address/Mask      Physical   Protocol\nGigabitEthernet0/0/0       10.0.12.1/24         up         up\nGigabitEthernet0/0/1       192.168.1.1/24       *down      down\nLoopBack0                  1.1.1.1/32           up         up(s)\n```",
+      "options": {
+        "a": "The cable is unplugged — reconnect it",
+        "b": "The interface was disabled with shutdown — use undo shutdown",
+        "c": "The IP overlaps with G0/0/0 — change the IP",
+        "d": "OSPF is not enabled — use ospf enable"
+      }
+    }
+  },
+  {
+    "id": "m3-loopback-029",
+    "module": "M3",
+    "topic": "Special addresses",
+    "type": "single",
+    "difficulty": 1,
+    "question": "การ `ping 127.0.0.1` บน PC สำเร็จบอกอะไรได้",
+    "options": [
+      {
+        "id": "a",
+        "text": "เครื่องเชื่อมต่ออินเทอร์เน็ตได้"
+      },
+      {
+        "id": "b",
+        "text": "TCP/IP stack ของเครื่องทำงาน"
+      },
+      {
+        "id": "c",
+        "text": "gateway ทำงานปกติ"
+      },
+      {
+        "id": "d",
+        "text": "DNS ทำงานปกติ"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "127.0.0.0/8 เป็น **loopback** — packet ไม่ออกจากเครื่องเลย จึงยืนยันได้แค่ว่า TCP/IP stack ภายในเครื่องทำงาน ไม่ได้ทดสอบการ์ดแลน สาย gateway หรือ DNS",
+    "ref": "Book1 Ch4 §4.2.6",
+    "en": {
+      "question": "What does a successful `ping 127.0.0.1` on a PC tell you?",
+      "options": {
+        "a": "The PC can reach the Internet",
+        "b": "The PC's TCP/IP stack is working",
+        "c": "The gateway is working normally",
+        "d": "DNS is working normally"
+      }
+    }
+  },
+  {
+    "id": "m3-mask-006",
+    "module": "M3",
+    "topic": "Subnet mask",
+    "type": "single",
+    "difficulty": 1,
+    "question": "prefix length **/27** ตรงกับ subnet mask แบบ dotted decimal ข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "255.255.255.192"
+      },
+      {
+        "id": "b",
+        "text": "255.255.255.224"
+      },
+      {
+        "id": "c",
+        "text": "255.255.255.240"
+      },
+      {
+        "id": "d",
+        "text": "255.255.255.248"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "/27 = 24 + 3 → octet สุดท้ายมี bit 1 จำนวน 3 ตัว = 128 + 64 + 32 = **224**\n\n/26 = .192, /28 = .240, /29 = .248",
+    "ref": "Book1 Ch4 §4.2.4",
+    "en": {
+      "question": "Which dotted-decimal subnet mask corresponds to prefix length **/27**?",
+      "options": {
+        "a": "255.255.255.192",
+        "b": "255.255.255.224",
+        "c": "255.255.255.240",
+        "d": "255.255.255.248"
+      }
+    }
+  },
+  {
+    "id": "m3-mask-020",
+    "module": "M3",
+    "topic": "Subnet mask",
+    "type": "single",
+    "difficulty": 1,
+    "question": "subnet mask `255.255.254.0` ตรงกับ prefix length ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "/22"
+      },
+      {
+        "id": "b",
+        "text": "/23"
+      },
+      {
+        "id": "c",
+        "text": "/24"
+      },
+      {
+        "id": "d",
+        "text": "/25"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "254 = 11111110 มี bit 1 จำนวน 7 → 8 + 8 + 7 = **/23**",
+    "ref": "Book1 Ch4 §4.2.4",
+    "en": {
+      "question": "Which prefix length corresponds to subnet mask `255.255.254.0`?",
+      "options": {
+        "a": "/22",
+        "b": "/23",
+        "c": "/24",
+        "d": "/25"
+      }
+    }
+  },
+  {
+    "id": "m3-multicast-023",
+    "module": "M3",
+    "topic": "Address classes",
+    "type": "single",
+    "difficulty": 1,
+    "question": "address ใดเป็น **multicast** address",
+    "options": [
+      {
+        "id": "a",
+        "text": "223.255.255.1"
+      },
+      {
+        "id": "b",
+        "text": "239.255.255.250"
+      },
+      {
+        "id": "c",
+        "text": "240.0.0.1"
+      },
+      {
+        "id": "d",
+        "text": "255.255.255.255"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "multicast (class D) คือ 224.0.0.0–**239**.255.255.255\n\n- 223.x = class C unicast\n- 240.x = class E (สงวน)\n- 255.255.255.255 = limited broadcast",
+    "ref": "Book1 Ch4 §4.2.5",
+    "en": {
+      "question": "Which address is a **multicast** address?",
+      "options": {
+        "a": "223.255.255.1",
+        "b": "239.255.255.250",
+        "c": "240.0.0.1",
+        "d": "255.255.255.255"
+      }
+    }
+  },
+  {
+    "id": "m3-network-026",
+    "module": "M3",
+    "topic": "Subnet calculation",
+    "type": "single",
+    "difficulty": 1,
+    "question": "IP `192.168.100.77/29` อยู่ใน network ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "192.168.100.64"
+      },
+      {
+        "id": "b",
+        "text": "192.168.100.72"
+      },
+      {
+        "id": "c",
+        "text": "192.168.100.76"
+      },
+      {
+        "id": "d",
+        "text": "192.168.100.80"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "/29 block 8 → subnet: …64, **72**, 80… → 77 อยู่ในช่วง .72–.79 (host .73–.78, broadcast .79)",
+    "ref": "Book1 Ch4 §4.4",
+    "en": {
+      "question": "Which network does IP `192.168.100.77/29` belong to?",
+      "options": {
+        "a": "192.168.100.64",
+        "b": "192.168.100.72",
+        "c": "192.168.100.76",
+        "d": "192.168.100.80"
+      }
+    }
+  },
+  {
+    "id": "m3-ordering-005",
+    "module": "M3",
+    "topic": "VLSM procedure",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงขั้นตอนการออกแบบ **VLSM** ให้ถูกต้อง",
+    "options": [
+      {
+        "id": "a",
+        "text": "เรียง subnet ตามจำนวน host ที่ต้องการจากมากไปน้อย"
+      },
+      {
+        "id": "b",
+        "text": "หา prefix ที่เล็กที่สุดที่รองรับ host ของ subnet ที่ใหญ่ที่สุด แล้วจัดสรรจากต้น address block"
+      },
+      {
+        "id": "c",
+        "text": "จัดสรร subnet ถัดไปต่อจาก broadcast address ของ subnet ก่อนหน้า"
+      },
+      {
+        "id": "d",
+        "text": "จัดสรร /30 สำหรับลิงก์ point-to-point ระหว่าง router เป็นลำดับท้าย"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "หลักของ VLSM คือ **จัดสรรจากก้อนใหญ่ไปก้อนเล็ก** เพื่อให้ทุก subnet ลงตัวตาม boundary และไม่เกิดช่องว่าง/ทับซ้อน\n\n1. เรียงความต้องการจากมากไปน้อย\n2. subnet ใหญ่สุดได้ address ต้น block\n3. subnet ถัดไปเริ่มจาก address ถัดจาก broadcast ของก้อนก่อน\n4. ลิงก์ P2P (2 host) ใช้ /30 ซึ่งเล็กที่สุด จึงจัดเป็นลำดับท้าย",
+    "ref": "Book1 Ch4 §4.4.4",
+    "en": {
+      "question": "Arrange the steps of **VLSM** design in the correct order.",
+      "options": {
+        "a": "Sort the subnets by required host count from largest to smallest",
+        "b": "Find the smallest prefix that fits the largest subnet's hosts and allocate it from the start of the address block",
+        "c": "Allocate the next subnet right after the broadcast address of the previous subnet",
+        "d": "Allocate /30s for point-to-point router links last"
+      }
+    }
+  },
+  {
+    "id": "m3-overlap-027",
+    "module": "M3",
+    "topic": "Address planning",
+    "type": "truefalse",
+    "difficulty": 3,
+    "question": "บน router ตัวเดียว ตั้ง G0/0/0 = `10.1.1.1/25` และ G0/0/1 = `10.1.1.130/25` แล้ว VRP จะแจ้งว่า IP ทับซ้อน (conflict)",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "/25 แบ่ง 10.1.1.0/24 เป็น `10.1.1.0/25` (.0–.127) และ `10.1.1.128/25` (.128–.255)\n\n.1 อยู่ subnet แรก ส่วน .130 อยู่ subnet ที่สอง — **ไม่ทับซ้อน** จึงตั้งค่าได้ปกติ",
+    "ref": "Book1 Ch4 §4.4",
+    "en": {
+      "question": "On a single router, configuring G0/0/0 = `10.1.1.1/25` and G0/0/1 = `10.1.1.130/25` makes VRP report an IP overlap (conflict)."
+    }
+  },
+  {
+    "id": "m3-p2p-028",
+    "module": "M3",
+    "topic": "VLSM",
+    "type": "single",
+    "difficulty": 2,
+    "question": "นำ `10.5.5.0/26` มาแบ่งเป็น subnet /30 สำหรับลิงก์ point-to-point ได้ทั้งหมดกี่ลิงก์",
+    "options": [
+      {
+        "id": "a",
+        "text": "8"
+      },
+      {
+        "id": "b",
+        "text": "16"
+      },
+      {
+        "id": "c",
+        "text": "32"
+      },
+      {
+        "id": "d",
+        "text": "62"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "จาก /26 ไป /30 ยืม 4 bit → 2⁴ = **16** subnet (แต่ละอันมี host ได้ 2 ตัวพอดีสำหรับ P2P)",
+    "ref": "Book1 Ch4 §4.4.4",
+    "en": {
+      "question": "How many point-to-point links can be created by dividing `10.5.5.0/26` into /30 subnets?",
+      "options": {
+        "a": "8",
+        "b": "16",
+        "c": "32",
+        "d": "62"
+      }
+    }
+  },
+  {
+    "id": "m3-private-022",
+    "module": "M3",
+    "topic": "Private addresses",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "`172.15.0.1` เป็น private IPv4 address ตาม RFC 1918",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "ช่วง private ใน class B คือ **172.16.0.0 – 172.31.255.255** (172.16.0.0/12) — 172.15.x.x อยู่นอกช่วงจึงเป็น public address",
+    "ref": "Book1 Ch4 §4.3.2",
+    "en": {
+      "question": "`172.15.0.1` is a private IPv4 address according to RFC 1918."
+    }
+  },
+  {
+    "id": "m3-range-030",
+    "module": "M3",
+    "topic": "Subnet calculation",
+    "type": "single",
+    "difficulty": 2,
+    "question": "host `200.1.1.130` mask `255.255.255.192` มีช่วง IP ที่ใช้ได้ (first–last usable) คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "200.1.1.128 – 200.1.1.191"
+      },
+      {
+        "id": "b",
+        "text": "200.1.1.129 – 200.1.1.190"
+      },
+      {
+        "id": "c",
+        "text": "200.1.1.129 – 200.1.1.191"
+      },
+      {
+        "id": "d",
+        "text": "200.1.1.130 – 200.1.1.190"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "mask .192 = /26 block 64 → network .128 broadcast .191 → host ที่ใช้ได้ **.129–.190**",
+    "ref": "Book1 Ch4 §4.4",
+    "en": {
+      "question": "Host `200.1.1.130` with mask `255.255.255.192` has which usable IP range (first–last usable)?",
+      "options": {
+        "a": "200.1.1.128 – 200.1.1.191",
+        "b": "200.1.1.129 – 200.1.1.190",
+        "c": "200.1.1.129 – 200.1.1.191",
+        "d": "200.1.1.130 – 200.1.1.190"
+      }
+    }
+  },
+  {
+    "id": "m3-same-010",
+    "module": "M3",
+    "topic": "Same subnet",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "host `172.16.10.5/20` และ `172.16.15.200/20` อยู่ใน subnet เดียวกัน",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "/20 → octet ที่ 3 mask 240 → block size 16 → subnet 172.16.0.0 ครอบคลุม 172.16.0.0–172.16.15.255\n\nทั้ง 10 และ 15 อยู่ในช่วง 0–15 จึงอยู่ subnet `172.16.0.0/20` เดียวกัน",
+    "ref": "Book1 Ch4 §4.6",
+    "en": {
+      "question": "Hosts `172.16.10.5/20` and `172.16.15.200/20` are in the same subnet."
+    }
+  },
+  {
+    "id": "m3-special-012",
+    "module": "M3",
+    "topic": "Special addresses",
+    "type": "single",
+    "difficulty": 1,
+    "question": "PC ของผู้ใช้ได้ IP `169.254.23.7` เองโดยอัตโนมัติ สถานการณ์ใดน่าจะเกิดขึ้น",
+    "options": [
+      {
+        "id": "a",
+        "text": "PC ได้ IP จาก DHCP server สำเร็จ"
+      },
+      {
+        "id": "b",
+        "text": "PC ตั้งค่าให้รับ IP อัตโนมัติแต่ติดต่อ DHCP server ไม่ได้"
+      },
+      {
+        "id": "c",
+        "text": "PC ถูกตั้ง IP แบบ static ผิด subnet"
+      },
+      {
+        "id": "d",
+        "text": "PC กำลังใช้ IPv6"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "`169.254.0.0/16` คือ **link-local / APIPA** ที่ระบบปฏิบัติการตั้งให้ตัวเองเมื่อขอ DHCP ไม่สำเร็จ ใช้คุยได้เฉพาะใน link เดียวกัน ไม่สามารถออก router ได้ — เป็นสัญญาณให้ตรวจ DHCP server/relay หรือสายเชื่อมต่อ",
+    "ref": "Book1 Ch4 §4.2.6",
+    "en": {
+      "question": "A user's PC automatically gets IP `169.254.23.7` by itself. What most likely happened?",
+      "options": {
+        "a": "The PC successfully got an IP from the DHCP server",
+        "b": "The PC is set to obtain an IP automatically but cannot reach the DHCP server",
+        "c": "The PC was given a static IP in the wrong subnet",
+        "d": "The PC is using IPv6"
+      }
+    }
+  },
+  {
+    "id": "m3-subnet-001",
+    "module": "M3",
+    "topic": "Subnet calculation",
+    "type": "single",
+    "difficulty": 1,
+    "question": "host มี IP `172.16.45.130/26` ข้อใดคือ **network address** และ **broadcast address** ของ subnet นี้",
+    "options": [
+      {
+        "id": "a",
+        "text": "network `172.16.45.128`, broadcast `172.16.45.191`"
+      },
+      {
+        "id": "b",
+        "text": "network `172.16.45.0`, broadcast `172.16.45.255`"
+      },
+      {
+        "id": "c",
+        "text": "network `172.16.45.128`, broadcast `172.16.45.255`"
+      },
+      {
+        "id": "d",
+        "text": "network `172.16.45.130`, broadcast `172.16.45.193`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "/26 → mask 255.255.255.192 → block size ใน octet ที่ 4 = 256 − 192 = **64** ดังนั้น subnet แบ่งเป็น .0, .64, .128, .192\n\n130 อยู่ในช่วง .128–.191 จึงได้ network = `172.16.45.128` และ broadcast = `172.16.45.191` (host ใช้ได้ .129–.190)\n\n- (b) เป็นคำตอบของ /24\n- (c) ใช้ broadcast ของ /25\n- (d) network address ต้องมี host bits เป็น 0 ทั้งหมด 130 จึงไม่ใช่ network address",
+    "ref": "Book1 Ch4 §4.4",
+    "en": {
+      "question": "A host has IP `172.16.45.130/26`. What are the **network address** and **broadcast address** of this subnet?",
+      "options": {
+        "a": "network `172.16.45.128`, broadcast `172.16.45.191`",
+        "b": "network `172.16.45.0`, broadcast `172.16.45.255`",
+        "c": "network `172.16.45.128`, broadcast `172.16.45.255`",
+        "d": "network `172.16.45.130`, broadcast `172.16.45.193`"
+      }
+    }
+  },
+  {
+    "id": "m3-subnet-002",
+    "module": "M3",
+    "topic": "Usable hosts",
+    "type": "single",
+    "difficulty": 1,
+    "question": "subnet ที่ต้องรองรับ host อย่างน้อย **50** เครื่อง และต้องการประหยัด address ให้มากที่สุด ควรใช้ prefix length เท่าใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "/25"
+      },
+      {
+        "id": "b",
+        "text": "/26"
+      },
+      {
+        "id": "c",
+        "text": "/27"
+      },
+      {
+        "id": "d",
+        "text": "/28"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "จำนวน host ที่ใช้ได้ = 2^h − 2 (h = จำนวน host bits)\n\n- /27 → h = 5 → 30 host (ไม่พอ)\n- /26 → h = 6 → **62 host** (พอและเล็กที่สุด)\n- /25 → 126 host (พอแต่เปลือง)\n\nจึงเลือก /26",
+    "ref": "Book1 Ch4 §4.4.2",
+    "en": {
+      "question": "A subnet must support at least **50** hosts while conserving as many addresses as possible. Which prefix length should be used?",
+      "options": {
+        "a": "/25",
+        "b": "/26",
+        "c": "/27",
+        "d": "/28"
+      }
+    }
+  },
+  {
+    "id": "m3-summary-004",
+    "module": "M3",
+    "topic": "Route summarization",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ต้องการรวม (summarize) network ต่อไปนี้ให้เป็น route เดียวที่เล็กที่สุดที่ครอบคลุมทั้งหมด\n\n`192.168.8.0/24`, `192.168.9.0/24`, `192.168.10.0/24`, `192.168.11.0/24`",
+    "options": [
+      {
+        "id": "a",
+        "text": "`192.168.8.0/22`"
+      },
+      {
+        "id": "b",
+        "text": "`192.168.8.0/21`"
+      },
+      {
+        "id": "c",
+        "text": "`192.168.0.0/20`"
+      },
+      {
+        "id": "d",
+        "text": "`192.168.8.0/23`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "เขียน octet ที่ 3 เป็น binary:\n\n```\n 8 = 0000 1000\n 9 = 0000 1001\n10 = 0000 1010\n11 = 0000 1011\n```\n\nbit ที่เหมือนกันคือ 6 bit แรก (`000010`) → prefix = 16 + 6 = **/22** ได้ `192.168.8.0/22` (ครอบคลุม .8.0–.11.255 พอดี)\n\n- /23 ครอบคลุมแค่ .8–.9\n- /21 และ /20 ครอบคลุมเกินจำเป็น",
+    "ref": "Book1 Ch4 §4.5",
+    "en": {
+      "question": "Summarize the following networks into the smallest single route that covers them all:\n\n`192.168.8.0/24`, `192.168.9.0/24`, `192.168.10.0/24`, `192.168.11.0/24`",
+      "options": {
+        "a": "`192.168.8.0/22`",
+        "b": "`192.168.8.0/21`",
+        "c": "`192.168.0.0/20`",
+        "d": "`192.168.8.0/23`"
+      }
+    }
+  },
+  {
+    "id": "m3-summary-015",
+    "module": "M3",
+    "topic": "Route summarization",
+    "type": "single",
+    "difficulty": 2,
+    "question": "summary route ที่เล็กที่สุดซึ่งครอบคลุม `172.16.32.0/24` ถึง `172.16.47.0/24` (16 network ต่อเนื่อง) คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "172.16.32.0/19"
+      },
+      {
+        "id": "b",
+        "text": "172.16.32.0/20"
+      },
+      {
+        "id": "c",
+        "text": "172.16.0.0/18"
+      },
+      {
+        "id": "d",
+        "text": "172.16.32.0/21"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "16 network /24 = 2⁴ → prefix สั้นลง 4 bit = **/20**\n\nตรวจ boundary: 32 หารด้วย 16 ลงตัว จึงเริ่มที่ `172.16.32.0/20` ครอบคลุม 32–47 พอดี\n\n/21 ครอบคลุมได้แค่ 8 network ส่วน /19 และ /18 กว้างเกิน",
+    "ref": "Book1 Ch4 §4.5",
+    "en": {
+      "question": "What is the smallest summary route covering `172.16.32.0/24` through `172.16.47.0/24` (16 contiguous networks)?",
+      "options": {
+        "a": "172.16.32.0/19",
+        "b": "172.16.32.0/20",
+        "c": "172.16.0.0/18",
+        "d": "172.16.32.0/21"
+      }
+    }
+  },
+  {
+    "id": "m3-vlsm-014",
+    "module": "M3",
+    "topic": "VLSM",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ออกแบบ VLSM จาก `172.16.0.0/24` สำหรับ LAN ที่ต้องการ 60, 28 และ 12 host ตามลำดับ (จัดสรรจากใหญ่ไปเล็กเริ่มที่ต้น block) LAN **12 host** จะได้ subnet ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "172.16.0.64/28"
+      },
+      {
+        "id": "b",
+        "text": "172.16.0.96/28"
+      },
+      {
+        "id": "c",
+        "text": "172.16.0.96/27"
+      },
+      {
+        "id": "d",
+        "text": "172.16.0.80/28"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "- 60 host → /26 → `172.16.0.0/26` (.0–.63)\n- 28 host → /27 → `172.16.0.64/27` (.64–.95)\n- 12 host → /28 (14 host) → เริ่มต่อจาก .95 คือ **`172.16.0.96/28`** (.96–.111)\n\n.80/28 ทับซ้อนกับ .64/27 ส่วน /27 ใหญ่เกินจำเป็น",
+    "ref": "Book1 Ch4 §4.4.4",
+    "en": {
+      "question": "Design VLSM from `172.16.0.0/24` for LANs needing 60, 28, and 12 hosts respectively (allocating largest to smallest from the start of the block). Which subnet does the **12-host** LAN get?",
+      "options": {
+        "a": "172.16.0.64/28",
+        "b": "172.16.0.96/28",
+        "c": "172.16.0.96/27",
+        "d": "172.16.0.80/28"
+      }
+    }
+  }
 ]

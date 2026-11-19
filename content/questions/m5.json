@@ -1,947 +1,1200 @@
 [
- {
-  "id": "m5-2way-010",
-  "module": "M5",
-  "topic": "Neighbor states",
-  "type": "truefalse",
-  "difficulty": 2,
-  "question": "บน Ethernet ที่มี 4 router ถ้าเห็นว่า neighbor สองตัวที่เป็น DROther ทั้งคู่ค้างอยู่ใน state **2-Way** แสดงว่ามีปัญหาต้องแก้ไข",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "เป็นพฤติกรรมปกติ — บน broadcast network DROther จะสร้าง adjacency (Full) เฉพาะกับ DR และ BDR เท่านั้น ระหว่าง DROther ด้วยกันจะหยุดที่ 2-Way เพื่อลดจำนวน adjacency",
-  "ref": "Book1 Ch6 §6.2.7"
- },
- {
-  "id": "m5-abr-020",
-  "module": "M5",
-  "topic": "Multi-area",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "จาก topology router ใดเป็น **ABR** (เลือกทุกข้อที่ถูก)",
-  "diagram": "m5-multiarea",
-  "options": [
-   {
-    "id": "a",
-    "text": "R1"
-   },
-   {
-    "id": "b",
-    "text": "R2"
-   },
-   {
-    "id": "c",
-    "text": "R3"
-   },
-   {
-    "id": "d",
-    "text": "R4"
-   },
-   {
-    "id": "e",
-    "text": "R5"
-   }
-  ],
-  "answer": [
-   "b",
-   "d"
-  ],
-  "explanation": "ABR มี interface อยู่ใน area 0 และอีก area หนึ่ง — **R2** (area 1 + area 0) และ **R4** (area 0 + area 2)\n\nR1 และ R5 เป็น internal router ของ area ตัวเอง R3 เป็น backbone router ล้วน",
-  "ref": "Book1 Ch6 §6.2.9"
- },
- {
-  "id": "m5-abrsum-021",
-  "module": "M5",
-  "topic": "Multi-area",
-  "type": "truefalse",
-  "difficulty": 2,
-  "question": "คำสั่ง `abr-summary` สำหรับสรุป route ข้าม area สามารถใช้ได้บน router ใดก็ได้ภายใน area",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "F"
-  ],
-  "explanation": "การสรุป route ระหว่าง area ทำที่ **ABR** เท่านั้น เพราะ ABR เป็นผู้สร้าง Type 3 LSA ส่งเข้าไปยัง area อื่น — internal router ไม่มีหน้าที่นี้",
-  "ref": "Book1 Ch6 §6.3.4"
- },
- {
-  "id": "m5-ase-024",
-  "module": "M5",
-  "topic": "Route preference",
-  "type": "single",
-  "difficulty": 2,
-  "question": "route ที่ R1 เรียนรู้จาก OSPF ซึ่งถูก ASBR นำเข้ามาจากภายนอก (เช่น default route จาก `default-route-advertise`) จะแสดงใน routing table ของ R1 ด้วย Proto และ Pre ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "OSPF / 10"
-   },
-   {
-    "id": "b",
-    "text": "O_ASE / 150"
-   },
-   {
-    "id": "c",
-    "text": "Static / 60"
-   },
-   {
-    "id": "d",
-    "text": "O_ASE / 10"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "route ภายนอก (AS external, Type 5) แสดงเป็น **O_ASE** และมี preference default **150** ส่วน route ภายใน OSPF แสดงเป็น OSPF preference 10",
-  "ref": "Book1 Ch6 §6.3"
- },
- {
-  "id": "m5-cost-016",
-  "module": "M5",
-  "topic": "OSPF cost",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ตั้ง `bandwidth-reference 1000` (หน่วย Mbit/s) บนทุก router แล้ว interface **GE (1000 Mbit/s)** และ **FE (100 Mbit/s)** จะมี cost เท่าใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "1 และ 1"
-   },
-   {
-    "id": "b",
-    "text": "1 และ 10"
-   },
-   {
-    "id": "c",
-    "text": "10 และ 100"
-   },
-   {
-    "id": "d",
-    "text": "100 และ 1000"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "cost = 1000 / 1000 = **1** สำหรับ GE และ 1000 / 100 = **10** สำหรับ FE — การเพิ่ม reference ทำให้ OSPF แยกความเร็วลิงก์ได้",
-  "ref": "Book1 Ch6 §6.2.2"
- },
- {
-  "id": "m5-default-022",
-  "module": "M5",
-  "topic": "Default route",
-  "type": "single",
-  "difficulty": 2,
-  "question": "บน R5 ผู้ดูแลสั่ง `default-route-advertise` ใน OSPF view แต่ router อื่นยังไม่ได้รับ default route สาเหตุที่น่าจะเป็นที่สุดคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "R5 ยังไม่มี default route (0.0.0.0/0) ใน routing table ของตัวเอง"
-   },
-   {
-    "id": "b",
-    "text": "ต้องใช้คำสั่งนี้ใน area 0 view"
-   },
-   {
-    "id": "c",
-    "text": "คำสั่งนี้ใช้ได้เฉพาะ ABR"
-   },
-   {
-    "id": "d",
-    "text": "router อื่นต้องตั้ง default-route-advertise ด้วย"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "โดยปกติ `default-route-advertise` จะประกาศ default route เข้า OSPF **เฉพาะเมื่อ router มี default route ที่ active อยู่** (เช่น static ไป ISP) ถ้าต้องการประกาศเสมอให้เพิ่มคีย์เวิร์ด `always`",
-  "ref": "Book1 Ch6 §6.3"
- },
- {
-  "id": "m5-exstart-027",
-  "module": "M5",
-  "topic": "Neighbor states",
-  "type": "single",
-  "difficulty": 3,
-  "question": "ในสถานะ **ExStart** router สองตัวตัดสินว่าใครเป็น master ในการแลก DD อย่างไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "DR priority สูงกว่าเป็น master"
-   },
-   {
-    "id": "b",
-    "text": "Router ID สูงกว่าเป็น master"
-   },
-   {
-    "id": "c",
-    "text": "ตัวที่ส่ง Hello ก่อนเป็น master"
-   },
-   {
-    "id": "d",
-    "text": "interface cost ต่ำกว่าเป็น master"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "ใน ExStart ทั้งสองฝั่งส่ง DD ว่างเพื่อเจรจา — router ที่มี **Router ID สูงกว่าเป็น master** และกำหนด DD sequence number จากนั้นเข้าสู่ Exchange",
-  "ref": "Book1 Ch6 §6.2.4"
- },
- {
-  "id": "m5-hello-030",
-  "module": "M5",
-  "topic": "Hello parameters",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ผู้ดูแลสั่ง `ospf timer hello 5` บน G0/0/0 ของ R1 เพียงฝั่งเดียว ส่วน R2 ใช้ค่า default ผลที่เกิดขึ้นคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "ไม่มีผลใด ๆ เพราะ Hello ไม่ต้องตรงกัน"
-   },
-   {
-    "id": "b",
-    "text": "neighbor ระหว่าง R1 กับ R2 จะไม่ขึ้น (หรือหลุด) เพราะ Hello/Dead interval ไม่ตรงกัน"
-   },
-   {
-    "id": "c",
-    "text": "R2 จะปรับ Hello ตามอัตโนมัติ"
-   },
-   {
-    "id": "d",
-    "text": "R1 จะกลายเป็น DR"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "Hello และ Dead interval เป็นค่าที่ต้อง **ตรงกัน** ใน Hello packet — เมื่อ R1 เปลี่ยน Hello เป็น 5 ค่า Dead จะเปลี่ยนเป็น 20 อัตโนมัติ ไม่ตรงกับ R2 (10/40) จึงไม่ยอมรับเป็น neighbor ต้องตั้งให้เหมือนกันทั้งสองฝั่ง",
-  "ref": "Book1 Ch6 §6.2.4"
- },
- {
-  "id": "m5-lsa-019",
-  "module": "M5",
-  "topic": "LSA types",
-  "type": "single",
-  "difficulty": 2,
-  "question": "LSA ชนิดใดที่ **DR** เป็นผู้สร้างเพื่ออธิบาย broadcast segment และรายชื่อ router ที่ต่ออยู่",
-  "options": [
-   {
-    "id": "a",
-    "text": "Type 1 Router-LSA"
-   },
-   {
-    "id": "b",
-    "text": "Type 2 Network-LSA"
-   },
-   {
-    "id": "c",
-    "text": "Type 3 Summary-LSA"
-   },
-   {
-    "id": "d",
-    "text": "Type 5 AS-External-LSA"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**Type 2 Network-LSA** สร้างโดย DR · Type 1 สร้างโดยทุก router · Type 3 สร้างโดย ABR · Type 5 สร้างโดย ASBR",
-  "ref": "Book1 Ch6 §6.2.8"
- },
- {
-  "id": "m5-lsdb-029",
-  "module": "M5",
-  "topic": "LSDB",
-  "type": "truefalse",
-  "difficulty": 1,
-  "question": "เมื่อ OSPF converge แล้ว router ทุกตัว **ภายใน area เดียวกัน** จะมี LSDB ของ area นั้นเหมือนกัน",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "T"
-  ],
-  "explanation": "นี่คือหลักของ link-state protocol — LSA ถูก flood ทั่วทั้ง area ทำให้ทุก router มีแผนที่เดียวกันแล้วต่างคนต่างรัน SPF โดยมีตัวเองเป็น root ผลลัพธ์ (route) จึงต่างกันได้ แต่ LSDB เหมือนกัน",
-  "ref": "Book1 Ch6 §6.2.8"
- },
- {
-  "id": "m5-mcast-009",
-  "module": "M5",
-  "topic": "Packet types",
-  "type": "single",
-  "difficulty": 1,
-  "question": "OSPF ใช้ multicast address `224.0.0.6` เพื่อส่งข้อมูลไปยังใคร",
-  "options": [
-   {
-    "id": "a",
-    "text": "ทุก OSPF router"
-   },
-   {
-    "id": "b",
-    "text": "เฉพาะ DR และ BDR"
-   },
-   {
-    "id": "c",
-    "text": "เฉพาะ ABR"
-   },
-   {
-    "id": "d",
-    "text": "ทุก host ใน subnet"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "`224.0.0.5` = AllSPFRouters (ทุก OSPF router) · **`224.0.0.6` = AllDRouters (DR และ BDR)** — DROther ส่ง LSU ไปที่ .6 แล้ว DR กระจายต่อด้วย .5",
-  "ref": "Book1 Ch6 §6.2.7"
- },
- {
-  "id": "m5-nettype-028",
-  "module": "M5",
-  "topic": "Network types",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "OSPF network type ใด **ไม่มีการเลือก DR/BDR** (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "Broadcast"
-   },
-   {
-    "id": "b",
-    "text": "P2P"
-   },
-   {
-    "id": "c",
-    "text": "NBMA"
-   },
-   {
-    "id": "d",
-    "text": "P2MP"
-   }
-  ],
-  "answer": [
-   "b",
-   "d"
-  ],
-  "explanation": "DR/BDR ใช้บน network แบบ multi-access คือ **Broadcast** และ **NBMA** ส่วน **P2P** มีเพื่อนบ้านตัวเดียวและ **P2MP** ปฏิบัติต่อแต่ละปลายทางเหมือน P2P จึงไม่ต้องมี DR",
-  "ref": "Book1 Ch6 §6.2.6"
- },
- {
-  "id": "m5-network-013",
-  "module": "M5",
-  "topic": "OSPF configuration",
-  "type": "single",
-  "difficulty": 2,
-  "question": "R1 มี G0/0/0 = 10.1.1.1/24, G0/0/1 = 10.1.2.1/24 และ LoopBack0 = 10.1.1.100/32 คำสั่ง `network 10.1.1.0 0.0.0.255` ใน area 0 จะเปิด OSPF บน interface ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "G0/0/0 เท่านั้น"
-   },
-   {
-    "id": "b",
-    "text": "G0/0/0 และ LoopBack0"
-   },
-   {
-    "id": "c",
-    "text": "ทั้งสาม interface"
-   },
-   {
-    "id": "d",
-    "text": "G0/0/1 เท่านั้น"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "wildcard `0.0.0.255` → 3 octet แรกต้องเป็น 10.1.1 ส่วน octet สุดท้ายเป็นอะไรก็ได้ → match **10.1.1.1** (G0/0/0) และ **10.1.1.100** (LoopBack0) แต่ไม่ match 10.1.2.1\n\nคำสั่ง `network` เลือก **interface** ที่ IP อยู่ในช่วง ไม่ได้ดูว่า subnet ของ interface คืออะไร",
-  "ref": "Book1 Ch6 §6.3.1"
- },
- {
-  "id": "m5-ospf-001",
-  "module": "M5",
-  "topic": "DR/BDR election",
-  "type": "single",
-  "difficulty": 2,
-  "diagram": "ospf-bma-4r",
-  "question": "จาก topology ทุก router เปิด OSPF พร้อมกัน ไม่มีการแก้ไขค่าอื่น router ใดจะได้เป็น **DR** และ **BDR**",
-  "options": [
-   {
-    "id": "a",
-    "text": "DR = R4, BDR = R2"
-   },
-   {
-    "id": "b",
-    "text": "DR = R1, BDR = R2"
-   },
-   {
-    "id": "c",
-    "text": "DR = R4, BDR = R3"
-   },
-   {
-    "id": "d",
-    "text": "DR = R3, BDR = R4"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "การเลือก DR/BDR พิจารณา **DR priority สูงสุดก่อน** ถ้าเท่ากันจึงดู **Router ID สูงสุด**\n\n- R3 มี priority 0 → ไม่มีสิทธิ์เป็น DR/BDR เลย (c, d ผิด)\n- R1, R2, R4 priority = 1 เท่ากัน → ตัดสินด้วย Router ID: R4 (4.4.4.4) สูงสุดได้ DR, R2 (2.2.2.2) รองลงมาได้ BDR\n\nหมายเหตุ: การเลือกตั้งเป็นแบบ non-preemptive ถ้า router เปิดไม่พร้อมกัน ตัวที่ขึ้นก่อนอาจได้เป็น DR ไปแล้ว",
-  "ref": "Book1 Ch6 §6.2.7"
- },
- {
-  "id": "m5-ospf-002",
-  "module": "M5",
-  "topic": "OSPF cost",
-  "type": "single",
-  "difficulty": 1,
-  "question": "บนอุปกรณ์ Huawei ที่ใช้ค่า default ของ OSPF (`bandwidth-reference` = 100 Mbit/s) อินเทอร์เฟซ **FastEthernet 100 Mbit/s** และ **GigabitEthernet 1000 Mbit/s** มี cost เท่าใดตามลำดับ",
-  "options": [
-   {
-    "id": "a",
-    "text": "1 และ 1"
-   },
-   {
-    "id": "b",
-    "text": "10 และ 1"
-   },
-   {
-    "id": "c",
-    "text": "1 และ 0.1"
-   },
-   {
-    "id": "d",
-    "text": "100 และ 10"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "cost = reference bandwidth / interface bandwidth = 100 / 100 = **1** สำหรับ FE และ 100 / 1000 = 0.1 ซึ่ง cost ต้องเป็นจำนวนเต็มและต่ำสุดคือ 1 → GE ก็ได้ **1** เช่นกัน\n\nผลคือ OSPF แยก FE กับ GE ไม่ออก จึงควรปรับ reference ให้สูงขึ้นด้วย `bandwidth-reference 10000` ในมุมมอง `ospf` (ตั้งให้เหมือนกันทุก router)",
-  "ref": "Book1 Ch6 §6.2.2"
- },
- {
-  "id": "m5-ospf-003",
-  "module": "M5",
-  "topic": "Neighbor states",
-  "type": "ordering",
-  "difficulty": 2,
-  "question": "เรียงลำดับ **OSPF neighbor state** ตั้งแต่เริ่มจนถึง adjacency สมบูรณ์บน point-to-point link",
-  "options": [
-   {
-    "id": "a",
-    "text": "Down"
-   },
-   {
-    "id": "b",
-    "text": "Init"
-   },
-   {
-    "id": "c",
-    "text": "2-Way"
-   },
-   {
-    "id": "d",
-    "text": "ExStart"
-   },
-   {
-    "id": "e",
-    "text": "Exchange"
-   },
-   {
-    "id": "f",
-    "text": "Loading"
-   },
-   {
-    "id": "g",
-    "text": "Full"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d",
-   "e",
-   "f",
-   "g"
-  ],
-  "explanation": "- **Down** → ยังไม่ได้รับ Hello\n- **Init** → ได้รับ Hello แล้ว แต่ใน Hello ยังไม่มี Router ID ของเรา\n- **2-Way** → เห็น Router ID ตัวเองใน Hello ของอีกฝั่ง (เป็น neighbor แล้ว)\n- **ExStart** → เลือก master/slave และเลข DD sequence\n- **Exchange** → แลก DD packet (สรุป LSDB)\n- **Loading** → ส่ง LSR ขอ LSA ที่ขาด และรับ LSU\n- **Full** → LSDB ตรงกัน adjacency สมบูรณ์",
-  "ref": "Book1 Ch6 §6.2.4"
- },
- {
-  "id": "m5-ospf-004",
-  "module": "M5",
-  "topic": "Hello parameters",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "พารามิเตอร์ใดที่ **ต้องตรงกัน** ระหว่างสอง router จึงจะกลายเป็น OSPF neighbor กันได้ (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "Hello interval และ Dead interval"
-   },
-   {
-    "id": "b",
-    "text": "Area ID"
-   },
-   {
-    "id": "c",
-    "text": "Router ID"
-   },
-   {
-    "id": "d",
-    "text": "Subnet mask ของอินเทอร์เฟซ (บน broadcast network)"
-   },
-   {
-    "id": "e",
-    "text": "OSPF process ID"
-   },
-   {
-    "id": "f",
-    "text": "รหัสผ่าน authentication (ถ้าเปิดใช้)"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "d",
-   "f"
-  ],
-  "explanation": "ค่าที่ต้องตรงกันใน Hello ได้แก่ Hello/Dead interval, Area ID, network mask (บน broadcast/NBMA), authentication และ stub flag\n\n- **Router ID ต้องไม่ซ้ำกัน** (ไม่ใช่ต้องเหมือนกัน)\n- **process ID มีความหมายเฉพาะในเครื่อง** จึงต่างกันได้ เช่น R1 ใช้ `ospf 1` และ R2 ใช้ `ospf 10` ก็เป็น neighbor กันได้",
-  "ref": "Book1 Ch6 §6.2.4"
- },
- {
-  "id": "m5-ospf-005",
-  "module": "M5",
-  "topic": "Route preference",
-  "type": "truefalse",
-  "difficulty": 1,
-  "question": "บน Huawei VRP ค่า **preference** default ของ OSPF internal route คือ 10 ซึ่งดีกว่า (น้อยกว่า) static route ที่มีค่า default 60",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "T"
-  ],
-  "explanation": "ค่า preference default บน Huawei: Direct = 0, OSPF internal = **10**, IS-IS = 15, Static = **60**, RIP = 100, OSPF ASE = 150, BGP = 255 — ค่ายิ่งน้อยยิ่งน่าเชื่อถือ\n\nเมื่อ OSPF และ static เรียนรู้ prefix เดียวกัน (mask ยาวเท่ากัน) route จาก OSPF จึงถูกเลือก",
-  "ref": "Book1 Ch5 §5.1.3"
- },
- {
-  "id": "m5-packets-008",
-  "module": "M5",
-  "topic": "Packet types",
-  "type": "single",
-  "difficulty": 1,
-  "question": "router พบว่าตนเองยังไม่มี LSA บางตัวหลังได้รับ DD จาก neighbor จะส่ง OSPF packet ชนิดใดเพื่อขอ LSA นั้น",
-  "options": [
-   {
-    "id": "a",
-    "text": "Hello"
-   },
-   {
-    "id": "b",
-    "text": "LSR"
-   },
-   {
-    "id": "c",
-    "text": "LSU"
-   },
-   {
-    "id": "d",
-    "text": "LSAck"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "**LSR (Link State Request)** ขอ LSA ที่ขาด → อีกฝั่งตอบด้วย **LSU** ที่มี LSA ตัวจริง → ผู้รับยืนยันด้วย **LSAck**",
-  "ref": "Book1 Ch6 §6.2.5"
- },
- {
-  "id": "m5-peer-018",
-  "module": "M5",
-  "topic": "Verification",
-  "type": "single",
-  "difficulty": 3,
-  "question": "R1, R2, R3, R4 อยู่บน Ethernet segment เดียวกัน ผลบน R1 เป็นดังนี้ ข้อใดสรุปได้ถูกต้อง\n\n```vrp\n<R1>display ospf peer brief\n Area Id     Interface               Neighbor id      State\n 0.0.0.0     GigabitEthernet0/0/0    2.2.2.2          Full\n 0.0.0.0     GigabitEthernet0/0/0    3.3.3.3          2-Way\n 0.0.0.0     GigabitEthernet0/0/0    4.4.4.4          Full\n```",
-  "options": [
-   {
-    "id": "a",
-    "text": "R1 เป็น DR"
-   },
-   {
-    "id": "b",
-    "text": "R1 เป็น DROther ส่วน R2 และ R4 เป็น DR/BDR"
-   },
-   {
-    "id": "c",
-    "text": "R3 เป็น DR"
-   },
-   {
-    "id": "d",
-    "text": "adjacency กับ R3 มีปัญหา authentication"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "ถ้า R1 เป็น DR หรือ BDR จะต้อง Full กับทุกตัว แต่ R1 Full เฉพาะ R2 และ R4 และ 2-Way กับ R3 → R1 เป็น **DROther** ส่วน R2/R4 คือ DR/BDR (ไม่ระบุได้จาก output นี้ว่าตัวไหนเป็น DR) และ R3 เป็น DROther อีกตัว\n\n2-Way ระหว่าง DROther เป็นเรื่องปกติ ไม่ใช่ปัญหา authentication",
-  "ref": "Book1 Ch6 §6.3.3"
- },
- {
-  "id": "m5-preempt-012",
-  "module": "M5",
-  "topic": "DR/BDR election",
-  "type": "single",
-  "difficulty": 2,
-  "question": "บน segment ที่ R1 เป็น DR (priority 1) และ R2 เป็น BDR อยู่แล้ว ผู้ดูแลเพิ่ม R5 ที่ตั้ง priority 255 เข้ามา ผลคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "R5 เป็น DR ทันที และ R1 กลายเป็น BDR"
-   },
-   {
-    "id": "b",
-    "text": "R1 ยังเป็น DR และ R2 ยังเป็น BDR — R5 เป็น DROther จนกว่าจะมีการเลือกใหม่"
-   },
-   {
-    "id": "c",
-    "text": "R5 เป็น BDR ทันที"
-   },
-   {
-    "id": "d",
-    "text": "ทุก router รีเซ็ตและเลือกใหม่"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "การเลือก DR/BDR เป็นแบบ **non-preemptive** — ถ้ามี DR/BDR อยู่แล้ว router ใหม่จะไม่แย่งตำแหน่ง แม้ priority สูงกว่า จะได้เป็นเมื่อ DR/BDR เดิมล่มหรือรีเซ็ต OSPF process",
-  "ref": "Book1 Ch6 §6.2.7"
- },
- {
-  "id": "m5-priority-011",
-  "module": "M5",
-  "topic": "DR/BDR election",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ถ้าตั้ง `ospf dr-priority 0` บน interface หนึ่งของ router จะเกิดผลอย่างไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "router นั้นจะเป็น DR แน่นอน"
-   },
-   {
-    "id": "b",
-    "text": "router นั้นจะไม่ถูกเลือกเป็น DR หรือ BDR บน segment นั้น"
-   },
-   {
-    "id": "c",
-    "text": "OSPF ถูกปิดบน interface นั้น"
-   },
-   {
-    "id": "d",
-    "text": "priority กลับเป็นค่า default 1"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "priority 0 หมายถึง **ไม่มีสิทธิ์** เป็น DR/BDR แต่ยังคงเป็น neighbor และ Full กับ DR/BDR ได้ตามปกติ — ค่า default คือ 1 และยิ่งสูงยิ่งมีโอกาส",
-  "ref": "Book1 Ch6 §6.2.7"
- },
- {
-  "id": "m5-process-025",
-  "module": "M5",
-  "topic": "OSPF operation",
-  "type": "ordering",
-  "difficulty": 2,
-  "question": "เรียงขั้นตอนการทำงานของ OSPF ตั้งแต่เริ่มจนได้ route",
-  "options": [
-   {
-    "id": "a",
-    "text": "ส่ง Hello เพื่อค้นหาและสร้าง neighbor"
-   },
-   {
-    "id": "b",
-    "text": "ซิงโครไนซ์ LSDB ผ่าน DD/LSR/LSU/LSAck จนเป็น Full"
-   },
-   {
-    "id": "c",
-    "text": "รัน SPF (Dijkstra) บน LSDB เพื่อสร้าง shortest-path tree"
-   },
-   {
-    "id": "d",
-    "text": "ติดตั้ง route ที่ดีที่สุดลง routing table"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "OSPF ทำงาน 3 ขั้นหลัก: สร้าง neighbor/adjacency → ซิงก์ LSDB ให้ทุก router ใน area เหมือนกัน → คำนวณ SPF แล้วนำผลลง routing table",
-  "ref": "Book1 Ch6 §6.2.4"
- },
- {
-  "id": "m5-rid-006",
-  "module": "M5",
-  "topic": "Router ID",
-  "type": "single",
-  "difficulty": 2,
-  "question": "R1 ไม่ได้กำหนด router ID ทั้งใน OSPF และระดับระบบ มี interface ดังนี้: LoopBack0 = 1.1.1.1, LoopBack1 = 9.9.9.9, G0/0/0 = 192.168.1.1 — OSPF จะใช้ Router ID ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "1.1.1.1"
-   },
-   {
-    "id": "b",
-    "text": "9.9.9.9"
-   },
-   {
-    "id": "c",
-    "text": "192.168.1.1"
-   },
-   {
-    "id": "d",
-    "text": "0.0.0.0 จนกว่าจะตั้งเอง"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "เมื่อไม่ได้กำหนดเอง VRP จะเลือก IP ของ **loopback ที่สูงที่สุด** ก่อน (9.9.9.9) ถ้าไม่มี loopback จึงเลือก IP สูงสุดของ interface อื่น — แม้ 192.168.1.1 จะมีค่ามากกว่าก็ไม่ถูกเลือกเพราะ loopback มาก่อน\n\nแนวปฏิบัติที่ดีคือกำหนดเองด้วย `ospf 1 router-id x.x.x.x`",
-  "ref": "Book1 Ch6 §6.2.3"
- },
- {
-  "id": "m5-rid-007",
-  "module": "M5",
-  "topic": "Router ID",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ผู้ดูแลเปลี่ยนคำสั่งเป็น `ospf 1 router-id 10.10.10.10` บน router ที่ OSPF ทำงานอยู่แล้ว แต่ `display ospf peer` ยังแสดง router ID เดิม ต้องทำอะไรต่อ",
-  "options": [
-   {
-    "id": "a",
-    "text": "save แล้วรอ 30 นาที"
-   },
-   {
-    "id": "b",
-    "text": "รัน `reset ospf process` (ยืนยัน Y)"
-   },
-   {
-    "id": "c",
-    "text": "ลบ interface loopback ทั้งหมด"
-   },
-   {
-    "id": "d",
-    "text": "เปลี่ยน area เป็น 0"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "router ID ใหม่มีผลเมื่อ OSPF process เริ่มใหม่ — ใช้ `reset ospf process` ใน user view (ระวัง: neighbor จะหลุดและสร้างใหม่) หรือรีบูตอุปกรณ์",
-  "ref": "Book1 Ch6 §6.3"
- },
- {
-  "id": "m5-silent-023",
-  "module": "M5",
-  "topic": "OSPF configuration",
-  "type": "single",
-  "difficulty": 2,
-  "question": "คำสั่ง `silent-interface GigabitEthernet0/0/2` ใน OSPF view มีผลอย่างไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "ปิด interface ทั้งหมด"
-   },
-   {
-    "id": "b",
-    "text": "interface นั้นไม่ส่ง/รับ Hello จึงไม่เกิด neighbor แต่ subnet ของ interface ยังถูกประกาศใน OSPF"
-   },
-   {
-    "id": "c",
-    "text": "ลบ subnet ของ interface ออกจาก OSPF"
-   },
-   {
-    "id": "d",
-    "text": "เปลี่ยน cost เป็น 0"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "silent-interface ใช้กับพอร์ตที่ต่อ host/ผู้ใช้ เพื่อลด traffic OSPF ที่ไม่จำเป็นและป้องกันอุปกรณ์แปลกปลอมมาเป็น neighbor ขณะที่ subnet นั้นยังถูกประกาศไปยัง router อื่น",
-  "ref": "Book1 Ch6 §6.3"
- },
- {
-  "id": "m5-spf-015",
-  "module": "M5",
-  "topic": "SPF calculation",
-  "type": "single",
-  "difficulty": 3,
-  "question": "จาก topology (ตัวเลขบนลิงก์คือ cost ทั้งสองทิศ และ subnet `10.4.4.0/24` บน R4 มี cost 1) cost รวมของเส้นทางที่ดีที่สุดจาก R1 ไป 10.4.4.0/24 คือเท่าใด และผ่าน router ใดบ้าง",
-  "diagram": "m5-cost",
-  "options": [
-   {
-    "id": "a",
-    "text": "21 — ผ่าน R2"
-   },
-   {
-    "id": "b",
-    "text": "32 — ผ่าน R3"
-   },
-   {
-    "id": "c",
-    "text": "17 — ผ่าน R3 แล้ว R2"
-   },
-   {
-    "id": "d",
-    "text": "16 — ผ่าน R3 แล้ว R2"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "- R1→R2→R4: 10 + 10 + 1 = 21\n- R1→R3→R4: 1 + 30 + 1 = 32\n- R1→R3→R2→R4: 1 + 5 + 10 + 1 = **17** ← ต่ำสุด\n\nSPF ไม่ได้เลือกเส้นที่มี hop น้อยที่สุด แต่เลือก cost รวมต่ำสุด (อย่าลืมบวก cost ของ subnet ปลายทาง)",
-  "ref": "Book1 Ch6 §6.2.2"
- },
- {
-  "id": "m5-tables-026",
-  "module": "M5",
-  "topic": "Three tables",
-  "type": "multiple",
-  "difficulty": 1,
-  "question": "OSPF ดูแลตารางใดบ้าง (เลือกทุกข้อที่ถูก)",
-  "options": [
-   {
-    "id": "a",
-    "text": "Neighbor table"
-   },
-   {
-    "id": "b",
-    "text": "LSDB (link-state database)"
-   },
-   {
-    "id": "c",
-    "text": "OSPF routing table"
-   },
-   {
-    "id": "d",
-    "text": "MAC address table"
-   },
-   {
-    "id": "e",
-    "text": "ARP table"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "OSPF มี 3 ตาราง: **peer/neighbor table**, **LSDB** และ **OSPF routing table** — MAC table และ ARP table เป็นของ layer 2 / ARP ไม่ใช่ของ OSPF",
-  "ref": "Book1 Ch6 §6.2.8"
- },
- {
-  "id": "m5-timers-017",
-  "module": "M5",
-  "topic": "Hello parameters",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ค่า default ของ Hello interval และ Dead interval บน OSPF broadcast network (Ethernet) คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "5 / 20 วินาที"
-   },
-   {
-    "id": "b",
-    "text": "10 / 40 วินาที"
-   },
-   {
-    "id": "c",
-    "text": "30 / 120 วินาที"
-   },
-   {
-    "id": "d",
-    "text": "60 / 240 วินาที"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "broadcast และ P2P: **10 / 40** วินาที · NBMA และ P2MP: 30 / 120 วินาที — Dead interval ปกติเป็น 4 เท่าของ Hello",
-  "ref": "Book1 Ch6 §6.2.6"
- },
- {
-  "id": "m5-wildcard-014",
-  "module": "M5",
-  "topic": "OSPF configuration",
-  "type": "single",
-  "difficulty": 3,
-  "question": "ผู้ดูแลพิมพ์ `network 10.0.12.0 255.255.255.0` ใน area 0 ของ R1 ซึ่ง G0/0/1 มี IP `10.0.12.1/24` ผลที่เกิดขึ้นคือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "ทำงานเหมือน `network 10.0.12.0 0.0.0.255` ทุกประการ"
-   },
-   {
-    "id": "b",
-    "text": "คำสั่งถูกรับ แต่ G0/0/1 จะไม่ถูกเปิด OSPF เพราะค่าถูกตีความเป็น wildcard"
-   },
-   {
-    "id": "c",
-    "text": "VRP แปลง mask เป็น wildcard ให้อัตโนมัติเสมอ"
-   },
-   {
-    "id": "d",
-    "text": "OSPF เปิดบนทุก interface"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "พารามิเตอร์ตัวที่สองคือ **wildcard** — `255.255.255.0` แปลว่า 3 octet แรกเป็นอะไรก็ได้ แต่ octet สุดท้ายต้องเท่ากับ **0** พอดี IP 10.0.12.1 ลงท้ายด้วย 1 จึงไม่ match และ OSPF ไม่ทำงานบน G0/0/1\n\nต้องใช้ `0.0.0.255` (หรือ `network 10.0.12.1 0.0.0.0` เพื่อระบุตัว)",
-  "ref": "Book1 Ch6 §6.3.1"
- }
+  {
+    "id": "m5-2way-010",
+    "module": "M5",
+    "topic": "Neighbor states",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "บน Ethernet ที่มี 4 router ถ้าเห็นว่า neighbor สองตัวที่เป็น DROther ทั้งคู่ค้างอยู่ใน state **2-Way** แสดงว่ามีปัญหาต้องแก้ไข",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "เป็นพฤติกรรมปกติ — บน broadcast network DROther จะสร้าง adjacency (Full) เฉพาะกับ DR และ BDR เท่านั้น ระหว่าง DROther ด้วยกันจะหยุดที่ 2-Way เพื่อลดจำนวน adjacency",
+    "ref": "Book1 Ch6 §6.2.7",
+    "en": {
+      "question": "On an Ethernet segment with 4 routers, if two neighbors that are both DROthers stay in the **2-Way** state, there is a problem that must be fixed."
+    }
+  },
+  {
+    "id": "m5-abr-020",
+    "module": "M5",
+    "topic": "Multi-area",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "จาก topology router ใดเป็น **ABR** (เลือกทุกข้อที่ถูก)",
+    "diagram": "m5-multiarea",
+    "options": [
+      {
+        "id": "a",
+        "text": "R1"
+      },
+      {
+        "id": "b",
+        "text": "R2"
+      },
+      {
+        "id": "c",
+        "text": "R3"
+      },
+      {
+        "id": "d",
+        "text": "R4"
+      },
+      {
+        "id": "e",
+        "text": "R5"
+      }
+    ],
+    "answer": [
+      "b",
+      "d"
+    ],
+    "explanation": "ABR มี interface อยู่ใน area 0 และอีก area หนึ่ง — **R2** (area 1 + area 0) และ **R4** (area 0 + area 2)\n\nR1 และ R5 เป็น internal router ของ area ตัวเอง R3 เป็น backbone router ล้วน",
+    "ref": "Book1 Ch6 §6.2.9",
+    "en": {
+      "question": "Based on the topology, which routers are **ABRs**? (Choose all that apply.)",
+      "options": {
+        "a": "R1",
+        "b": "R2",
+        "c": "R3",
+        "d": "R4",
+        "e": "R5"
+      }
+    }
+  },
+  {
+    "id": "m5-abrsum-021",
+    "module": "M5",
+    "topic": "Multi-area",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "คำสั่ง `abr-summary` สำหรับสรุป route ข้าม area สามารถใช้ได้บน router ใดก็ได้ภายใน area",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "การสรุป route ระหว่าง area ทำที่ **ABR** เท่านั้น เพราะ ABR เป็นผู้สร้าง Type 3 LSA ส่งเข้าไปยัง area อื่น — internal router ไม่มีหน้าที่นี้",
+    "ref": "Book1 Ch6 §6.3.4",
+    "en": {
+      "question": "The `abr-summary` command for summarizing routes between areas can be used on any router within the area."
+    }
+  },
+  {
+    "id": "m5-ase-024",
+    "module": "M5",
+    "topic": "Route preference",
+    "type": "single",
+    "difficulty": 2,
+    "question": "route ที่ R1 เรียนรู้จาก OSPF ซึ่งถูก ASBR นำเข้ามาจากภายนอก (เช่น default route จาก `default-route-advertise`) จะแสดงใน routing table ของ R1 ด้วย Proto และ Pre ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "OSPF / 10"
+      },
+      {
+        "id": "b",
+        "text": "O_ASE / 150"
+      },
+      {
+        "id": "c",
+        "text": "Static / 60"
+      },
+      {
+        "id": "d",
+        "text": "O_ASE / 10"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "route ภายนอก (AS external, Type 5) แสดงเป็น **O_ASE** และมี preference default **150** ส่วน route ภายใน OSPF แสดงเป็น OSPF preference 10",
+    "ref": "Book1 Ch6 §6.3",
+    "en": {
+      "question": "A route that R1 learns via OSPF, which was imported from outside by an ASBR (e.g., a default route from `default-route-advertise`), appears in R1's routing table with which Proto and Pre?",
+      "options": {
+        "a": "OSPF / 10",
+        "b": "O_ASE / 150",
+        "c": "Static / 60",
+        "d": "O_ASE / 10"
+      }
+    }
+  },
+  {
+    "id": "m5-cost-016",
+    "module": "M5",
+    "topic": "OSPF cost",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ตั้ง `bandwidth-reference 1000` (หน่วย Mbit/s) บนทุก router แล้ว interface **GE (1000 Mbit/s)** และ **FE (100 Mbit/s)** จะมี cost เท่าใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "1 และ 1"
+      },
+      {
+        "id": "b",
+        "text": "1 และ 10"
+      },
+      {
+        "id": "c",
+        "text": "10 และ 100"
+      },
+      {
+        "id": "d",
+        "text": "100 และ 1000"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "cost = 1000 / 1000 = **1** สำหรับ GE และ 1000 / 100 = **10** สำหรับ FE — การเพิ่ม reference ทำให้ OSPF แยกความเร็วลิงก์ได้",
+    "ref": "Book1 Ch6 §6.2.2",
+    "en": {
+      "question": "After setting `bandwidth-reference 1000` (Mbit/s) on all routers, what costs will a **GE (1000 Mbit/s)** and an **FE (100 Mbit/s)** interface have?",
+      "options": {
+        "a": "1 and 1",
+        "b": "1 and 10",
+        "c": "10 and 100",
+        "d": "100 and 1000"
+      }
+    }
+  },
+  {
+    "id": "m5-default-022",
+    "module": "M5",
+    "topic": "Default route",
+    "type": "single",
+    "difficulty": 2,
+    "question": "บน R5 ผู้ดูแลสั่ง `default-route-advertise` ใน OSPF view แต่ router อื่นยังไม่ได้รับ default route สาเหตุที่น่าจะเป็นที่สุดคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "R5 ยังไม่มี default route (0.0.0.0/0) ใน routing table ของตัวเอง"
+      },
+      {
+        "id": "b",
+        "text": "ต้องใช้คำสั่งนี้ใน area 0 view"
+      },
+      {
+        "id": "c",
+        "text": "คำสั่งนี้ใช้ได้เฉพาะ ABR"
+      },
+      {
+        "id": "d",
+        "text": "router อื่นต้องตั้ง default-route-advertise ด้วย"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "โดยปกติ `default-route-advertise` จะประกาศ default route เข้า OSPF **เฉพาะเมื่อ router มี default route ที่ active อยู่** (เช่น static ไป ISP) ถ้าต้องการประกาศเสมอให้เพิ่มคีย์เวิร์ด `always`",
+    "ref": "Book1 Ch6 §6.3",
+    "en": {
+      "question": "On R5, the administrator runs `default-route-advertise` in the OSPF view, but other routers still do not receive a default route. What is the most likely cause?",
+      "options": {
+        "a": "R5 has no default route (0.0.0.0/0) in its own routing table",
+        "b": "The command must be used in the area 0 view",
+        "c": "The command works only on an ABR",
+        "d": "Other routers must also configure default-route-advertise"
+      }
+    }
+  },
+  {
+    "id": "m5-exstart-027",
+    "module": "M5",
+    "topic": "Neighbor states",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ในสถานะ **ExStart** router สองตัวตัดสินว่าใครเป็น master ในการแลก DD อย่างไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "DR priority สูงกว่าเป็น master"
+      },
+      {
+        "id": "b",
+        "text": "Router ID สูงกว่าเป็น master"
+      },
+      {
+        "id": "c",
+        "text": "ตัวที่ส่ง Hello ก่อนเป็น master"
+      },
+      {
+        "id": "d",
+        "text": "interface cost ต่ำกว่าเป็น master"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "ใน ExStart ทั้งสองฝั่งส่ง DD ว่างเพื่อเจรจา — router ที่มี **Router ID สูงกว่าเป็น master** และกำหนด DD sequence number จากนั้นเข้าสู่ Exchange",
+    "ref": "Book1 Ch6 §6.2.4",
+    "en": {
+      "question": "In the **ExStart** state, how do two routers decide which one is the master for the DD exchange?",
+      "options": {
+        "a": "The one with the higher DR priority is master",
+        "b": "The one with the higher Router ID is master",
+        "c": "The one that sent Hello first is master",
+        "d": "The one with the lower interface cost is master"
+      }
+    }
+  },
+  {
+    "id": "m5-hello-030",
+    "module": "M5",
+    "topic": "Hello parameters",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ผู้ดูแลสั่ง `ospf timer hello 5` บน G0/0/0 ของ R1 เพียงฝั่งเดียว ส่วน R2 ใช้ค่า default ผลที่เกิดขึ้นคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ไม่มีผลใด ๆ เพราะ Hello ไม่ต้องตรงกัน"
+      },
+      {
+        "id": "b",
+        "text": "neighbor ระหว่าง R1 กับ R2 จะไม่ขึ้น (หรือหลุด) เพราะ Hello/Dead interval ไม่ตรงกัน"
+      },
+      {
+        "id": "c",
+        "text": "R2 จะปรับ Hello ตามอัตโนมัติ"
+      },
+      {
+        "id": "d",
+        "text": "R1 จะกลายเป็น DR"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Hello และ Dead interval เป็นค่าที่ต้อง **ตรงกัน** ใน Hello packet — เมื่อ R1 เปลี่ยน Hello เป็น 5 ค่า Dead จะเปลี่ยนเป็น 20 อัตโนมัติ ไม่ตรงกับ R2 (10/40) จึงไม่ยอมรับเป็น neighbor ต้องตั้งให้เหมือนกันทั้งสองฝั่ง",
+    "ref": "Book1 Ch6 §6.2.4",
+    "en": {
+      "question": "The administrator runs `ospf timer hello 5` on R1's G0/0/0 only, while R2 uses the default. What happens?",
+      "options": {
+        "a": "Nothing, because Hello does not need to match",
+        "b": "The neighbor relationship between R1 and R2 will not come up (or will drop) because the Hello/Dead intervals do not match",
+        "c": "R2 automatically adjusts its Hello",
+        "d": "R1 becomes the DR"
+      }
+    }
+  },
+  {
+    "id": "m5-lsa-019",
+    "module": "M5",
+    "topic": "LSA types",
+    "type": "single",
+    "difficulty": 2,
+    "question": "LSA ชนิดใดที่ **DR** เป็นผู้สร้างเพื่ออธิบาย broadcast segment และรายชื่อ router ที่ต่ออยู่",
+    "options": [
+      {
+        "id": "a",
+        "text": "Type 1 Router-LSA"
+      },
+      {
+        "id": "b",
+        "text": "Type 2 Network-LSA"
+      },
+      {
+        "id": "c",
+        "text": "Type 3 Summary-LSA"
+      },
+      {
+        "id": "d",
+        "text": "Type 5 AS-External-LSA"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**Type 2 Network-LSA** สร้างโดย DR · Type 1 สร้างโดยทุก router · Type 3 สร้างโดย ABR · Type 5 สร้างโดย ASBR",
+    "ref": "Book1 Ch6 §6.2.8",
+    "en": {
+      "question": "Which LSA type is generated by the **DR** to describe a broadcast segment and the list of attached routers?",
+      "options": {
+        "a": "Type 1 Router-LSA",
+        "b": "Type 2 Network-LSA",
+        "c": "Type 3 Summary-LSA",
+        "d": "Type 5 AS-External-LSA"
+      }
+    }
+  },
+  {
+    "id": "m5-lsdb-029",
+    "module": "M5",
+    "topic": "LSDB",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "เมื่อ OSPF converge แล้ว router ทุกตัว **ภายใน area เดียวกัน** จะมี LSDB ของ area นั้นเหมือนกัน",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "นี่คือหลักของ link-state protocol — LSA ถูก flood ทั่วทั้ง area ทำให้ทุก router มีแผนที่เดียวกันแล้วต่างคนต่างรัน SPF โดยมีตัวเองเป็น root ผลลัพธ์ (route) จึงต่างกันได้ แต่ LSDB เหมือนกัน",
+    "ref": "Book1 Ch6 §6.2.8",
+    "en": {
+      "question": "Once OSPF has converged, all routers **within the same area** have an identical LSDB for that area."
+    }
+  },
+  {
+    "id": "m5-mcast-009",
+    "module": "M5",
+    "topic": "Packet types",
+    "type": "single",
+    "difficulty": 1,
+    "question": "OSPF ใช้ multicast address `224.0.0.6` เพื่อส่งข้อมูลไปยังใคร",
+    "options": [
+      {
+        "id": "a",
+        "text": "ทุก OSPF router"
+      },
+      {
+        "id": "b",
+        "text": "เฉพาะ DR และ BDR"
+      },
+      {
+        "id": "c",
+        "text": "เฉพาะ ABR"
+      },
+      {
+        "id": "d",
+        "text": "ทุก host ใน subnet"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "`224.0.0.5` = AllSPFRouters (ทุก OSPF router) · **`224.0.0.6` = AllDRouters (DR และ BDR)** — DROther ส่ง LSU ไปที่ .6 แล้ว DR กระจายต่อด้วย .5",
+    "ref": "Book1 Ch6 §6.2.7",
+    "en": {
+      "question": "OSPF uses multicast address `224.0.0.6` to send to whom?",
+      "options": {
+        "a": "All OSPF routers",
+        "b": "Only the DR and BDR",
+        "c": "Only ABRs",
+        "d": "All hosts in the subnet"
+      }
+    }
+  },
+  {
+    "id": "m5-nettype-028",
+    "module": "M5",
+    "topic": "Network types",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "OSPF network type ใด **ไม่มีการเลือก DR/BDR** (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "Broadcast"
+      },
+      {
+        "id": "b",
+        "text": "P2P"
+      },
+      {
+        "id": "c",
+        "text": "NBMA"
+      },
+      {
+        "id": "d",
+        "text": "P2MP"
+      }
+    ],
+    "answer": [
+      "b",
+      "d"
+    ],
+    "explanation": "DR/BDR ใช้บน network แบบ multi-access คือ **Broadcast** และ **NBMA** ส่วน **P2P** มีเพื่อนบ้านตัวเดียวและ **P2MP** ปฏิบัติต่อแต่ละปลายทางเหมือน P2P จึงไม่ต้องมี DR",
+    "ref": "Book1 Ch6 §6.2.6",
+    "en": {
+      "question": "Which OSPF network types **do not elect a DR/BDR**? (Choose all that apply.)",
+      "options": {
+        "a": "Broadcast",
+        "b": "P2P",
+        "c": "NBMA",
+        "d": "P2MP"
+      }
+    }
+  },
+  {
+    "id": "m5-network-013",
+    "module": "M5",
+    "topic": "OSPF configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "R1 มี G0/0/0 = 10.1.1.1/24, G0/0/1 = 10.1.2.1/24 และ LoopBack0 = 10.1.1.100/32 คำสั่ง `network 10.1.1.0 0.0.0.255` ใน area 0 จะเปิด OSPF บน interface ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "G0/0/0 เท่านั้น"
+      },
+      {
+        "id": "b",
+        "text": "G0/0/0 และ LoopBack0"
+      },
+      {
+        "id": "c",
+        "text": "ทั้งสาม interface"
+      },
+      {
+        "id": "d",
+        "text": "G0/0/1 เท่านั้น"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "wildcard `0.0.0.255` → 3 octet แรกต้องเป็น 10.1.1 ส่วน octet สุดท้ายเป็นอะไรก็ได้ → match **10.1.1.1** (G0/0/0) และ **10.1.1.100** (LoopBack0) แต่ไม่ match 10.1.2.1\n\nคำสั่ง `network` เลือก **interface** ที่ IP อยู่ในช่วง ไม่ได้ดูว่า subnet ของ interface คืออะไร",
+    "ref": "Book1 Ch6 §6.3.1",
+    "en": {
+      "question": "R1 has G0/0/0 = 10.1.1.1/24, G0/0/1 = 10.1.2.1/24, and LoopBack0 = 10.1.1.100/32. On which interfaces does `network 10.1.1.0 0.0.0.255` in area 0 enable OSPF?",
+      "options": {
+        "a": "Only G0/0/0",
+        "b": "G0/0/0 and LoopBack0",
+        "c": "All three interfaces",
+        "d": "Only G0/0/1"
+      }
+    }
+  },
+  {
+    "id": "m5-ospf-001",
+    "module": "M5",
+    "topic": "DR/BDR election",
+    "type": "single",
+    "difficulty": 2,
+    "diagram": "ospf-bma-4r",
+    "question": "จาก topology ทุก router เปิด OSPF พร้อมกัน ไม่มีการแก้ไขค่าอื่น router ใดจะได้เป็น **DR** และ **BDR**",
+    "options": [
+      {
+        "id": "a",
+        "text": "DR = R4, BDR = R2"
+      },
+      {
+        "id": "b",
+        "text": "DR = R1, BDR = R2"
+      },
+      {
+        "id": "c",
+        "text": "DR = R4, BDR = R3"
+      },
+      {
+        "id": "d",
+        "text": "DR = R3, BDR = R4"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "การเลือก DR/BDR พิจารณา **DR priority สูงสุดก่อน** ถ้าเท่ากันจึงดู **Router ID สูงสุด**\n\n- R3 มี priority 0 → ไม่มีสิทธิ์เป็น DR/BDR เลย (c, d ผิด)\n- R1, R2, R4 priority = 1 เท่ากัน → ตัดสินด้วย Router ID: R4 (4.4.4.4) สูงสุดได้ DR, R2 (2.2.2.2) รองลงมาได้ BDR\n\nหมายเหตุ: การเลือกตั้งเป็นแบบ non-preemptive ถ้า router เปิดไม่พร้อมกัน ตัวที่ขึ้นก่อนอาจได้เป็น DR ไปแล้ว",
+    "ref": "Book1 Ch6 §6.2.7",
+    "en": {
+      "question": "Based on the topology, all routers start OSPF at the same time with no other values changed. Which routers become the **DR** and **BDR**?",
+      "options": {
+        "a": "DR = R4, BDR = R2",
+        "b": "DR = R1, BDR = R2",
+        "c": "DR = R4, BDR = R3",
+        "d": "DR = R3, BDR = R4"
+      }
+    }
+  },
+  {
+    "id": "m5-ospf-002",
+    "module": "M5",
+    "topic": "OSPF cost",
+    "type": "single",
+    "difficulty": 1,
+    "question": "บนอุปกรณ์ Huawei ที่ใช้ค่า default ของ OSPF (`bandwidth-reference` = 100 Mbit/s) อินเทอร์เฟซ **FastEthernet 100 Mbit/s** และ **GigabitEthernet 1000 Mbit/s** มี cost เท่าใดตามลำดับ",
+    "options": [
+      {
+        "id": "a",
+        "text": "1 และ 1"
+      },
+      {
+        "id": "b",
+        "text": "10 และ 1"
+      },
+      {
+        "id": "c",
+        "text": "1 และ 0.1"
+      },
+      {
+        "id": "d",
+        "text": "100 และ 10"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "cost = reference bandwidth / interface bandwidth = 100 / 100 = **1** สำหรับ FE และ 100 / 1000 = 0.1 ซึ่ง cost ต้องเป็นจำนวนเต็มและต่ำสุดคือ 1 → GE ก็ได้ **1** เช่นกัน\n\nผลคือ OSPF แยก FE กับ GE ไม่ออก จึงควรปรับ reference ให้สูงขึ้นด้วย `bandwidth-reference 10000` ในมุมมอง `ospf` (ตั้งให้เหมือนกันทุก router)",
+    "ref": "Book1 Ch6 §6.2.2",
+    "en": {
+      "question": "On a Huawei device using the OSPF default (`bandwidth-reference` = 100 Mbit/s), what are the costs of a **100 Mbit/s FastEthernet** and a **1000 Mbit/s GigabitEthernet** interface, respectively?",
+      "options": {
+        "a": "1 and 1",
+        "b": "10 and 1",
+        "c": "1 and 0.1",
+        "d": "100 and 10"
+      }
+    }
+  },
+  {
+    "id": "m5-ospf-003",
+    "module": "M5",
+    "topic": "Neighbor states",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงลำดับ **OSPF neighbor state** ตั้งแต่เริ่มจนถึง adjacency สมบูรณ์บน point-to-point link",
+    "options": [
+      {
+        "id": "a",
+        "text": "Down"
+      },
+      {
+        "id": "b",
+        "text": "Init"
+      },
+      {
+        "id": "c",
+        "text": "2-Way"
+      },
+      {
+        "id": "d",
+        "text": "ExStart"
+      },
+      {
+        "id": "e",
+        "text": "Exchange"
+      },
+      {
+        "id": "f",
+        "text": "Loading"
+      },
+      {
+        "id": "g",
+        "text": "Full"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g"
+    ],
+    "explanation": "- **Down** → ยังไม่ได้รับ Hello\n- **Init** → ได้รับ Hello แล้ว แต่ใน Hello ยังไม่มี Router ID ของเรา\n- **2-Way** → เห็น Router ID ตัวเองใน Hello ของอีกฝั่ง (เป็น neighbor แล้ว)\n- **ExStart** → เลือก master/slave และเลข DD sequence\n- **Exchange** → แลก DD packet (สรุป LSDB)\n- **Loading** → ส่ง LSR ขอ LSA ที่ขาด และรับ LSU\n- **Full** → LSDB ตรงกัน adjacency สมบูรณ์",
+    "ref": "Book1 Ch6 §6.2.4",
+    "en": {
+      "question": "Arrange the **OSPF neighbor states** from the start until full adjacency on a point-to-point link.",
+      "options": {
+        "a": "Down",
+        "b": "Init",
+        "c": "2-Way",
+        "d": "ExStart",
+        "e": "Exchange",
+        "f": "Loading",
+        "g": "Full"
+      }
+    }
+  },
+  {
+    "id": "m5-ospf-004",
+    "module": "M5",
+    "topic": "Hello parameters",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "พารามิเตอร์ใดที่ **ต้องตรงกัน** ระหว่างสอง router จึงจะกลายเป็น OSPF neighbor กันได้ (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "Hello interval และ Dead interval"
+      },
+      {
+        "id": "b",
+        "text": "Area ID"
+      },
+      {
+        "id": "c",
+        "text": "Router ID"
+      },
+      {
+        "id": "d",
+        "text": "Subnet mask ของอินเทอร์เฟซ (บน broadcast network)"
+      },
+      {
+        "id": "e",
+        "text": "OSPF process ID"
+      },
+      {
+        "id": "f",
+        "text": "รหัสผ่าน authentication (ถ้าเปิดใช้)"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "d",
+      "f"
+    ],
+    "explanation": "ค่าที่ต้องตรงกันใน Hello ได้แก่ Hello/Dead interval, Area ID, network mask (บน broadcast/NBMA), authentication และ stub flag\n\n- **Router ID ต้องไม่ซ้ำกัน** (ไม่ใช่ต้องเหมือนกัน)\n- **process ID มีความหมายเฉพาะในเครื่อง** จึงต่างกันได้ เช่น R1 ใช้ `ospf 1` และ R2 ใช้ `ospf 10` ก็เป็น neighbor กันได้",
+    "ref": "Book1 Ch6 §6.2.4",
+    "en": {
+      "question": "Which parameters **must match** between two routers for them to become OSPF neighbors? (Choose all that apply.)",
+      "options": {
+        "a": "Hello interval and Dead interval",
+        "b": "Area ID",
+        "c": "Router ID",
+        "d": "Interface subnet mask (on broadcast networks)",
+        "e": "OSPF process ID",
+        "f": "Authentication password (if enabled)"
+      }
+    }
+  },
+  {
+    "id": "m5-ospf-005",
+    "module": "M5",
+    "topic": "Route preference",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "บน Huawei VRP ค่า **preference** default ของ OSPF internal route คือ 10 ซึ่งดีกว่า (น้อยกว่า) static route ที่มีค่า default 60",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "ค่า preference default บน Huawei: Direct = 0, OSPF internal = **10**, IS-IS = 15, Static = **60**, RIP = 100, OSPF ASE = 150, BGP = 255 — ค่ายิ่งน้อยยิ่งน่าเชื่อถือ\n\nเมื่อ OSPF และ static เรียนรู้ prefix เดียวกัน (mask ยาวเท่ากัน) route จาก OSPF จึงถูกเลือก",
+    "ref": "Book1 Ch5 §5.1.3",
+    "en": {
+      "question": "On Huawei VRP, the default **preference** of an OSPF internal route is 10, which is better (lower) than a static route's default of 60."
+    }
+  },
+  {
+    "id": "m5-packets-008",
+    "module": "M5",
+    "topic": "Packet types",
+    "type": "single",
+    "difficulty": 1,
+    "question": "router พบว่าตนเองยังไม่มี LSA บางตัวหลังได้รับ DD จาก neighbor จะส่ง OSPF packet ชนิดใดเพื่อขอ LSA นั้น",
+    "options": [
+      {
+        "id": "a",
+        "text": "Hello"
+      },
+      {
+        "id": "b",
+        "text": "LSR"
+      },
+      {
+        "id": "c",
+        "text": "LSU"
+      },
+      {
+        "id": "d",
+        "text": "LSAck"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**LSR (Link State Request)** ขอ LSA ที่ขาด → อีกฝั่งตอบด้วย **LSU** ที่มี LSA ตัวจริง → ผู้รับยืนยันด้วย **LSAck**",
+    "ref": "Book1 Ch6 §6.2.5",
+    "en": {
+      "question": "After receiving DDs from a neighbor, a router finds it is missing some LSAs. Which OSPF packet type does it send to request them?",
+      "options": {
+        "a": "Hello",
+        "b": "LSR",
+        "c": "LSU",
+        "d": "LSAck"
+      }
+    }
+  },
+  {
+    "id": "m5-peer-018",
+    "module": "M5",
+    "topic": "Verification",
+    "type": "single",
+    "difficulty": 3,
+    "question": "R1, R2, R3, R4 อยู่บน Ethernet segment เดียวกัน ผลบน R1 เป็นดังนี้ ข้อใดสรุปได้ถูกต้อง\n\n```vrp\n<R1>display ospf peer brief\n Area Id     Interface               Neighbor id      State\n 0.0.0.0     GigabitEthernet0/0/0    2.2.2.2          Full\n 0.0.0.0     GigabitEthernet0/0/0    3.3.3.3          2-Way\n 0.0.0.0     GigabitEthernet0/0/0    4.4.4.4          Full\n```",
+    "options": [
+      {
+        "id": "a",
+        "text": "R1 เป็น DR"
+      },
+      {
+        "id": "b",
+        "text": "R1 เป็น DROther ส่วน R2 และ R4 เป็น DR/BDR"
+      },
+      {
+        "id": "c",
+        "text": "R3 เป็น DR"
+      },
+      {
+        "id": "d",
+        "text": "adjacency กับ R3 มีปัญหา authentication"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "ถ้า R1 เป็น DR หรือ BDR จะต้อง Full กับทุกตัว แต่ R1 Full เฉพาะ R2 และ R4 และ 2-Way กับ R3 → R1 เป็น **DROther** ส่วน R2/R4 คือ DR/BDR (ไม่ระบุได้จาก output นี้ว่าตัวไหนเป็น DR) และ R3 เป็น DROther อีกตัว\n\n2-Way ระหว่าง DROther เป็นเรื่องปกติ ไม่ใช่ปัญหา authentication",
+    "ref": "Book1 Ch6 §6.3.3",
+    "en": {
+      "question": "R1, R2, R3, and R4 are on the same Ethernet segment. R1 shows the following. Which conclusion is correct?\n\n```vrp\n<R1>display ospf peer brief\n Area Id     Interface               Neighbor id      State\n 0.0.0.0     GigabitEthernet0/0/0    2.2.2.2          Full\n 0.0.0.0     GigabitEthernet0/0/0    3.3.3.3          2-Way\n 0.0.0.0     GigabitEthernet0/0/0    4.4.4.4          Full\n```",
+      "options": {
+        "a": "R1 is the DR",
+        "b": "R1 is a DROther, while R2 and R4 are the DR/BDR",
+        "c": "R3 is the DR",
+        "d": "The adjacency with R3 has an authentication problem"
+      }
+    }
+  },
+  {
+    "id": "m5-preempt-012",
+    "module": "M5",
+    "topic": "DR/BDR election",
+    "type": "single",
+    "difficulty": 2,
+    "question": "บน segment ที่ R1 เป็น DR (priority 1) และ R2 เป็น BDR อยู่แล้ว ผู้ดูแลเพิ่ม R5 ที่ตั้ง priority 255 เข้ามา ผลคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "R5 เป็น DR ทันที และ R1 กลายเป็น BDR"
+      },
+      {
+        "id": "b",
+        "text": "R1 ยังเป็น DR และ R2 ยังเป็น BDR — R5 เป็น DROther จนกว่าจะมีการเลือกใหม่"
+      },
+      {
+        "id": "c",
+        "text": "R5 เป็น BDR ทันที"
+      },
+      {
+        "id": "d",
+        "text": "ทุก router รีเซ็ตและเลือกใหม่"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "การเลือก DR/BDR เป็นแบบ **non-preemptive** — ถ้ามี DR/BDR อยู่แล้ว router ใหม่จะไม่แย่งตำแหน่ง แม้ priority สูงกว่า จะได้เป็นเมื่อ DR/BDR เดิมล่มหรือรีเซ็ต OSPF process",
+    "ref": "Book1 Ch6 §6.2.7",
+    "en": {
+      "question": "On a segment where R1 is already the DR (priority 1) and R2 is the BDR, the administrator adds R5 with priority 255. What happens?",
+      "options": {
+        "a": "R5 immediately becomes DR and R1 becomes BDR",
+        "b": "R1 remains DR and R2 remains BDR — R5 is a DROther until a new election",
+        "c": "R5 immediately becomes BDR",
+        "d": "All routers reset and re-elect"
+      }
+    }
+  },
+  {
+    "id": "m5-priority-011",
+    "module": "M5",
+    "topic": "DR/BDR election",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ถ้าตั้ง `ospf dr-priority 0` บน interface หนึ่งของ router จะเกิดผลอย่างไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "router นั้นจะเป็น DR แน่นอน"
+      },
+      {
+        "id": "b",
+        "text": "router นั้นจะไม่ถูกเลือกเป็น DR หรือ BDR บน segment นั้น"
+      },
+      {
+        "id": "c",
+        "text": "OSPF ถูกปิดบน interface นั้น"
+      },
+      {
+        "id": "d",
+        "text": "priority กลับเป็นค่า default 1"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "priority 0 หมายถึง **ไม่มีสิทธิ์** เป็น DR/BDR แต่ยังคงเป็น neighbor และ Full กับ DR/BDR ได้ตามปกติ — ค่า default คือ 1 และยิ่งสูงยิ่งมีโอกาส",
+    "ref": "Book1 Ch6 §6.2.7",
+    "en": {
+      "question": "What happens if `ospf dr-priority 0` is set on a router interface?",
+      "options": {
+        "a": "That router will definitely be DR",
+        "b": "That router will never be elected DR or BDR on that segment",
+        "c": "OSPF is disabled on that interface",
+        "d": "The priority reverts to the default of 1"
+      }
+    }
+  },
+  {
+    "id": "m5-process-025",
+    "module": "M5",
+    "topic": "OSPF operation",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "เรียงขั้นตอนการทำงานของ OSPF ตั้งแต่เริ่มจนได้ route",
+    "options": [
+      {
+        "id": "a",
+        "text": "ส่ง Hello เพื่อค้นหาและสร้าง neighbor"
+      },
+      {
+        "id": "b",
+        "text": "ซิงโครไนซ์ LSDB ผ่าน DD/LSR/LSU/LSAck จนเป็น Full"
+      },
+      {
+        "id": "c",
+        "text": "รัน SPF (Dijkstra) บน LSDB เพื่อสร้าง shortest-path tree"
+      },
+      {
+        "id": "d",
+        "text": "ติดตั้ง route ที่ดีที่สุดลง routing table"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "OSPF ทำงาน 3 ขั้นหลัก: สร้าง neighbor/adjacency → ซิงก์ LSDB ให้ทุก router ใน area เหมือนกัน → คำนวณ SPF แล้วนำผลลง routing table",
+    "ref": "Book1 Ch6 §6.2.4",
+    "en": {
+      "question": "Arrange how OSPF works from the start until routes are obtained.",
+      "options": {
+        "a": "Send Hellos to discover and form neighbors",
+        "b": "Synchronize the LSDB via DD/LSR/LSU/LSAck until Full",
+        "c": "Run SPF (Dijkstra) on the LSDB to build the shortest-path tree",
+        "d": "Install the best routes in the routing table"
+      }
+    }
+  },
+  {
+    "id": "m5-rid-006",
+    "module": "M5",
+    "topic": "Router ID",
+    "type": "single",
+    "difficulty": 2,
+    "question": "R1 ไม่ได้กำหนด router ID ทั้งใน OSPF และระดับระบบ มี interface ดังนี้: LoopBack0 = 1.1.1.1, LoopBack1 = 9.9.9.9, G0/0/0 = 192.168.1.1 — OSPF จะใช้ Router ID ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "1.1.1.1"
+      },
+      {
+        "id": "b",
+        "text": "9.9.9.9"
+      },
+      {
+        "id": "c",
+        "text": "192.168.1.1"
+      },
+      {
+        "id": "d",
+        "text": "0.0.0.0 จนกว่าจะตั้งเอง"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "เมื่อไม่ได้กำหนดเอง VRP จะเลือก IP ของ **loopback ที่สูงที่สุด** ก่อน (9.9.9.9) ถ้าไม่มี loopback จึงเลือก IP สูงสุดของ interface อื่น — แม้ 192.168.1.1 จะมีค่ามากกว่าก็ไม่ถูกเลือกเพราะ loopback มาก่อน\n\nแนวปฏิบัติที่ดีคือกำหนดเองด้วย `ospf 1 router-id x.x.x.x`",
+    "ref": "Book1 Ch6 §6.2.3",
+    "en": {
+      "question": "R1 has no router ID configured in OSPF or at the system level. Its interfaces are: LoopBack0 = 1.1.1.1, LoopBack1 = 9.9.9.9, G0/0/0 = 192.168.1.1. Which Router ID will OSPF use?",
+      "options": {
+        "a": "1.1.1.1",
+        "b": "9.9.9.9",
+        "c": "192.168.1.1",
+        "d": "0.0.0.0 until configured manually"
+      }
+    }
+  },
+  {
+    "id": "m5-rid-007",
+    "module": "M5",
+    "topic": "Router ID",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ผู้ดูแลเปลี่ยนคำสั่งเป็น `ospf 1 router-id 10.10.10.10` บน router ที่ OSPF ทำงานอยู่แล้ว แต่ `display ospf peer` ยังแสดง router ID เดิม ต้องทำอะไรต่อ",
+    "options": [
+      {
+        "id": "a",
+        "text": "save แล้วรอ 30 นาที"
+      },
+      {
+        "id": "b",
+        "text": "รัน `reset ospf process` (ยืนยัน Y)"
+      },
+      {
+        "id": "c",
+        "text": "ลบ interface loopback ทั้งหมด"
+      },
+      {
+        "id": "d",
+        "text": "เปลี่ยน area เป็น 0"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "router ID ใหม่มีผลเมื่อ OSPF process เริ่มใหม่ — ใช้ `reset ospf process` ใน user view (ระวัง: neighbor จะหลุดและสร้างใหม่) หรือรีบูตอุปกรณ์",
+    "ref": "Book1 Ch6 §6.3",
+    "en": {
+      "question": "The administrator changes the command to `ospf 1 router-id 10.10.10.10` on a router where OSPF is already running, but `display ospf peer` still shows the old router ID. What must be done next?",
+      "options": {
+        "a": "Save and wait 30 minutes",
+        "b": "Run `reset ospf process` (confirm Y)",
+        "c": "Delete all loopback interfaces",
+        "d": "Change the area to 0"
+      }
+    }
+  },
+  {
+    "id": "m5-silent-023",
+    "module": "M5",
+    "topic": "OSPF configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "คำสั่ง `silent-interface GigabitEthernet0/0/2` ใน OSPF view มีผลอย่างไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "ปิด interface ทั้งหมด"
+      },
+      {
+        "id": "b",
+        "text": "interface นั้นไม่ส่ง/รับ Hello จึงไม่เกิด neighbor แต่ subnet ของ interface ยังถูกประกาศใน OSPF"
+      },
+      {
+        "id": "c",
+        "text": "ลบ subnet ของ interface ออกจาก OSPF"
+      },
+      {
+        "id": "d",
+        "text": "เปลี่ยน cost เป็น 0"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "silent-interface ใช้กับพอร์ตที่ต่อ host/ผู้ใช้ เพื่อลด traffic OSPF ที่ไม่จำเป็นและป้องกันอุปกรณ์แปลกปลอมมาเป็น neighbor ขณะที่ subnet นั้นยังถูกประกาศไปยัง router อื่น",
+    "ref": "Book1 Ch6 §6.3",
+    "en": {
+      "question": "What is the effect of `silent-interface GigabitEthernet0/0/2` in the OSPF view?",
+      "options": {
+        "a": "Shuts down all interfaces",
+        "b": "That interface neither sends nor receives Hellos, so no neighbor forms, but its subnet is still advertised in OSPF",
+        "c": "Removes the interface's subnet from OSPF",
+        "d": "Changes the cost to 0"
+      }
+    }
+  },
+  {
+    "id": "m5-spf-015",
+    "module": "M5",
+    "topic": "SPF calculation",
+    "type": "single",
+    "difficulty": 3,
+    "question": "จาก topology (ตัวเลขบนลิงก์คือ cost ทั้งสองทิศ และ subnet `10.4.4.0/24` บน R4 มี cost 1) cost รวมของเส้นทางที่ดีที่สุดจาก R1 ไป 10.4.4.0/24 คือเท่าใด และผ่าน router ใดบ้าง",
+    "diagram": "m5-cost",
+    "options": [
+      {
+        "id": "a",
+        "text": "21 — ผ่าน R2"
+      },
+      {
+        "id": "b",
+        "text": "32 — ผ่าน R3"
+      },
+      {
+        "id": "c",
+        "text": "17 — ผ่าน R3 แล้ว R2"
+      },
+      {
+        "id": "d",
+        "text": "16 — ผ่าน R3 แล้ว R2"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "- R1→R2→R4: 10 + 10 + 1 = 21\n- R1→R3→R4: 1 + 30 + 1 = 32\n- R1→R3→R2→R4: 1 + 5 + 10 + 1 = **17** ← ต่ำสุด\n\nSPF ไม่ได้เลือกเส้นที่มี hop น้อยที่สุด แต่เลือก cost รวมต่ำสุด (อย่าลืมบวก cost ของ subnet ปลายทาง)",
+    "ref": "Book1 Ch6 §6.2.2",
+    "en": {
+      "question": "Based on the topology (link numbers are costs in both directions, and subnet `10.4.4.0/24` on R4 has cost 1), what is the total cost of the best path from R1 to 10.4.4.0/24, and which routers does it pass through?",
+      "options": {
+        "a": "21 — via R2",
+        "b": "32 — via R3",
+        "c": "17 — via R3 then R2",
+        "d": "16 — via R3 then R2"
+      }
+    }
+  },
+  {
+    "id": "m5-tables-026",
+    "module": "M5",
+    "topic": "Three tables",
+    "type": "multiple",
+    "difficulty": 1,
+    "question": "OSPF ดูแลตารางใดบ้าง (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "Neighbor table"
+      },
+      {
+        "id": "b",
+        "text": "LSDB (link-state database)"
+      },
+      {
+        "id": "c",
+        "text": "OSPF routing table"
+      },
+      {
+        "id": "d",
+        "text": "MAC address table"
+      },
+      {
+        "id": "e",
+        "text": "ARP table"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "OSPF มี 3 ตาราง: **peer/neighbor table**, **LSDB** และ **OSPF routing table** — MAC table และ ARP table เป็นของ layer 2 / ARP ไม่ใช่ของ OSPF",
+    "ref": "Book1 Ch6 §6.2.8",
+    "en": {
+      "question": "Which tables does OSPF maintain? (Choose all that apply.)",
+      "options": {
+        "a": "Neighbor table",
+        "b": "LSDB (link-state database)",
+        "c": "OSPF routing table",
+        "d": "MAC address table",
+        "e": "ARP table"
+      }
+    }
+  },
+  {
+    "id": "m5-timers-017",
+    "module": "M5",
+    "topic": "Hello parameters",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ค่า default ของ Hello interval และ Dead interval บน OSPF broadcast network (Ethernet) คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "5 / 20 วินาที"
+      },
+      {
+        "id": "b",
+        "text": "10 / 40 วินาที"
+      },
+      {
+        "id": "c",
+        "text": "30 / 120 วินาที"
+      },
+      {
+        "id": "d",
+        "text": "60 / 240 วินาที"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "broadcast และ P2P: **10 / 40** วินาที · NBMA และ P2MP: 30 / 120 วินาที — Dead interval ปกติเป็น 4 เท่าของ Hello",
+    "ref": "Book1 Ch6 §6.2.6",
+    "en": {
+      "question": "What are the default Hello and Dead intervals on an OSPF broadcast network (Ethernet)?",
+      "options": {
+        "a": "5 / 20 seconds",
+        "b": "10 / 40 seconds",
+        "c": "30 / 120 seconds",
+        "d": "60 / 240 seconds"
+      }
+    }
+  },
+  {
+    "id": "m5-wildcard-014",
+    "module": "M5",
+    "topic": "OSPF configuration",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ผู้ดูแลพิมพ์ `network 10.0.12.0 255.255.255.0` ใน area 0 ของ R1 ซึ่ง G0/0/1 มี IP `10.0.12.1/24` ผลที่เกิดขึ้นคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ทำงานเหมือน `network 10.0.12.0 0.0.0.255` ทุกประการ"
+      },
+      {
+        "id": "b",
+        "text": "คำสั่งถูกรับ แต่ G0/0/1 จะไม่ถูกเปิด OSPF เพราะค่าถูกตีความเป็น wildcard"
+      },
+      {
+        "id": "c",
+        "text": "VRP แปลง mask เป็น wildcard ให้อัตโนมัติเสมอ"
+      },
+      {
+        "id": "d",
+        "text": "OSPF เปิดบนทุก interface"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "พารามิเตอร์ตัวที่สองคือ **wildcard** — `255.255.255.0` แปลว่า 3 octet แรกเป็นอะไรก็ได้ แต่ octet สุดท้ายต้องเท่ากับ **0** พอดี IP 10.0.12.1 ลงท้ายด้วย 1 จึงไม่ match และ OSPF ไม่ทำงานบน G0/0/1\n\nต้องใช้ `0.0.0.255` (หรือ `network 10.0.12.1 0.0.0.0` เพื่อระบุตัว)",
+    "ref": "Book1 Ch6 §6.3.1",
+    "en": {
+      "question": "The administrator types `network 10.0.12.0 255.255.255.0` in area 0 on R1, whose G0/0/1 has IP `10.0.12.1/24`. What happens?",
+      "options": {
+        "a": "It works exactly like `network 10.0.12.0 0.0.0.255`",
+        "b": "The command is accepted, but OSPF will not be enabled on G0/0/1 because the value is interpreted as a wildcard",
+        "c": "VRP always converts the mask to a wildcard automatically",
+        "d": "OSPF is enabled on all interfaces"
+      }
+    }
+  }
 ]

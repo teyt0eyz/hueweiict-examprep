@@ -1,471 +1,601 @@
 [
- {
-  "id": "m10-apipa-014",
-  "module": "M10",
-  "topic": "Troubleshooting",
-  "type": "single",
-  "difficulty": 2,
-  "question": "PC Windows ได้ IP **169.254.33.7** หลังเปิดเครื่อง สรุปได้ว่าอย่างไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "DHCP ทำงานปกติ"
-   },
-   {
-    "id": "b",
-    "text": "PC ติดต่อ DHCP server ไม่ได้จึงตั้ง link-local (APIPA) เอง"
-   },
-   {
-    "id": "c",
-    "text": "PC ได้ IP จาก DHCP relay"
-   },
-   {
-    "id": "d",
-    "text": "PC ใช้ IPv6"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "169.254.0.0/16 คือ **link-local/APIPA** ที่ OS ตั้งเองเมื่อไม่ได้รับ OFFER — ตรวจว่า DHCP server/relay ทำงาน VLAN ถูก และ `dhcp enable` แล้ว",
-  "ref": "Book1 Ch4"
- },
- {
-  "id": "m10-decline-006",
-  "module": "M10",
-  "topic": "DHCP messages",
-  "type": "single",
-  "difficulty": 2,
-  "question": "client ได้ IP จาก ACK แล้วตรวจพบด้วย ARP ว่ามีเครื่องอื่นใช้ IP นี้อยู่ client จะส่ง message ใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "DHCP NAK"
-   },
-   {
-    "id": "b",
-    "text": "DHCP RELEASE"
-   },
-   {
-    "id": "c",
-    "text": "DHCP DECLINE"
-   },
-   {
-    "id": "d",
-    "text": "DHCP INFORM"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "**DECLINE** แจ้ง server ว่า address ซ้ำ server จะทำเครื่องหมาย conflict แล้ว client เริ่มขอใหม่ · NAK ส่งจาก server · RELEASE คืน IP ตามปกติ · INFORM ขอเฉพาะพารามิเตอร์อื่น",
-  "ref": "Book1 Ch11 §11.2"
- },
- {
-  "id": "m10-dora-001",
-  "module": "M10",
-  "topic": "DORA",
-  "type": "ordering",
-  "difficulty": 1,
-  "question": "เรียงลำดับ message ที่ client ได้ IP ครั้งแรกจาก DHCP server",
-  "options": [
-   {
-    "id": "a",
-    "text": "DHCP DISCOVER"
-   },
-   {
-    "id": "b",
-    "text": "DHCP OFFER"
-   },
-   {
-    "id": "c",
-    "text": "DHCP REQUEST"
-   },
-   {
-    "id": "d",
-    "text": "DHCP ACK"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c",
-   "d"
-  ],
-  "explanation": "**DORA**: Discover → Offer → Request → Ack",
-  "ref": "Book1 Ch11 §11.2"
- },
- {
-  "id": "m10-enable-007",
-  "module": "M10",
-  "topic": "DHCP configuration",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ตั้ง global pool ครบและสั่ง `dhcp select global` บน interface แล้ว แต่ client ยังไม่ได้ IP คำสั่งใดน่าจะลืมใส่",
-  "options": [
-   {
-    "id": "a",
-    "text": "`dhcp enable` ใน system view"
-   },
-   {
-    "id": "b",
-    "text": "`stp enable`"
-   },
-   {
-    "id": "c",
-    "text": "`ip pool enable`"
-   },
-   {
-    "id": "d",
-    "text": "`dhcp server start`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "VRP ต้องเปิด `dhcp enable` ในระดับ system ก่อนเสมอ ฟังก์ชัน DHCP server/relay จึงทำงาน",
-  "ref": "Book1 Ch11 §11.3"
- },
- {
-  "id": "m10-exclude-009",
-  "module": "M10",
-  "topic": "DHCP configuration",
-  "type": "single",
-  "difficulty": 1,
-  "question": "คำสั่งใดใน global pool ใช้ **ไม่แจก** address 192.168.10.1–192.168.10.20",
-  "options": [
-   {
-    "id": "a",
-    "text": "`excluded-ip-address 192.168.10.1 192.168.10.20`"
-   },
-   {
-    "id": "b",
-    "text": "`static-bind ip-address 192.168.10.1`"
-   },
-   {
-    "id": "c",
-    "text": "`deny ip 192.168.10.1 192.168.10.20`"
-   },
-   {
-    "id": "d",
-    "text": "`reserved 192.168.10.1 20`"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "`excluded-ip-address <start> <end>` สงวนช่วง address ไว้ (เช่นให้ gateway, server ที่ตั้ง static) · `static-bind` ใช้จอง IP ให้ MAC ใด MAC หนึ่ง",
-  "ref": "Book1 Ch11 §11.3"
- },
- {
-  "id": "m10-giaddr-012",
-  "module": "M10",
-  "topic": "DHCP relay",
-  "type": "single",
-  "difficulty": 2,
-  "question": "จาก topology R1 ส่ง DISCOVER ต่อไปยัง server โดยใส่ **giaddr** เป็นค่าใด และ server ใช้ค่านี้ทำอะไร",
-  "diagram": "m10-dhcp-relay",
-  "options": [
-   {
-    "id": "a",
-    "text": "10.0.0.5 — ใช้ตอบกลับ client โดยตรง"
-   },
-   {
-    "id": "b",
-    "text": "192.168.10.1 — ใช้เลือก pool ที่ subnet ตรงกันและส่งคำตอบกลับมาที่ relay"
-   },
-   {
-    "id": "c",
-    "text": "0.0.0.0 — ไม่ใช้"
-   },
-   {
-    "id": "d",
-    "text": "MAC ของ PC — ใช้ทำ static bind"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "relay ใส่ **giaddr = IP ของ interface ที่รับ request** (192.168.10.1) server เลือก pool 192.168.10.0/24 จาก giaddr และส่งคำตอบกลับไปที่ giaddr — server จึงต้องมี route กลับไปยัง subnet นั้น",
-  "ref": "Book1 Ch11 §11.4"
- },
- {
-  "id": "m10-lease-010",
-  "module": "M10",
-  "topic": "DHCP configuration",
-  "type": "single",
-  "difficulty": 1,
-  "question": "ค่า default ของ lease ใน DHCP address pool บน Huawei คือเท่าใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "1 ชั่วโมง"
-   },
-   {
-    "id": "b",
-    "text": "8 ชั่วโมง"
-   },
-   {
-    "id": "c",
-    "text": "1 วัน"
-   },
-   {
-    "id": "d",
-    "text": "7 วัน"
-   }
-  ],
-  "answer": [
-   "c"
-  ],
-  "explanation": "lease default = **1 วัน** ปรับด้วย `lease day <d> hour <h> minute <m>`",
-  "ref": "Book1 Ch11 §11.3"
- },
- {
-  "id": "m10-port-002",
-  "module": "M10",
-  "topic": "DHCP basics",
-  "type": "single",
-  "difficulty": 1,
-  "question": "DHCP ใช้ transport protocol และพอร์ตใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "TCP 67/68"
-   },
-   {
-    "id": "b",
-    "text": "UDP 67 (server) / 68 (client)"
-   },
-   {
-    "id": "c",
-    "text": "UDP 53"
-   },
-   {
-    "id": "d",
-    "text": "UDP 69"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "DHCP ใช้ **UDP — server 67, client 68** · UDP 53 = DNS, UDP 69 = TFTP",
-  "ref": "Book1 Ch11 §11.2"
- },
- {
-  "id": "m10-relay-011",
-  "module": "M10",
-  "topic": "DHCP relay",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ทำไมจึงต้องใช้ **DHCP relay** เมื่อ client กับ DHCP server อยู่คนละ subnet",
-  "diagram": "m10-dhcp-relay",
-  "options": [
-   {
-    "id": "a",
-    "text": "เพราะ DHCP ใช้ TCP"
-   },
-   {
-    "id": "b",
-    "text": "เพราะ DISCOVER เป็น broadcast และ router ไม่ forward broadcast ข้าม subnet"
-   },
-   {
-    "id": "c",
-    "text": "เพื่อเข้ารหัส DHCP"
-   },
-   {
-    "id": "d",
-    "text": "เพราะ server ต้องรู้ MAC ของ router"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "client ยังไม่มี IP และไม่รู้จัก server จึงส่ง broadcast ซึ่งไม่ข้าม router — relay agent รับ broadcast แล้วส่งต่อเป็น **unicast** ไปยัง server",
-  "ref": "Book1 Ch11 §11.4"
- },
- {
-  "id": "m10-relaycfg-013",
-  "module": "M10",
-  "topic": "DHCP relay",
-  "type": "multiple",
-  "difficulty": 2,
-  "question": "ต้องตั้งค่าใดบ้างบน R1 (relay) ตาม topology (เลือกทุกข้อที่จำเป็น)",
-  "diagram": "m10-dhcp-relay",
-  "options": [
-   {
-    "id": "a",
-    "text": "`dhcp enable`"
-   },
-   {
-    "id": "b",
-    "text": "`dhcp select relay` บน G0/0/0"
-   },
-   {
-    "id": "c",
-    "text": "`dhcp relay server-ip 10.0.0.5` บน G0/0/0"
-   },
-   {
-    "id": "d",
-    "text": "`ip pool vlan10` บน R1"
-   },
-   {
-    "id": "e",
-    "text": "`dhcp select global` บน G0/0/0"
-   }
-  ],
-  "answer": [
-   "a",
-   "b",
-   "c"
-  ],
-  "explanation": "relay ต้องการ `dhcp enable` + `dhcp select relay` + `dhcp relay server-ip` บน interface ฝั่ง client · pool อยู่ที่ DHCP server ไม่ใช่ relay · `dhcp select global` ใช้เมื่อ R1 เป็น server เอง",
-  "ref": "Book1 Ch11 §11.4"
- },
- {
-  "id": "m10-request-003",
-  "module": "M10",
-  "topic": "DORA",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ทำไม DHCP REQUEST ในการขอ IP ครั้งแรกจึงส่งแบบ **broadcast** ทั้งที่ client รู้ IP ของ server แล้วจาก OFFER",
-  "options": [
-   {
-    "id": "a",
-    "text": "เพราะ client ยังไม่มี MAC address"
-   },
-   {
-    "id": "b",
-    "text": "เพื่อแจ้ง server ทุกตัวว่าเลือก offer ของใคร server ที่ไม่ถูกเลือกจะได้คืน IP ที่เสนอไว้"
-   },
-   {
-    "id": "c",
-    "text": "เพราะ unicast ใช้กับ UDP ไม่ได้"
-   },
-   {
-    "id": "d",
-    "text": "เพื่อให้ switch เรียนรู้ MAC"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "อาจมีหลาย server ส่ง OFFER มา REQUEST แบบ broadcast (ใส่ server identifier ของตัวที่เลือก) ทำให้ server อื่นรู้ว่าไม่ถูกเลือกและคืน address กลับ pool — อีกทั้ง client ยังไม่มี IP ที่ใช้งานได้",
-  "ref": "Book1 Ch11 §11.2"
- },
- {
-  "id": "m10-select-008",
-  "module": "M10",
-  "topic": "DHCP configuration",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ความแตกต่างระหว่าง `dhcp select interface` กับ `dhcp select global` คือข้อใด",
-  "options": [
-   {
-    "id": "a",
-    "text": "interface pool ใช้ subnet ของ IP บน interface นั้นเอง ส่วน global pool เป็น pool ที่สร้างด้วย `ip pool` และเลือกตาม subnet ที่ตรงกับ interface/giaddr"
-   },
-   {
-    "id": "b",
-    "text": "interface pool ใช้ได้กับ relay เท่านั้น"
-   },
-   {
-    "id": "c",
-    "text": "global pool แจกได้เฉพาะ IPv6"
-   },
-   {
-    "id": "d",
-    "text": "ไม่ต่างกัน"
-   }
-  ],
-  "answer": [
-   "a"
-  ],
-  "explanation": "**interface pool** สร้างจาก subnet ของ interface และใช้ IP ของ interface เป็น gateway อัตโนมัติ · **global pool** สร้างด้วย `ip pool` ใช้ได้กับหลาย interface และรองรับ client ผ่าน relay",
-  "ref": "Book1 Ch11 §11.3"
- },
- {
-  "id": "m10-static-015",
-  "module": "M10",
-  "topic": "DHCP configuration",
-  "type": "truefalse",
-  "difficulty": 1,
-  "question": "คำสั่ง `static-bind ip-address 192.168.10.50 mac-address 5489-98aa-0050` ใน global pool ทำให้เครื่องที่มี MAC นี้ได้ IP 192.168.10.50 ทุกครั้งที่ขอ DHCP",
-  "options": [
-   {
-    "id": "T",
-    "text": "ถูก"
-   },
-   {
-    "id": "F",
-    "text": "ผิด"
-   }
-  ],
-  "answer": [
-   "T"
-  ],
-  "explanation": "static binding จอง IP ให้ MAC ที่ระบุ เหมาะกับ printer/server ที่ต้องใช้ IP คงที่แต่ยังต้องการจัดการจากศูนย์กลางด้วย DHCP",
-  "ref": "Book1 Ch11 §11.3"
- },
- {
-  "id": "m10-t1-004",
-  "module": "M10",
-  "topic": "Lease renewal",
-  "type": "single",
-  "difficulty": 2,
-  "question": "client ได้ lease **8 ชั่วโมง** จะเริ่มส่ง REQUEST แบบ unicast เพื่อต่ออายุกับ server เดิมเมื่อผ่านไปกี่ชั่วโมง",
-  "options": [
-   {
-    "id": "a",
-    "text": "2 ชั่วโมง"
-   },
-   {
-    "id": "b",
-    "text": "4 ชั่วโมง"
-   },
-   {
-    "id": "c",
-    "text": "7 ชั่วโมง"
-   },
-   {
-    "id": "d",
-    "text": "8 ชั่วโมง"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "T1 = **50%** ของ lease = 4 ชั่วโมง (renew แบบ unicast) · T2 = 87.5% = 7 ชั่วโมง (rebind แบบ broadcast)",
-  "ref": "Book1 Ch11 §11.2"
- },
- {
-  "id": "m10-t2-005",
-  "module": "M10",
-  "topic": "Lease renewal",
-  "type": "single",
-  "difficulty": 2,
-  "question": "ที่เวลา T2 (87.5% ของ lease) ถ้า client ยังต่ออายุกับ server เดิมไม่ได้ จะทำอย่างไร",
-  "options": [
-   {
-    "id": "a",
-    "text": "หยุดใช้ IP ทันที"
-   },
-   {
-    "id": "b",
-    "text": "ส่ง REQUEST แบบ broadcast เพื่อให้ server ใดก็ได้ต่ออายุให้ (rebind)"
-   },
-   {
-    "id": "c",
-    "text": "ส่ง DECLINE"
-   },
-   {
-    "id": "d",
-    "text": "ส่ง DISCOVER ทันที"
-   }
-  ],
-  "answer": [
-   "b"
-  ],
-  "explanation": "ที่ T2 client **rebind** ด้วย REQUEST แบบ broadcast ถ้าหมด lease แล้วยังไม่ได้ ACK จึงหยุดใช้ IP และเริ่ม DISCOVER ใหม่",
-  "ref": "Book1 Ch11 §11.2"
- }
+  {
+    "id": "m10-apipa-014",
+    "module": "M10",
+    "topic": "Troubleshooting",
+    "type": "single",
+    "difficulty": 2,
+    "question": "PC Windows ได้ IP **169.254.33.7** หลังเปิดเครื่อง สรุปได้ว่าอย่างไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "DHCP ทำงานปกติ"
+      },
+      {
+        "id": "b",
+        "text": "PC ติดต่อ DHCP server ไม่ได้จึงตั้ง link-local (APIPA) เอง"
+      },
+      {
+        "id": "c",
+        "text": "PC ได้ IP จาก DHCP relay"
+      },
+      {
+        "id": "d",
+        "text": "PC ใช้ IPv6"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "169.254.0.0/16 คือ **link-local/APIPA** ที่ OS ตั้งเองเมื่อไม่ได้รับ OFFER — ตรวจว่า DHCP server/relay ทำงาน VLAN ถูก และ `dhcp enable` แล้ว",
+    "ref": "Book1 Ch4",
+    "en": {
+      "question": "A Windows PC receives the IP **169.254.33.7** after booting. What can you conclude?",
+      "options": {
+        "a": "DHCP is working normally",
+        "b": "The PC could not reach a DHCP server, so it assigned itself a link-local (APIPA) address",
+        "c": "The PC got its IP from a DHCP relay",
+        "d": "The PC is using IPv6"
+      }
+    }
+  },
+  {
+    "id": "m10-decline-006",
+    "module": "M10",
+    "topic": "DHCP messages",
+    "type": "single",
+    "difficulty": 2,
+    "question": "client ได้ IP จาก ACK แล้วตรวจพบด้วย ARP ว่ามีเครื่องอื่นใช้ IP นี้อยู่ client จะส่ง message ใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "DHCP NAK"
+      },
+      {
+        "id": "b",
+        "text": "DHCP RELEASE"
+      },
+      {
+        "id": "c",
+        "text": "DHCP DECLINE"
+      },
+      {
+        "id": "d",
+        "text": "DHCP INFORM"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "**DECLINE** แจ้ง server ว่า address ซ้ำ server จะทำเครื่องหมาย conflict แล้ว client เริ่มขอใหม่ · NAK ส่งจาก server · RELEASE คืน IP ตามปกติ · INFORM ขอเฉพาะพารามิเตอร์อื่น",
+    "ref": "Book1 Ch11 §11.2",
+    "en": {
+      "question": "After receiving an ACK, a client uses ARP and finds that another host is already using the IP. Which message does the client send?",
+      "options": {
+        "a": "DHCP NAK",
+        "b": "DHCP RELEASE",
+        "c": "DHCP DECLINE",
+        "d": "DHCP INFORM"
+      }
+    }
+  },
+  {
+    "id": "m10-dora-001",
+    "module": "M10",
+    "topic": "DORA",
+    "type": "ordering",
+    "difficulty": 1,
+    "question": "เรียงลำดับ message ที่ client ได้ IP ครั้งแรกจาก DHCP server",
+    "options": [
+      {
+        "id": "a",
+        "text": "DHCP DISCOVER"
+      },
+      {
+        "id": "b",
+        "text": "DHCP OFFER"
+      },
+      {
+        "id": "c",
+        "text": "DHCP REQUEST"
+      },
+      {
+        "id": "d",
+        "text": "DHCP ACK"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "**DORA**: Discover → Offer → Request → Ack",
+    "ref": "Book1 Ch11 §11.2",
+    "en": {
+      "question": "Arrange the messages exchanged when a client obtains an IP address from a DHCP server for the first time.",
+      "options": {
+        "a": "DHCP DISCOVER",
+        "b": "DHCP OFFER",
+        "c": "DHCP REQUEST",
+        "d": "DHCP ACK"
+      }
+    }
+  },
+  {
+    "id": "m10-enable-007",
+    "module": "M10",
+    "topic": "DHCP configuration",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ตั้ง global pool ครบและสั่ง `dhcp select global` บน interface แล้ว แต่ client ยังไม่ได้ IP คำสั่งใดน่าจะลืมใส่",
+    "options": [
+      {
+        "id": "a",
+        "text": "`dhcp enable` ใน system view"
+      },
+      {
+        "id": "b",
+        "text": "`stp enable`"
+      },
+      {
+        "id": "c",
+        "text": "`ip pool enable`"
+      },
+      {
+        "id": "d",
+        "text": "`dhcp server start`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "VRP ต้องเปิด `dhcp enable` ในระดับ system ก่อนเสมอ ฟังก์ชัน DHCP server/relay จึงทำงาน",
+    "ref": "Book1 Ch11 §11.3",
+    "en": {
+      "question": "A global pool is fully configured and `dhcp select global` is set on the interface, but clients still get no IP. Which command was most likely forgotten?",
+      "options": {
+        "a": "`dhcp enable` in the system view",
+        "b": "`stp enable`",
+        "c": "`ip pool enable`",
+        "d": "`dhcp server start`"
+      }
+    }
+  },
+  {
+    "id": "m10-exclude-009",
+    "module": "M10",
+    "topic": "DHCP configuration",
+    "type": "single",
+    "difficulty": 1,
+    "question": "คำสั่งใดใน global pool ใช้ **ไม่แจก** address 192.168.10.1–192.168.10.20",
+    "options": [
+      {
+        "id": "a",
+        "text": "`excluded-ip-address 192.168.10.1 192.168.10.20`"
+      },
+      {
+        "id": "b",
+        "text": "`static-bind ip-address 192.168.10.1`"
+      },
+      {
+        "id": "c",
+        "text": "`deny ip 192.168.10.1 192.168.10.20`"
+      },
+      {
+        "id": "d",
+        "text": "`reserved 192.168.10.1 20`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "`excluded-ip-address <start> <end>` สงวนช่วง address ไว้ (เช่นให้ gateway, server ที่ตั้ง static) · `static-bind` ใช้จอง IP ให้ MAC ใด MAC หนึ่ง",
+    "ref": "Book1 Ch11 §11.3",
+    "en": {
+      "question": "Which command in a global pool **prevents** addresses 192.168.10.1–192.168.10.20 from being assigned?",
+      "options": {
+        "a": "`excluded-ip-address 192.168.10.1 192.168.10.20`",
+        "b": "`static-bind ip-address 192.168.10.1`",
+        "c": "`deny ip 192.168.10.1 192.168.10.20`",
+        "d": "`reserved 192.168.10.1 20`"
+      }
+    }
+  },
+  {
+    "id": "m10-giaddr-012",
+    "module": "M10",
+    "topic": "DHCP relay",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก topology R1 ส่ง DISCOVER ต่อไปยัง server โดยใส่ **giaddr** เป็นค่าใด และ server ใช้ค่านี้ทำอะไร",
+    "diagram": "m10-dhcp-relay",
+    "options": [
+      {
+        "id": "a",
+        "text": "10.0.0.5 — ใช้ตอบกลับ client โดยตรง"
+      },
+      {
+        "id": "b",
+        "text": "192.168.10.1 — ใช้เลือก pool ที่ subnet ตรงกันและส่งคำตอบกลับมาที่ relay"
+      },
+      {
+        "id": "c",
+        "text": "0.0.0.0 — ไม่ใช้"
+      },
+      {
+        "id": "d",
+        "text": "MAC ของ PC — ใช้ทำ static bind"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "relay ใส่ **giaddr = IP ของ interface ที่รับ request** (192.168.10.1) server เลือก pool 192.168.10.0/24 จาก giaddr และส่งคำตอบกลับไปที่ giaddr — server จึงต้องมี route กลับไปยัง subnet นั้น",
+    "ref": "Book1 Ch11 §11.4",
+    "en": {
+      "question": "Refer to the topology. When R1 forwards the DISCOVER to the server, what does it set as the **giaddr**, and what does the server use it for?",
+      "options": {
+        "a": "10.0.0.5 — used to reply to the client directly",
+        "b": "192.168.10.1 — used to select the pool with the matching subnet and to send the reply back to the relay",
+        "c": "0.0.0.0 — not used",
+        "d": "The PC's MAC — used for static binding"
+      }
+    }
+  },
+  {
+    "id": "m10-lease-010",
+    "module": "M10",
+    "topic": "DHCP configuration",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ค่า default ของ lease ใน DHCP address pool บน Huawei คือเท่าใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "1 ชั่วโมง"
+      },
+      {
+        "id": "b",
+        "text": "8 ชั่วโมง"
+      },
+      {
+        "id": "c",
+        "text": "1 วัน"
+      },
+      {
+        "id": "d",
+        "text": "7 วัน"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "lease default = **1 วัน** ปรับด้วย `lease day <d> hour <h> minute <m>`",
+    "ref": "Book1 Ch11 §11.3",
+    "en": {
+      "question": "What is the default lease time of a DHCP address pool on Huawei devices?",
+      "options": {
+        "a": "1 hour",
+        "b": "8 hours",
+        "c": "1 day",
+        "d": "7 days"
+      }
+    }
+  },
+  {
+    "id": "m10-port-002",
+    "module": "M10",
+    "topic": "DHCP basics",
+    "type": "single",
+    "difficulty": 1,
+    "question": "DHCP ใช้ transport protocol และพอร์ตใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "TCP 67/68"
+      },
+      {
+        "id": "b",
+        "text": "UDP 67 (server) / 68 (client)"
+      },
+      {
+        "id": "c",
+        "text": "UDP 53"
+      },
+      {
+        "id": "d",
+        "text": "UDP 69"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "DHCP ใช้ **UDP — server 67, client 68** · UDP 53 = DNS, UDP 69 = TFTP",
+    "ref": "Book1 Ch11 §11.2",
+    "en": {
+      "question": "Which transport protocol and ports does DHCP use?",
+      "options": {
+        "a": "TCP 67/68",
+        "b": "UDP 67 (server) / 68 (client)",
+        "c": "UDP 53",
+        "d": "UDP 69"
+      }
+    }
+  },
+  {
+    "id": "m10-relay-011",
+    "module": "M10",
+    "topic": "DHCP relay",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ทำไมจึงต้องใช้ **DHCP relay** เมื่อ client กับ DHCP server อยู่คนละ subnet",
+    "diagram": "m10-dhcp-relay",
+    "options": [
+      {
+        "id": "a",
+        "text": "เพราะ DHCP ใช้ TCP"
+      },
+      {
+        "id": "b",
+        "text": "เพราะ DISCOVER เป็น broadcast และ router ไม่ forward broadcast ข้าม subnet"
+      },
+      {
+        "id": "c",
+        "text": "เพื่อเข้ารหัส DHCP"
+      },
+      {
+        "id": "d",
+        "text": "เพราะ server ต้องรู้ MAC ของ router"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "client ยังไม่มี IP และไม่รู้จัก server จึงส่ง broadcast ซึ่งไม่ข้าม router — relay agent รับ broadcast แล้วส่งต่อเป็น **unicast** ไปยัง server",
+    "ref": "Book1 Ch11 §11.4",
+    "en": {
+      "question": "Why is a **DHCP relay** needed when the client and DHCP server are in different subnets?",
+      "options": {
+        "a": "Because DHCP uses TCP",
+        "b": "Because DISCOVER is a broadcast and routers do not forward broadcasts between subnets",
+        "c": "To encrypt DHCP",
+        "d": "Because the server must know the router's MAC address"
+      }
+    }
+  },
+  {
+    "id": "m10-relaycfg-013",
+    "module": "M10",
+    "topic": "DHCP relay",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ต้องตั้งค่าใดบ้างบน R1 (relay) ตาม topology (เลือกทุกข้อที่จำเป็น)",
+    "diagram": "m10-dhcp-relay",
+    "options": [
+      {
+        "id": "a",
+        "text": "`dhcp enable`"
+      },
+      {
+        "id": "b",
+        "text": "`dhcp select relay` บน G0/0/0"
+      },
+      {
+        "id": "c",
+        "text": "`dhcp relay server-ip 10.0.0.5` บน G0/0/0"
+      },
+      {
+        "id": "d",
+        "text": "`ip pool vlan10` บน R1"
+      },
+      {
+        "id": "e",
+        "text": "`dhcp select global` บน G0/0/0"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "relay ต้องการ `dhcp enable` + `dhcp select relay` + `dhcp relay server-ip` บน interface ฝั่ง client · pool อยู่ที่ DHCP server ไม่ใช่ relay · `dhcp select global` ใช้เมื่อ R1 เป็น server เอง",
+    "ref": "Book1 Ch11 §11.4",
+    "en": {
+      "question": "Which settings are required on R1 (the relay) in the topology? (Choose all that apply.)",
+      "options": {
+        "a": "`dhcp enable`",
+        "b": "`dhcp select relay` on G0/0/0",
+        "c": "`dhcp relay server-ip 10.0.0.5` on G0/0/0",
+        "d": "`ip pool vlan10` on R1",
+        "e": "`dhcp select global` on G0/0/0"
+      }
+    }
+  },
+  {
+    "id": "m10-request-003",
+    "module": "M10",
+    "topic": "DORA",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ทำไม DHCP REQUEST ในการขอ IP ครั้งแรกจึงส่งแบบ **broadcast** ทั้งที่ client รู้ IP ของ server แล้วจาก OFFER",
+    "options": [
+      {
+        "id": "a",
+        "text": "เพราะ client ยังไม่มี MAC address"
+      },
+      {
+        "id": "b",
+        "text": "เพื่อแจ้ง server ทุกตัวว่าเลือก offer ของใคร server ที่ไม่ถูกเลือกจะได้คืน IP ที่เสนอไว้"
+      },
+      {
+        "id": "c",
+        "text": "เพราะ unicast ใช้กับ UDP ไม่ได้"
+      },
+      {
+        "id": "d",
+        "text": "เพื่อให้ switch เรียนรู้ MAC"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "อาจมีหลาย server ส่ง OFFER มา REQUEST แบบ broadcast (ใส่ server identifier ของตัวที่เลือก) ทำให้ server อื่นรู้ว่าไม่ถูกเลือกและคืน address กลับ pool — อีกทั้ง client ยังไม่มี IP ที่ใช้งานได้",
+    "ref": "Book1 Ch11 §11.2",
+    "en": {
+      "question": "Why is the initial DHCP REQUEST sent as a **broadcast**, even though the client already knows the server's IP from the OFFER?",
+      "options": {
+        "a": "Because the client has no MAC address yet",
+        "b": "To tell all servers which offer was chosen, so servers that were not selected can release their offered addresses",
+        "c": "Because unicast cannot be used with UDP",
+        "d": "So the switch can learn the MAC address"
+      }
+    }
+  },
+  {
+    "id": "m10-select-008",
+    "module": "M10",
+    "topic": "DHCP configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ความแตกต่างระหว่าง `dhcp select interface` กับ `dhcp select global` คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "interface pool ใช้ subnet ของ IP บน interface นั้นเอง ส่วน global pool เป็น pool ที่สร้างด้วย `ip pool` และเลือกตาม subnet ที่ตรงกับ interface/giaddr"
+      },
+      {
+        "id": "b",
+        "text": "interface pool ใช้ได้กับ relay เท่านั้น"
+      },
+      {
+        "id": "c",
+        "text": "global pool แจกได้เฉพาะ IPv6"
+      },
+      {
+        "id": "d",
+        "text": "ไม่ต่างกัน"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "**interface pool** สร้างจาก subnet ของ interface และใช้ IP ของ interface เป็น gateway อัตโนมัติ · **global pool** สร้างด้วย `ip pool` ใช้ได้กับหลาย interface และรองรับ client ผ่าน relay",
+    "ref": "Book1 Ch11 §11.3",
+    "en": {
+      "question": "What is the difference between `dhcp select interface` and `dhcp select global`?",
+      "options": {
+        "a": "The interface pool uses the subnet of the interface's own IP, while the global pool is created with `ip pool` and selected by the subnet matching the interface/giaddr",
+        "b": "The interface pool works only with a relay",
+        "c": "The global pool can assign only IPv6 addresses",
+        "d": "There is no difference"
+      }
+    }
+  },
+  {
+    "id": "m10-static-015",
+    "module": "M10",
+    "topic": "DHCP configuration",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "คำสั่ง `static-bind ip-address 192.168.10.50 mac-address 5489-98aa-0050` ใน global pool ทำให้เครื่องที่มี MAC นี้ได้ IP 192.168.10.50 ทุกครั้งที่ขอ DHCP",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "static binding จอง IP ให้ MAC ที่ระบุ เหมาะกับ printer/server ที่ต้องใช้ IP คงที่แต่ยังต้องการจัดการจากศูนย์กลางด้วย DHCP",
+    "ref": "Book1 Ch11 §11.3",
+    "en": {
+      "question": "The command `static-bind ip-address 192.168.10.50 mac-address 5489-98aa-0050` in a global pool causes the host with this MAC to receive 192.168.10.50 every time it requests DHCP."
+    }
+  },
+  {
+    "id": "m10-t1-004",
+    "module": "M10",
+    "topic": "Lease renewal",
+    "type": "single",
+    "difficulty": 2,
+    "question": "client ได้ lease **8 ชั่วโมง** จะเริ่มส่ง REQUEST แบบ unicast เพื่อต่ออายุกับ server เดิมเมื่อผ่านไปกี่ชั่วโมง",
+    "options": [
+      {
+        "id": "a",
+        "text": "2 ชั่วโมง"
+      },
+      {
+        "id": "b",
+        "text": "4 ชั่วโมง"
+      },
+      {
+        "id": "c",
+        "text": "7 ชั่วโมง"
+      },
+      {
+        "id": "d",
+        "text": "8 ชั่วโมง"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "T1 = **50%** ของ lease = 4 ชั่วโมง (renew แบบ unicast) · T2 = 87.5% = 7 ชั่วโมง (rebind แบบ broadcast)",
+    "ref": "Book1 Ch11 §11.2",
+    "en": {
+      "question": "A client receives an **8-hour** lease. After how many hours does it start sending a unicast REQUEST to the original server to renew?",
+      "options": {
+        "a": "2 hours",
+        "b": "4 hours",
+        "c": "7 hours",
+        "d": "8 hours"
+      }
+    }
+  },
+  {
+    "id": "m10-t2-005",
+    "module": "M10",
+    "topic": "Lease renewal",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ที่เวลา T2 (87.5% ของ lease) ถ้า client ยังต่ออายุกับ server เดิมไม่ได้ จะทำอย่างไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "หยุดใช้ IP ทันที"
+      },
+      {
+        "id": "b",
+        "text": "ส่ง REQUEST แบบ broadcast เพื่อให้ server ใดก็ได้ต่ออายุให้ (rebind)"
+      },
+      {
+        "id": "c",
+        "text": "ส่ง DECLINE"
+      },
+      {
+        "id": "d",
+        "text": "ส่ง DISCOVER ทันที"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "ที่ T2 client **rebind** ด้วย REQUEST แบบ broadcast ถ้าหมด lease แล้วยังไม่ได้ ACK จึงหยุดใช้ IP และเริ่ม DISCOVER ใหม่",
+    "ref": "Book1 Ch11 §11.2",
+    "en": {
+      "question": "At T2 (87.5% of the lease), if the client still has not renewed with the original server, what does it do?",
+      "options": {
+        "a": "Stops using the IP immediately",
+        "b": "Broadcasts a REQUEST so any server can extend the lease (rebind)",
+        "c": "Sends a DECLINE",
+        "d": "Sends a DISCOVER immediately"
+      }
+    }
+  }
 ]

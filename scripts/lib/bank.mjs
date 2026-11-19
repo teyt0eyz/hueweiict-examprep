@@ -89,6 +89,14 @@ export function validateBank() {
     for (const a of q.answer) if (!optIds.includes(a)) err(`answer "${a}" is not an option id`);
     if (new Set(q.answer).size !== q.answer.length) err("duplicate ids in answer");
 
+    if (q.en !== undefined) {
+      if (typeof q.en !== "object" || !q.en.question?.trim()) err("en.question must be a non-empty string");
+      else if (q.type !== "truefalse") {
+        const ids = (q.options ?? []).map((o) => o.id);
+        const keys = Object.keys(q.en.options ?? {});
+        if (ids.length !== keys.length || ids.some((id) => !q.en.options[id]?.trim())) err("en.options must give text for every option id");
+      }
+    }
     switch (q.type) {
       case "single":
         if (q.answer.length !== 1) err("single must have exactly one answer");
