@@ -3,9 +3,9 @@
 # Huawei ICT Competition (Network Track) Prep Site
 
 ## Project facts (decided in Phase 0)
-- Repo: `hueweiict-examprep` → deploys to `https://teyt0eyz.github.io/hueweiict-examprep/`
+- Repo: `huewei-exam-prep` (local folder is still `hueweiict-examprep`) → deploys to `https://teyt0eyz.github.io/huewei-exam-prep/`
 - Next.js **16.4** (Turbopack, App Router), Tailwind **v4** (CSS-first config in `src/app/globals.css`, no tailwind.config). Read `node_modules/next/dist/docs/` before using unfamiliar APIs.
-- `next.config.ts`: `output: "export"`, `trailingSlash: true`, basePath `/hueweiict-examprep` **only in production** (dev runs at `/`). Cache Components are intentionally OFF (they need a Node server).
+- `next.config.ts`: `output: "export"`, `trailingSlash: true`, basePath `/huewei-exam-prep` **only in production** (dev runs at `/`). Cache Components are intentionally OFF (they need a Node server).
 - Dynamic routes need `generateStaticParams()` + `export const dynamicParams = false`.
 - Internal links: use `next/link` with trailing-slash hrefs (`/lessons/ospf/`). Raw asset URLs must be prefixed with `process.env.NEXT_PUBLIC_BASE_PATH`.
 - Theme: class-based (`html.dark`), color tokens in `globals.css` (`bg`, `surface`, `surface-2`, `border`, `fg`, `muted`, `accent`, …). Use the tokens, not raw Tailwind colors.
