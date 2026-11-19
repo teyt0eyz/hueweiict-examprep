@@ -1335,5 +1335,407 @@
     "label": "2001:db8:3::/64"
    }
   ]
+ },
+ "m13-ppp": {
+  "w": 560,
+  "h": 150,
+  "title": "PPP บนลิงก์ serial ระหว่าง R1 กับ R2",
+  "nodes": [
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 110,
+    "y": 75,
+    "label": "R1",
+    "sub": "ผู้ถูกตรวจสอบ (authenticatee)"
+   },
+   {
+    "id": "R2",
+    "type": "router",
+    "x": 450,
+    "y": 75,
+    "label": "R2",
+    "sub": "ผู้ตรวจสอบ (authenticator)"
+   }
+  ],
+  "links": [
+   {
+    "a": "R1",
+    "b": "R2",
+    "label": "Serial 10.0.12.0/24 · link-protocol ppp",
+    "la": "S1/0/0",
+    "lb": "S1/0/0"
+   }
+  ]
+ },
+ "m13-pppoe": {
+  "w": 620,
+  "h": 170,
+  "title": "PPPoE: router ที่บ้าน/สาขา dial ไปยัง BRAS ของ ISP",
+  "nodes": [
+   {
+    "id": "PC",
+    "type": "pc",
+    "x": 50,
+    "y": 85,
+    "label": "LAN",
+    "sub": "192.168.1.0/24"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 220,
+    "y": 85,
+    "label": "R1",
+    "sub": "PPPoE client"
+   },
+   {
+    "id": "SW",
+    "type": "switch",
+    "x": 380,
+    "y": 85,
+    "label": "Access network"
+   },
+   {
+    "id": "BRAS",
+    "type": "router",
+    "x": 540,
+    "y": 85,
+    "label": "BRAS",
+    "sub": "PPPoE server"
+   }
+  ],
+  "links": [
+   {
+    "a": "PC",
+    "b": "R1"
+   },
+   {
+    "a": "R1",
+    "b": "SW",
+    "label": "Ethernet",
+    "la": "G0/0/1"
+   },
+   {
+    "a": "SW",
+    "b": "BRAS"
+   }
+  ]
+ },
+ "m14-campus": {
+  "w": 620,
+  "h": 330,
+  "title": "Campus network แบบ 3 ชั้น (core / aggregation / access) พร้อม egress",
+  "nodes": [
+   {
+    "id": "NET",
+    "type": "cloud",
+    "x": 310,
+    "y": 30,
+    "label": "Internet"
+   },
+   {
+    "id": "FW",
+    "type": "firewall",
+    "x": 310,
+    "y": 95,
+    "label": "Egress (FW/router)"
+   },
+   {
+    "id": "C1",
+    "type": "l3switch",
+    "x": 220,
+    "y": 160,
+    "label": "Core1"
+   },
+   {
+    "id": "C2",
+    "type": "l3switch",
+    "x": 400,
+    "y": 160,
+    "label": "Core2"
+   },
+   {
+    "id": "A1",
+    "type": "switch",
+    "x": 130,
+    "y": 235,
+    "label": "Agg1"
+   },
+   {
+    "id": "A2",
+    "type": "switch",
+    "x": 490,
+    "y": 235,
+    "label": "Agg2"
+   },
+   {
+    "id": "S1",
+    "type": "switch",
+    "x": 60,
+    "y": 300,
+    "label": "Access"
+   },
+   {
+    "id": "S2",
+    "type": "switch",
+    "x": 200,
+    "y": 300,
+    "label": "Access"
+   },
+   {
+    "id": "AP",
+    "type": "ap",
+    "x": 420,
+    "y": 300,
+    "label": "AP"
+   },
+   {
+    "id": "S3",
+    "type": "switch",
+    "x": 560,
+    "y": 300,
+    "label": "Access"
+   }
+  ],
+  "links": [
+   {
+    "a": "NET",
+    "b": "FW"
+   },
+   {
+    "a": "FW",
+    "b": "C1"
+   },
+   {
+    "a": "FW",
+    "b": "C2"
+   },
+   {
+    "a": "C1",
+    "b": "C2",
+    "style": "trunk",
+    "label": "Eth-Trunk"
+   },
+   {
+    "a": "C1",
+    "b": "A1"
+   },
+   {
+    "a": "C2",
+    "b": "A1",
+    "style": "dashed"
+   },
+   {
+    "a": "C2",
+    "b": "A2"
+   },
+   {
+    "a": "C1",
+    "b": "A2",
+    "style": "dashed"
+   },
+   {
+    "a": "A1",
+    "b": "S1"
+   },
+   {
+    "a": "A1",
+    "b": "S2"
+   },
+   {
+    "a": "A2",
+    "b": "AP"
+   },
+   {
+    "a": "A2",
+    "b": "S3"
+   }
+  ]
+ },
+ "m15-snmp": {
+  "w": 580,
+  "h": 190,
+  "title": "SNMP: NMS ↔ agent บนอุปกรณ์ และ NTP ทำให้เวลาตรงกัน",
+  "nodes": [
+   {
+    "id": "NMS",
+    "type": "server",
+    "x": 70,
+    "y": 95,
+    "label": "NMS",
+    "sub": "10.0.0.100"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 300,
+    "y": 60,
+    "label": "R1 (agent)",
+    "sub": "MIB"
+   },
+   {
+    "id": "SW1",
+    "type": "switch",
+    "x": 300,
+    "y": 150,
+    "label": "SW1 (agent)"
+   },
+   {
+    "id": "NTP",
+    "type": "server",
+    "x": 510,
+    "y": 95,
+    "label": "NTP server",
+    "sub": "stratum 2"
+   }
+  ],
+  "links": [
+   {
+    "a": "NMS",
+    "b": "R1",
+    "label": "get/set UDP 161 · trap UDP 162"
+   },
+   {
+    "a": "NMS",
+    "b": "SW1"
+   },
+   {
+    "a": "R1",
+    "b": "NTP",
+    "label": "NTP UDP 123"
+   },
+   {
+    "a": "SW1",
+    "b": "NTP",
+    "style": "dashed"
+   }
+  ]
+ },
+ "m16-sdn": {
+  "w": 600,
+  "h": 260,
+  "title": "สถาปัตยกรรม SDN: application / control / forwarding",
+  "areas": [
+   {
+    "x": 20,
+    "y": 10,
+    "w": 560,
+    "h": 55,
+    "label": "Application layer"
+   },
+   {
+    "x": 20,
+    "y": 80,
+    "w": 560,
+    "h": 65,
+    "label": "Control layer"
+   },
+   {
+    "x": 20,
+    "y": 160,
+    "w": 560,
+    "h": 90,
+    "label": "Forwarding (infrastructure) layer"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "APP",
+    "type": "server",
+    "x": 300,
+    "y": 38,
+    "label": "Apps / Orchestrator"
+   },
+   {
+    "id": "CTRL",
+    "type": "server",
+    "x": 300,
+    "y": 112,
+    "label": "SDN Controller"
+   },
+   {
+    "id": "F1",
+    "type": "switch",
+    "x": 160,
+    "y": 210,
+    "label": "Switch"
+   },
+   {
+    "id": "F2",
+    "type": "switch",
+    "x": 300,
+    "y": 210,
+    "label": "Switch"
+   },
+   {
+    "id": "F3",
+    "type": "switch",
+    "x": 440,
+    "y": 210,
+    "label": "Switch"
+   }
+  ],
+  "links": [
+   {
+    "a": "APP",
+    "b": "CTRL",
+    "label": "NBI (RESTful)"
+   },
+   {
+    "a": "CTRL",
+    "b": "F1",
+    "style": "dashed",
+    "label": "SBI (OpenFlow/NETCONF)"
+   },
+   {
+    "a": "CTRL",
+    "b": "F2",
+    "style": "dashed"
+   },
+   {
+    "a": "CTRL",
+    "b": "F3",
+    "style": "dashed"
+   },
+   {
+    "a": "F1",
+    "b": "F2"
+   },
+   {
+    "a": "F2",
+    "b": "F3"
+   }
+  ]
+ },
+ "m17-auto": {
+  "w": 560,
+  "h": 150,
+  "title": "สคริปต์ Python บน PC จัดการ router ผ่าน Telnet",
+  "nodes": [
+   {
+    "id": "PC",
+    "type": "pc",
+    "x": 90,
+    "y": 75,
+    "label": "PC + Python",
+    "sub": "telnetlib"
+   },
+   {
+    "id": "R1",
+    "type": "router",
+    "x": 460,
+    "y": 75,
+    "label": "R1",
+    "sub": "192.168.56.100"
+   }
+  ],
+  "links": [
+   {
+    "a": "PC",
+    "b": "R1",
+    "label": "Telnet TCP 23 (lab) / SSH TCP 22 (production)"
+   }
+  ]
  }
 }

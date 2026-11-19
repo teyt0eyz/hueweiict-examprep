@@ -1,0 +1,475 @@
+[
+  {
+    "id": "m15-community-006",
+    "module": "M15",
+    "topic": "SNMP configuration",
+    "type": "truefalse",
+    "difficulty": 2,
+    "question": "ใน SNMPv2c community string ถูกเข้ารหัสระหว่างส่ง จึงปลอดภัยแม้มีผู้ดักฟัง",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "F"
+    ],
+    "explanation": "community string ของ v1/v2c ส่งแบบ **plaintext** — ควรใช้ SNMPv3 หรืออย่างน้อยจำกัด NMS ที่อนุญาตด้วย ACL",
+    "ref": "Book1 Ch16 §16.2.6"
+  },
+  {
+    "id": "m15-comp-002",
+    "module": "M15",
+    "topic": "SNMP components",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ใน SNMP ส่วนใดเป็นฐานข้อมูลเชิงต้นไม้ที่อธิบาย object ที่จัดการได้บนอุปกรณ์",
+    "options": [
+      {
+        "id": "a",
+        "text": "NMS"
+      },
+      {
+        "id": "b",
+        "text": "Agent"
+      },
+      {
+        "id": "c",
+        "text": "MIB"
+      },
+      {
+        "id": "d",
+        "text": "Trap"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "**MIB** เก็บนิยามของ object ซึ่งแต่ละตัวระบุด้วย OID · agent เป็น process บนอุปกรณ์ · NMS เป็นซอฟต์แวร์จัดการ",
+    "ref": "Book1 Ch16 §16.2.2"
+  },
+  {
+    "id": "m15-display-015",
+    "module": "M15",
+    "topic": "Verification",
+    "type": "single",
+    "difficulty": 2,
+    "question": "จาก output ข้อสรุปใดถูกต้อง\n\n```vrp\n<SW1>display ntp-service status\n clock status: synchronized\n clock stratum: 3\n reference clock ID: 10.0.0.1\n```",
+    "options": [
+      {
+        "id": "a",
+        "text": "SW1 ยังไม่ sync"
+      },
+      {
+        "id": "b",
+        "text": "SW1 sync เวลากับ 10.0.0.1 แล้ว และอยู่ที่ stratum 3 (แหล่งเวลาของมันอยู่ที่ stratum 2)"
+      },
+      {
+        "id": "c",
+        "text": "SW1 เป็นนาฬิกาอ้างอิงหลัก"
+      },
+      {
+        "id": "d",
+        "text": "10.0.0.1 เป็น NMS"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "status synchronized และ reference 10.0.0.1 แปลว่า SW1 ได้เวลาจาก 10.0.0.1 ซึ่งต้องอยู่ที่ stratum 2",
+    "ref": "Book1 Ch16 §16.3.5"
+  },
+  {
+    "id": "m15-getnext-004",
+    "module": "M15",
+    "topic": "SNMP operations",
+    "type": "single",
+    "difficulty": 2,
+    "question": "NMS ต้องการอ่านทุกแถวของตาราง interface ที่ไม่รู้จำนวนแถวล่วงหน้า (SNMP walk) ควรใช้ operation ใดซ้ำ ๆ",
+    "options": [
+      {
+        "id": "a",
+        "text": "Set"
+      },
+      {
+        "id": "b",
+        "text": "GetNext (หรือ GetBulk ใน v2c+)"
+      },
+      {
+        "id": "c",
+        "text": "Trap"
+      },
+      {
+        "id": "d",
+        "text": "Inform"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "GetNext ขอ object ถัดไปตามลำดับ OID ทำให้ไล่ทั้งตารางได้ · GetBulk อ่านหลาย object ในคำขอเดียวช่วยลดจำนวน packet",
+    "ref": "Book1 Ch16 §16.2.3"
+  },
+  {
+    "id": "m15-mode-014",
+    "module": "M15",
+    "topic": "NTP modes",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "โหมดการทำงานของ NTP ข้อใดถูกต้อง (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "Client/Server (unicast)"
+      },
+      {
+        "id": "b",
+        "text": "Symmetric peer"
+      },
+      {
+        "id": "c",
+        "text": "Broadcast"
+      },
+      {
+        "id": "d",
+        "text": "Multicast"
+      },
+      {
+        "id": "e",
+        "text": "Trap mode"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "NTP มีโหมด client/server, symmetric (active/passive) peer, broadcast และ multicast · trap เป็นของ SNMP",
+    "ref": "Book1 Ch16 §16.3.4"
+  },
+  {
+    "id": "m15-ntpclient-011",
+    "module": "M15",
+    "topic": "NTP configuration",
+    "type": "single",
+    "difficulty": 2,
+    "question": "SW1 จะได้ stratum เท่าใดหลัง sync กับ R1 ที่ตั้ง `ntp-service refclock-master 2`",
+    "diagram": "m15-snmp",
+    "options": [
+      {
+        "id": "a",
+        "text": "1"
+      },
+      {
+        "id": "b",
+        "text": "2"
+      },
+      {
+        "id": "c",
+        "text": "3"
+      },
+      {
+        "id": "d",
+        "text": "16"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "R1 ใช้นาฬิกาของตัวเองเป็นแหล่งอ้างอิงที่ stratum 2 · client ที่ sync จาก R1 จึงเป็น **stratum 3**",
+    "ref": "Book1 Ch16 §16.3.5"
+  },
+  {
+    "id": "m15-ntpcmd-012",
+    "module": "M15",
+    "topic": "NTP configuration",
+    "type": "single",
+    "difficulty": 1,
+    "question": "คำสั่งใดทำให้อุปกรณ์ Huawei sync เวลาจาก NTP server 10.0.0.1 ในโหมด client/server",
+    "options": [
+      {
+        "id": "a",
+        "text": "`ntp-service unicast-server 10.0.0.1`"
+      },
+      {
+        "id": "b",
+        "text": "`ntp server 10.0.0.1`"
+      },
+      {
+        "id": "c",
+        "text": "`clock timezone 10.0.0.1`"
+      },
+      {
+        "id": "d",
+        "text": "`ntp-service refclock-master 10.0.0.1`"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "VRP ใช้ `ntp-service unicast-server <ip>` ใน system view · `ntp server` เป็นรูปแบบของ Cisco · `refclock-master` ใช้ทำให้ตัวเองเป็นแหล่งเวลา",
+    "ref": "Book1 Ch16 §16.3.5"
+  },
+  {
+    "id": "m15-ntpport-009",
+    "module": "M15",
+    "topic": "NTP basics",
+    "type": "single",
+    "difficulty": 1,
+    "question": "NTP ใช้ protocol และพอร์ตใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "TCP 123"
+      },
+      {
+        "id": "b",
+        "text": "UDP 123"
+      },
+      {
+        "id": "c",
+        "text": "UDP 161"
+      },
+      {
+        "id": "d",
+        "text": "TCP 23"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "NTP ใช้ **UDP 123** ทั้งฝั่ง client และ server · TCP ไม่ใช้กับ NTP · UDP 161 เป็นของ SNMP agent · TCP 23 เป็นของ Telnet",
+    "ref": "Book1 Ch16 §16.3.1"
+  },
+  {
+    "id": "m15-offset-013",
+    "module": "M15",
+    "topic": "NTP principles",
+    "type": "single",
+    "difficulty": 3,
+    "question": "client ส่ง request ที่ T1 = 10:00:00.000 (เวลา client) server รับที่ T2 = 10:00:05.100 ตอบที่ T3 = 10:00:05.200 (เวลา server) client รับที่ T4 = 10:00:00.300 **round-trip delay** เท่ากับเท่าใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "0.1 วินาที"
+      },
+      {
+        "id": "b",
+        "text": "0.2 วินาที"
+      },
+      {
+        "id": "c",
+        "text": "0.3 วินาที"
+      },
+      {
+        "id": "d",
+        "text": "5.0 วินาที"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "delay = (T4 − T1) − (T3 − T2) = 0.300 − 0.100 = **0.2 วินาที** (offset = ((T2−T1)+(T3−T4))/2 = (5.1 + 4.9)/2 = 5.0 วินาที — นาฬิกา client ช้ากว่า server 5 วินาที)",
+    "ref": "Book1 Ch16 §16.3.2"
+  },
+  {
+    "id": "m15-oid-008",
+    "module": "M15",
+    "topic": "SNMP components",
+    "type": "single",
+    "difficulty": 1,
+    "question": "OID คืออะไร",
+    "options": [
+      {
+        "id": "a",
+        "text": "รหัสผ่านของ NMS"
+      },
+      {
+        "id": "b",
+        "text": "ตัวระบุตำแหน่งของ object ในต้นไม้ MIB เช่น 1.3.6.1.2.1.1.5"
+      },
+      {
+        "id": "c",
+        "text": "หมายเลข port ของ SNMP"
+      },
+      {
+        "id": "d",
+        "text": "ชื่อ community"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "**OID (Object Identifier)** เป็นลำดับตัวเลขตามกิ่งของต้นไม้ MIB ที่ระบุ object หนึ่ง ๆ อย่างไม่ซ้ำ",
+    "ref": "Book1 Ch16 §16.2.2"
+  },
+  {
+    "id": "m15-port-001",
+    "module": "M15",
+    "topic": "SNMP basics",
+    "type": "single",
+    "difficulty": 1,
+    "question": "SNMP agent รับคำขอ get/set และ NMS รับ trap ที่พอร์ตใดตามลำดับ",
+    "options": [
+      {
+        "id": "a",
+        "text": "TCP 161 / TCP 162"
+      },
+      {
+        "id": "b",
+        "text": "UDP 161 / UDP 162"
+      },
+      {
+        "id": "c",
+        "text": "UDP 162 / UDP 161"
+      },
+      {
+        "id": "d",
+        "text": "UDP 123 / UDP 514"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "SNMP ใช้ **UDP**: agent ฟังที่ **161**, NMS รับ trap ที่ **162** · UDP 123 = NTP, UDP 514 = syslog",
+    "ref": "Book1 Ch16 §16.2.1"
+  },
+  {
+    "id": "m15-snmpcfg-007",
+    "module": "M15",
+    "topic": "SNMP configuration",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ต้องการให้ R1 ตอบ SNMPv2c แบบอ่านอย่างเดียวและส่ง trap ไปยัง NMS 10.0.0.100 ต้องตั้งค่าใด (เลือกทุกข้อที่ถูก)",
+    "diagram": "m15-snmp",
+    "options": [
+      {
+        "id": "a",
+        "text": "`snmp-agent sys-info version v2c`"
+      },
+      {
+        "id": "b",
+        "text": "`snmp-agent community read cipher <string>`"
+      },
+      {
+        "id": "c",
+        "text": "`snmp-agent target-host trap address udp-domain 10.0.0.100 params securityname <string> v2c`"
+      },
+      {
+        "id": "d",
+        "text": "`snmp-agent trap enable`"
+      },
+      {
+        "id": "e",
+        "text": "`ntp-service unicast-server 10.0.0.100`"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "ต้องเลือกเวอร์ชัน, community สำหรับอ่าน, ปลายทาง trap และเปิดการส่ง trap · คำสั่ง NTP ไม่เกี่ยวกับ SNMP",
+    "ref": "Book1 Ch16 §16.2.6"
+  },
+  {
+    "id": "m15-stratum-010",
+    "module": "M15",
+    "topic": "NTP stratum",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ข้อใดถูกต้องเกี่ยวกับ **stratum** ของ NTP",
+    "options": [
+      {
+        "id": "a",
+        "text": "stratum สูงกว่า = แม่นยำกว่า"
+      },
+      {
+        "id": "b",
+        "text": "stratum 1 คือ server ที่ต่อตรงกับนาฬิกาอ้างอิง และ stratum 16 หมายถึงยังไม่ sync"
+      },
+      {
+        "id": "c",
+        "text": "ค่า stratum สูงสุดที่ใช้งานได้คือ 255"
+      },
+      {
+        "id": "d",
+        "text": "client ต้อง stratum เท่ากับ server"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "stratum เพิ่มขึ้นทีละ 1 ตามจำนวนชั้นจากแหล่งเวลา · ค่าที่ใช้ได้ 1–15 · **16 = unsynchronized** · client จะมี stratum มากกว่า server ที่ตนใช้ 1",
+    "ref": "Book1 Ch16 §16.3.3"
+  },
+  {
+    "id": "m15-trap-003",
+    "module": "M15",
+    "topic": "SNMP operations",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ข้อใดอธิบายความแตกต่างระหว่าง **Trap** กับ **Inform** ได้ถูกต้อง",
+    "options": [
+      {
+        "id": "a",
+        "text": "Trap ส่งจาก NMS ไป agent ส่วน Inform ส่งจาก agent"
+      },
+      {
+        "id": "b",
+        "text": "ทั้งคู่ส่งจาก agent ไป NMS แต่ Inform ต้องได้รับการตอบรับจาก NMS ส่วน Trap ไม่ต้อง"
+      },
+      {
+        "id": "c",
+        "text": "Trap ใช้ TCP ส่วน Inform ใช้ UDP"
+      },
+      {
+        "id": "d",
+        "text": "Inform มีเฉพาะ SNMPv1"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "Trap แจ้งเหตุการณ์แบบไม่ต้องตอบรับ อาจสูญหายได้ · **Inform** (v2c ขึ้นไป) ต้องได้รับ response จาก NMS ถ้าไม่ได้จะส่งซ้ำ",
+    "ref": "Book1 Ch16 §16.2.5"
+  },
+  {
+    "id": "m15-version-005",
+    "module": "M15",
+    "topic": "SNMP versions",
+    "type": "single",
+    "difficulty": 2,
+    "question": "SNMP เวอร์ชันใดที่มีทั้ง **authentication และ encryption** ของข้อความ",
+    "options": [
+      {
+        "id": "a",
+        "text": "SNMPv1"
+      },
+      {
+        "id": "b",
+        "text": "SNMPv2c"
+      },
+      {
+        "id": "c",
+        "text": "SNMPv3"
+      },
+      {
+        "id": "d",
+        "text": "ทุกเวอร์ชัน"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "v1/v2c ใช้ community string แบบ plaintext · **SNMPv3** มี USM รองรับ authentication (MD5/SHA) และ privacy (DES/AES) และ VACM ควบคุมสิทธิ์",
+    "ref": "Book1 Ch16 §16.2.1"
+  }
+]

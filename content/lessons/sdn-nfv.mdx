@@ -1,0 +1,112 @@
+<Objectives items={[
+  "อธิบายข้อจำกัดของเครือข่ายแบบดั้งเดิมที่ control plane กระจายอยู่ในทุกอุปกรณ์",
+  "อธิบายแนวคิด SDN: แยก control กับ forwarding, ควบคุมแบบรวมศูนย์, เปิดให้โปรแกรมได้",
+  "อธิบาย OpenFlow และโครงสร้างของ flow table",
+  "อธิบายแนวคิด NFV, ประโยชน์ และสถาปัตยกรรม ETSI NFV (NFVI, VNF, MANO)",
+]} />
+
+## เครือข่ายแบบดั้งเดิม
+
+อุปกรณ์แต่ละตัวมีครบทั้งสาม plane:
+
+| Plane | หน้าที่ | ตัวอย่าง |
+|---|---|---|
+| **Management plane** | ตั้งค่าและเฝ้าระวัง | CLI, SNMP |
+| **Control plane** | ตัดสินใจเส้นทาง สร้างตาราง | OSPF, STP, ARP |
+| **Data (forwarding) plane** | ส่ง packet ตามตาราง | FIB, MAC table |
+
+control plane ที่ **กระจาย** อยู่ทุกอุปกรณ์ทำให้:
+
+- ตั้งค่าทีละเครื่อง ช้าและผิดพลาดง่ายเมื่อเครือข่ายใหญ่
+- มองภาพรวมทั้งเครือข่ายยาก ปรับเส้นทางตาม traffic จริงได้ไม่ดี (เช่น OSPF เลือกตาม cost ไม่สนว่าลิงก์แน่นหรือไม่)
+- เพิ่มบริการใหม่ช้า ต้องรอผู้ผลิตพัฒนาฟีเจอร์ในอุปกรณ์
+
+## SDN — Software-Defined Networking
+
+แนวคิดหลักสามข้อ:
+
+1. **แยก control plane ออกจาก forwarding plane**
+2. **ควบคุมแบบรวมศูนย์** ด้วย **SDN controller** ที่เห็นทั้งเครือข่าย
+3. **เปิดให้โปรแกรมได้** ผ่าน interface มาตรฐาน (open API)
+
+<Topology name="m16-sdn" />
+
+| ชั้น | หน้าที่ |
+|---|---|
+| **Application** | แอปพลิเคชัน/ระบบ orchestration บอกความต้องการ เช่น "ให้ video ใช้เส้นทาง latency ต่ำ" |
+| **Control** | controller คำนวณเส้นทางและสั่งอุปกรณ์ |
+| **Forwarding** (infrastructure) | สวิตช์ส่ง packet ตามคำสั่ง |
+
+- **NBI (Northbound Interface)** — ระหว่าง application กับ controller มักเป็น **RESTful API**
+- **SBI (Southbound Interface)** — ระหว่าง controller กับอุปกรณ์ เช่น **OpenFlow**, **NETCONF**, BGP-LS, PCEP, SNMP
+
+<Callout type="tip">
+Huawei มี controller อย่าง **iMaster NCE** สำหรับ campus/WAN/data center ซึ่งรวม SDN กับระบบ automation และ analytics
+</Callout>
+
+## OpenFlow
+
+**OpenFlow** คือ southbound protocol ที่ controller ใช้ติดตั้ง **flow entry** ลงใน OpenFlow switch ผ่านช่องทางที่ปลอดภัย (TCP, มักใช้ TLS; พอร์ตมาตรฐาน **6653**)
+
+ส่วนประกอบของ flow entry:
+
+| Field | ความหมาย |
+|---|---|
+| **Match fields** | เงื่อนไข เช่น ingress port, MAC, VLAN, IP, TCP/UDP port |
+| **Priority** | ลำดับความสำคัญ entry ที่ priority สูงกว่าถูกเลือกก่อน |
+| **Counters** | สถิติ packet/byte ที่ match |
+| **Instructions** | สิ่งที่ทำ เช่น output ไป port, ส่งให้ controller, drop, แก้ header, ไป table ถัดไป |
+| **Timeouts** | idle/hard timeout ให้ entry หมดอายุ |
+| Cookie | ค่าที่ controller ใช้อ้างอิง |
+
+ถ้า packet **ไม่ match** entry ใด จะใช้ **table-miss entry** (priority 0) ซึ่งมักส่ง packet ไปถาม controller (Packet-In) หรือทิ้ง
+
+```text
+packet เข้า → Flow table 0 → (goto) table 1 → … → ทำ action set
+                └─ ไม่ match → table-miss: ส่ง controller / drop
+```
+
+## NFV — Network Functions Virtualization
+
+**NFV** ย้ายฟังก์ชันเครือข่ายที่เคยเป็นฮาร์ดแวร์เฉพาะ (router, firewall, load balancer, BRAS, EPC ฯลฯ) มาเป็น **ซอฟต์แวร์บน server มาตรฐาน** (x86 + virtualization/cloud)
+
+ประโยชน์:
+
+- ลดต้นทุนอุปกรณ์และพลังงาน (ใช้ฮาร์ดแวร์ทั่วไปร่วมกัน)
+- เปิดบริการใหม่ได้เร็ว ขยาย/ย่อขนาดได้ตามความต้องการ (scale in/out)
+- ไม่ผูกติดผู้ผลิตฮาร์ดแวร์รายเดียว
+
+เทคโนโลยีสำคัญ: **virtualization** (hypervisor, VM, container) และ **cloud** (การจัดสรรทรัพยากรแบบยืดหยุ่น)
+
+### สถาปัตยกรรม ETSI NFV
+
+| ส่วน | หน้าที่ |
+|---|---|
+| **NFVI** (NFV Infrastructure) | ฮาร์ดแวร์ (compute, storage, network) + virtualization layer |
+| **VNF** (Virtualized Network Function) | ฟังก์ชันเครือข่ายที่เป็นซอฟต์แวร์ เช่น vRouter, vFirewall |
+| EMS | จัดการ VNF ในระดับฟังก์ชัน |
+| **MANO** | **NFVO** (orchestrator: บริการ/ทรัพยากรรวม), **VNFM** (วงจรชีวิตของ VNF), **VIM** (จัดการทรัพยากร NFVI เช่น OpenStack) |
+| OSS/BSS | ระบบปฏิบัติการและธุรกิจของผู้ให้บริการ |
+
+## SDN vs NFV
+
+| | SDN | NFV |
+|---|---|---|
+| เป้าหมาย | เปลี่ยน **วิธีควบคุม** เครือข่าย | เปลี่ยน **รูปแบบของอุปกรณ์** เครือข่าย |
+| แนวคิดหลัก | แยก control/forwarding + รวมศูนย์ | แยก software ออกจาก hardware เฉพาะ |
+| มาจาก | สถาบันวิจัย/มหาวิทยาลัย (OpenFlow) | กลุ่มผู้ให้บริการโทรคมนาคม (ETSI) |
+
+ทั้งสองแนวคิด **เป็นอิสระต่อกันแต่เสริมกัน** — ใช้แยกกันได้ หรือใช้ SDN controller ควบคุม VNF ก็ได้
+
+<Callout type="exam">
+- SDN: แยก control/forwarding · controller รวมศูนย์ · NBI (REST) / SBI (OpenFlow, NETCONF)
+- OpenFlow flow entry: match fields, priority, counters, instructions, timeouts, cookie · table-miss = priority 0
+- NFV: ฟังก์ชันเครือข่ายเป็นซอฟต์แวร์บน server มาตรฐาน · NFVI + VNF + MANO (NFVO/VNFM/VIM)
+</Callout>
+
+## สรุปท้ายบท
+
+- เครือข่ายดั้งเดิม: control plane กระจาย ทำให้จัดการยากและไม่ยืดหยุ่น
+- SDN แบ่งเป็น application / control / forwarding และใช้ open interface
+- OpenFlow ใช้ flow table ที่ controller ติดตั้งให้
+- NFV ทำ network function ให้เป็นซอฟต์แวร์ — สถาปัตยกรรม NFVI, VNF, MANO

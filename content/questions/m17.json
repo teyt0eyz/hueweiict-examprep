@@ -1,0 +1,480 @@
+[
+ {
+  "id": "m17-compile-003",
+  "module": "M17",
+  "topic": "Programming languages",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ข้อใดเป็นลักษณะของภาษาแบบ **compiled**",
+  "options": [
+   {
+    "id": "a",
+    "text": "แปลทั้งโปรแกรมเป็น machine code ก่อนรัน มักทำงานเร็ว"
+   },
+   {
+    "id": "b",
+    "text": "ต้องมี interpreter อ่านทีละบรรทัดขณะรัน"
+   },
+   {
+    "id": "c",
+    "text": "รันได้ทุกแพลตฟอร์มโดยไม่ต้องแปลใหม่เสมอ"
+   },
+   {
+    "id": "d",
+    "text": "ไม่มีการตรวจ syntax"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "compiled language (เช่น C) ผ่าน compiler สร้าง executable สำหรับแพลตฟอร์มนั้นก่อนรัน · interpreted language ใช้ interpreter ขณะรัน",
+  "ref": "Book1 Ch18 §18.2.1"
+ },
+ {
+  "id": "m17-indent-005",
+  "module": "M17",
+  "topic": "Python syntax",
+  "type": "single",
+  "difficulty": 1,
+  "question": "Python ใช้สิ่งใดในการแบ่ง **block** ของ code (เช่นภายใน if หรือ for)",
+  "options": [
+   {
+    "id": "a",
+    "text": "วงเล็บปีกกา { }"
+   },
+   {
+    "id": "b",
+    "text": "การย่อหน้า (indentation) — มาตรฐาน 4 ช่องว่าง"
+   },
+   {
+    "id": "c",
+    "text": "คำว่า begin/end"
+   },
+   {
+    "id": "d",
+    "text": "เครื่องหมาย ;"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "Python ใช้ **indentation** แบ่ง block ย่อหน้าไม่สม่ำเสมอจะเกิด IndentationError — PEP 8 แนะนำ 4 ช่องว่าง",
+  "ref": "Book1 Ch18 §18.3.4"
+ },
+ {
+  "id": "m17-lang-002",
+  "module": "M17",
+  "topic": "Programming languages",
+  "type": "single",
+  "difficulty": 1,
+  "question": "Python จัดเป็นภาษาประเภทใด",
+  "options": [
+   {
+    "id": "a",
+    "text": "Low-level, compiled"
+   },
+   {
+    "id": "b",
+    "text": "High-level, interpreted"
+   },
+   {
+    "id": "c",
+    "text": "Machine language"
+   },
+   {
+    "id": "d",
+    "text": "Assembly"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "Python เป็นภาษา **high-level แบบ interpreted** (CPython แปลงเป็น bytecode แล้วให้ PVM รัน) · C/C++ เป็นตัวอย่างของ compiled",
+  "ref": "Book1 Ch18 §18.2.1"
+ },
+ {
+  "id": "m17-order-011",
+  "module": "M17",
+  "topic": "telnetlib",
+  "type": "ordering",
+  "difficulty": 2,
+  "question": "เรียงขั้นตอนสคริปต์ telnetlib ที่ login แล้วสั่งคำสั่งบน router",
+  "diagram": "m17-auto",
+  "options": [
+   {
+    "id": "a",
+    "text": "`tn = telnetlib.Telnet(host)`"
+   },
+   {
+    "id": "b",
+    "text": "`tn.read_until(b\"Username:\")` แล้ว `tn.write(user + b\"\\n\")`"
+   },
+   {
+    "id": "c",
+    "text": "`tn.read_until(b\"Password:\")` แล้ว `tn.write(password + b\"\\n\")`"
+   },
+   {
+    "id": "d",
+    "text": "`tn.write(b\"display ip interface brief\\n\")`"
+   },
+   {
+    "id": "e",
+    "text": "`print(tn.read_very_eager().decode())` แล้ว `tn.close()`"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c",
+   "d",
+   "e"
+  ],
+  "explanation": "เชื่อมต่อ → ตอบ prompt username/password → ส่งคำสั่ง → อ่านผล (decode เป็น str) → ปิดการเชื่อมต่อ",
+  "ref": "Book1 Ch18 §18.4.2"
+ },
+ {
+  "id": "m17-output-008",
+  "module": "M17",
+  "topic": "Python syntax",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ผลลัพธ์ของโค้ดนี้คือข้อใด\n\n```python\nvlans = [10, 20, 30]\ncmds = [f\"vlan {v}\" for v in vlans if v != 20]\nprint(len(cmds), cmds[-1])\n```",
+  "options": [
+   {
+    "id": "a",
+    "text": "3 vlan 30"
+   },
+   {
+    "id": "b",
+    "text": "2 vlan 30"
+   },
+   {
+    "id": "c",
+    "text": "2 vlan 10"
+   },
+   {
+    "id": "d",
+    "text": "3 vlan 20"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "list comprehension ข้าม 20 จึงได้ `['vlan 10', 'vlan 30']` → len = 2 และ `cmds[-1]` คือสมาชิกตัวสุดท้าย 'vlan 30'",
+  "ref": "Book1 Ch18 §18.3.5"
+ },
+ {
+  "id": "m17-pep8-015",
+  "module": "M17",
+  "topic": "Python syntax",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "ข้อใดสอดคล้องกับ **PEP 8** (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "ย่อหน้าด้วย 4 ช่องว่าง"
+   },
+   {
+    "id": "b",
+    "text": "ตั้งชื่อตัวแปรและฟังก์ชันแบบ snake_case เช่น `device_list`"
+   },
+   {
+    "id": "c",
+    "text": "วาง import ไว้ต้นไฟล์"
+   },
+   {
+    "id": "d",
+    "text": "ตั้งชื่อตัวแปรเป็นตัวอักษรเดียวทุกตัวเพื่อให้สั้น"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "PEP 8 แนะนำ 4 ช่องว่าง, snake_case, import ต้นไฟล์ และชื่อที่สื่อความหมาย",
+  "ref": "Book1 Ch18 §18.3.4"
+ },
+ {
+  "id": "m17-pyc-004",
+  "module": "M17",
+  "topic": "How Python runs",
+  "type": "ordering",
+  "difficulty": 2,
+  "question": "เรียงลำดับการทำงานของโปรแกรม Python (CPython)",
+  "options": [
+   {
+    "id": "a",
+    "text": "เขียน source code (.py)"
+   },
+   {
+    "id": "b",
+    "text": "แปลงเป็น bytecode (.pyc)"
+   },
+   {
+    "id": "c",
+    "text": "Python Virtual Machine (PVM) รัน bytecode"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "source → bytecode → PVM แปลง bytecode เป็นการทำงานบนเครื่องจริง",
+  "ref": "Book1 Ch18 §18.3.3"
+ },
+ {
+  "id": "m17-read-010",
+  "module": "M17",
+  "topic": "telnetlib",
+  "type": "single",
+  "difficulty": 2,
+  "question": "เมธอดใดของ telnetlib ใช้ **รอจนกว่าจะเห็นข้อความที่ระบุ** เช่น prompt `Password:` ก่อนส่ง password",
+  "options": [
+   {
+    "id": "a",
+    "text": "`read_very_eager()`"
+   },
+   {
+    "id": "b",
+    "text": "`read_until(b\"Password:\")`"
+   },
+   {
+    "id": "c",
+    "text": "`write(b\"Password:\")`"
+   },
+   {
+    "id": "d",
+    "text": "`close()`"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "`read_until()` อ่านจนเจอข้อความที่ต้องการ (หรือหมด timeout) · `read_very_eager()` อ่านเท่าที่มีใน buffer ทันทีโดยไม่รอ",
+  "ref": "Book1 Ch18 §18.4.2"
+ },
+ {
+  "id": "m17-router-012",
+  "module": "M17",
+  "topic": "Device preparation",
+  "type": "multiple",
+  "difficulty": 2,
+  "question": "ก่อนรันสคริปต์ telnetlib ที่ใช้ AAA ต้องเตรียมอะไรบน router (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "`telnet server enable`"
+   },
+   {
+    "id": "b",
+    "text": "`authentication-mode aaa` ใน user-interface vty"
+   },
+   {
+    "id": "c",
+    "text": "local-user ที่มี `service-type telnet` และ privilege เพียงพอ"
+   },
+   {
+    "id": "d",
+    "text": "`snmp-agent trap enable`"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "router ต้องเปิด Telnet server, ให้ VTY ใช้ AAA และมีบัญชีผู้ใช้สำหรับ telnet ที่มีสิทธิ์เหมาะสม · SNMP ไม่เกี่ยวข้อง",
+  "ref": "Book1 Ch18 §18.4.2"
+ },
+ {
+  "id": "m17-screen-014",
+  "module": "M17",
+  "topic": "telnetlib",
+  "type": "single",
+  "difficulty": 3,
+  "question": "สคริปต์ส่ง `display current-configuration` แล้วได้ผลแค่ส่วนแรกพร้อมข้อความ `---- More ----` ควรส่งคำสั่งใดก่อนเพื่อแก้ปัญหา",
+  "options": [
+   {
+    "id": "a",
+    "text": "`screen-length 0 temporary`"
+   },
+   {
+    "id": "b",
+    "text": "`undo terminal monitor`"
+   },
+   {
+    "id": "c",
+    "text": "`system-view`"
+   },
+   {
+    "id": "d",
+    "text": "`return`"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "VRP แบ่งหน้าการแสดงผล — `screen-length 0 temporary` ปิดการแบ่งหน้าสำหรับ session ปัจจุบัน ทำให้สคริปต์ได้ output ครบ",
+  "ref": "Book1 Ch3"
+ },
+ {
+  "id": "m17-security-013",
+  "module": "M17",
+  "topic": "Automation security",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ในเครือข่ายจริง ทำไมจึงไม่ควรใช้ Telnet สำหรับสคริปต์ automation",
+  "options": [
+   {
+    "id": "a",
+    "text": "Telnet ช้าเกินไป"
+   },
+   {
+    "id": "b",
+    "text": "Telnet ส่ง username, password และข้อมูลทั้งหมดแบบไม่เข้ารหัส ควรใช้ SSH หรือ NETCONF แทน"
+   },
+   {
+    "id": "c",
+    "text": "Telnet ไม่รองรับ Huawei"
+   },
+   {
+    "id": "d",
+    "text": "Python รองรับเฉพาะ SSH"
+   }
+  ],
+  "answer": [
+   "b"
+  ],
+  "explanation": "Telnet (TCP 23) เป็น plaintext — ผู้ดักฟังเห็นรหัสผ่าน ใช้ได้ใน lab แต่ production ควรใช้ SSH (paramiko/netmiko) หรือ NETCONF over SSH",
+  "ref": "Book1 Ch18 §18.4.1"
+ },
+ {
+  "id": "m17-telnetlib-009",
+  "module": "M17",
+  "topic": "telnetlib",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ใน telnetlib เหตุใดจึงต้องเขียน `tn.write(b\"display version\\n\")` แทน `tn.write(\"display version\")`",
+  "options": [
+   {
+    "id": "a",
+    "text": "write() รับข้อมูลชนิด bytes และต้องมี \\n แทนการกด Enter"
+   },
+   {
+    "id": "b",
+    "text": "ต้องเข้ารหัสด้วย MD5"
+   },
+   {
+    "id": "c",
+    "text": "\\n ใช้ปิด session"
+   },
+   {
+    "id": "d",
+    "text": "b ย่อมาจาก broadcast"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "telnetlib ส่งข้อมูลเป็น **bytes** (`b\"...\"` หรือ `\"...\".encode()`) และอุปกรณ์จะรันคำสั่งเมื่อได้รับ newline",
+  "ref": "Book1 Ch18 §18.4.2"
+ },
+ {
+  "id": "m17-tuple-007",
+  "module": "M17",
+  "topic": "Python data types",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ข้อใดถูกต้องเกี่ยวกับ **tuple** เมื่อเทียบกับ list",
+  "options": [
+   {
+    "id": "a",
+    "text": "tuple แก้ไขสมาชิกหลังสร้างไม่ได้ (immutable)"
+   },
+   {
+    "id": "b",
+    "text": "tuple เก็บได้เฉพาะตัวเลข"
+   },
+   {
+    "id": "c",
+    "text": "tuple ใช้วงเล็บปีกกา"
+   },
+   {
+    "id": "d",
+    "text": "tuple ไม่มีลำดับ"
+   }
+  ],
+  "answer": [
+   "a"
+  ],
+  "explanation": "tuple เป็นลำดับแบบ **immutable** (เขียนด้วย `( )`) · list แก้ไขได้ (เขียนด้วย `[ ]`)",
+  "ref": "Book1 Ch18 §18.3.5"
+ },
+ {
+  "id": "m17-type-006",
+  "module": "M17",
+  "topic": "Python data types",
+  "type": "single",
+  "difficulty": 2,
+  "question": "ชนิดข้อมูลใดของ Python เก็บแบบ **key: value** เช่น `{\"name\": \"R1\", \"ip\": \"10.0.0.1\"}`",
+  "options": [
+   {
+    "id": "a",
+    "text": "list"
+   },
+   {
+    "id": "b",
+    "text": "tuple"
+   },
+   {
+    "id": "c",
+    "text": "dict"
+   },
+   {
+    "id": "d",
+    "text": "set"
+   }
+  ],
+  "answer": [
+   "c"
+  ],
+  "explanation": "**dict** เก็บคู่ key/value · list = ลำดับที่แก้ไขได้ · tuple = ลำดับที่แก้ไขไม่ได้ · set = กลุ่มค่าที่ไม่ซ้ำ",
+  "ref": "Book1 Ch18 §18.3.5"
+ },
+ {
+  "id": "m17-why-001",
+  "module": "M17",
+  "topic": "Automation basics",
+  "type": "multiple",
+  "difficulty": 1,
+  "question": "ข้อใดเป็นประโยชน์ของ **network automation** (เลือกทุกข้อที่ถูก)",
+  "options": [
+   {
+    "id": "a",
+    "text": "ตั้งค่าอุปกรณ์จำนวนมากได้รวดเร็ว"
+   },
+   {
+    "id": "b",
+    "text": "ลดความผิดพลาดจากการพิมพ์คำสั่งด้วยมือ"
+   },
+   {
+    "id": "c",
+    "text": "ทำให้ config ของอุปกรณ์สม่ำเสมอ"
+   },
+   {
+    "id": "d",
+    "text": "ไม่ต้องเข้าใจโปรโตคอลเครือข่ายอีกต่อไป"
+   }
+  ],
+  "answer": [
+   "a",
+   "b",
+   "c"
+  ],
+  "explanation": "automation ช่วยให้เร็ว แม่นยำ และสม่ำเสมอ แต่ผู้เขียนสคริปต์ยังต้องเข้าใจเครือข่ายเพื่อสั่งงานให้ถูก",
+  "ref": "Book1 Ch18 §18.1"
+ }
+]

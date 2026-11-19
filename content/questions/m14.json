@@ -1,0 +1,477 @@
+[
+  {
+    "id": "m14-access-011",
+    "module": "M14",
+    "topic": "Campus architecture",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "ฟีเจอร์ใดมักตั้งค่าที่ **access switch** (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "port link-type access และกำหนด VLAN ของพอร์ตผู้ใช้"
+      },
+      {
+        "id": "b",
+        "text": "edge port / BPDU protection บนพอร์ตที่ต่อ host"
+      },
+      {
+        "id": "c",
+        "text": "802.1X หรือ MAC authentication"
+      },
+      {
+        "id": "d",
+        "text": "OSPF area 0 กับ ISP"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "access ดูแลพอร์ตผู้ใช้: VLAN, edge port, ความปลอดภัยของพอร์ต, การยืนยันตัวผู้ใช้ และ PoE · การ peer กับ ISP อยู่ที่ egress",
+    "ref": "Book1 Ch15 §15.1.3"
+  },
+  {
+    "id": "m14-agg-003",
+    "module": "M14",
+    "topic": "Campus architecture",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "หน้าที่ใดมักอยู่ที่ **aggregation layer** (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "เป็น gateway ของ VLAN ผู้ใช้ (VLANIF)"
+      },
+      {
+        "id": "b",
+        "text": "DHCP relay"
+      },
+      {
+        "id": "c",
+        "text": "ใช้ ACL บังคับ policy ระหว่างพื้นที่"
+      },
+      {
+        "id": "d",
+        "text": "ต่อ PC ผู้ใช้โดยตรงผ่าน PoE"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "aggregation รวม access switch และมักเป็น layer 3 boundary: VLANIF gateway, DHCP relay, ACL, VRRP · การต่อ PC/AP เป็นงานของ access",
+    "ref": "Book1 Ch15 §15.1.2"
+  },
+  {
+    "id": "m14-core-002",
+    "module": "M14",
+    "topic": "Campus architecture",
+    "type": "single",
+    "difficulty": 2,
+    "question": "หลักการออกแบบ **core layer** ข้อใดถูกต้องที่สุด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ใส่ ACL และ policy ละเอียดให้มากที่สุด"
+      },
+      {
+        "id": "b",
+        "text": "เน้นความเร็วสูง ความเสถียร และความเรียบง่าย หลีกเลี่ยงการประมวลผลที่ซับซ้อน"
+      },
+      {
+        "id": "c",
+        "text": "ต่อผู้ใช้ปลายทางโดยตรง"
+      },
+      {
+        "id": "d",
+        "text": "ใช้ hub เพื่อลดต้นทุน"
+      }
+    ],
+    "answer": [
+      "b"
+    ],
+    "explanation": "core คือแกนหลักที่ traffic ข้ามพื้นที่ทั้งหมดวิ่งผ่าน จึงต้อง **เร็ว เสถียร และเรียบง่าย** — policy ส่วนใหญ่ควรอยู่ที่ aggregation/access",
+    "ref": "Book1 Ch15 §15.1.2"
+  },
+  {
+    "id": "m14-egress-012",
+    "module": "M14",
+    "topic": "Campus architecture",
+    "type": "single",
+    "difficulty": 1,
+    "question": "อุปกรณ์ที่ **egress** ของ campus ขนาดเล็กมักทำหน้าที่ใดบ้าง",
+    "options": [
+      {
+        "id": "a",
+        "text": "NAT, PPPoE dial-up และ firewall/ความปลอดภัยขาออก"
+      },
+      {
+        "id": "b",
+        "text": "จ่ายไฟ PoE ให้ AP"
+      },
+      {
+        "id": "c",
+        "text": "เป็น root bridge ของทุก VLAN"
+      },
+      {
+        "id": "d",
+        "text": "แจก SSID"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "egress คือทางออก WAN/Internet: NAT (Easy IP/NAT Server), PPPoE, security policy, VPN",
+    "ref": "Book1 Ch15 §15.1.2"
+  },
+  {
+    "id": "m14-guest-009",
+    "module": "M14",
+    "topic": "Small campus",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ต้องการให้ Wi-Fi guest (192.168.101.0/24) ออกอินเทอร์เน็ตได้แต่เข้าถึง subnet ภายใน 192.168.0.0/16 อื่นไม่ได้ วิธีใดเหมาะสม",
+    "options": [
+      {
+        "id": "a",
+        "text": "ใช้ advanced ACL deny จาก 192.168.101.0/24 ไปยัง 192.168.0.0/16 แล้วใช้ traffic-filter inbound บน VLANIF ของ guest"
+      },
+      {
+        "id": "b",
+        "text": "ปิด DHCP บน VLAN guest"
+      },
+      {
+        "id": "c",
+        "text": "ใช้ static NAT ให้ guest ทุกเครื่อง"
+      },
+      {
+        "id": "d",
+        "text": "ตั้ง STP priority ของ guest VLAN"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "advanced ACL ระบุได้ทั้ง source และ destination จึงห้ามเฉพาะ traffic ของ guest ที่ไปยังเครือข่ายภายใน ส่วน traffic ไปอินเทอร์เน็ตไม่ match และ traffic-filter ปล่อยผ่านตามค่า default (ดู M8) · การปิด DHCP ทำให้ guest ใช้งานไม่ได้เลย",
+    "ref": "Book1 Ch15 §15.3.3"
+  },
+  {
+    "id": "m14-layer-001",
+    "module": "M14",
+    "topic": "Campus architecture",
+    "type": "single",
+    "difficulty": 1,
+    "question": "ชั้นใดของ campus network ทำหน้าที่ **เชื่อมต่อผู้ใช้และ AP** เข้าสู่เครือข่าย",
+    "diagram": "m14-campus",
+    "options": [
+      {
+        "id": "a",
+        "text": "Core"
+      },
+      {
+        "id": "b",
+        "text": "Aggregation"
+      },
+      {
+        "id": "c",
+        "text": "Access"
+      },
+      {
+        "id": "d",
+        "text": "Egress"
+      }
+    ],
+    "answer": [
+      "c"
+    ],
+    "explanation": "**Access layer** ต่อ PC, โทรศัพท์ IP, AP และควบคุมการเข้าถึงที่พอร์ต · aggregation รวม access · core ส่งข้อมูลความเร็วสูง · egress ออก WAN/Internet",
+    "ref": "Book1 Ch15 §15.1.2"
+  },
+  {
+    "id": "m14-lifecycle-004",
+    "module": "M14",
+    "topic": "Network lifecycle",
+    "type": "ordering",
+    "difficulty": 1,
+    "question": "เรียงวงจรชีวิตของโครงการ campus network",
+    "options": [
+      {
+        "id": "a",
+        "text": "Planning"
+      },
+      {
+        "id": "b",
+        "text": "Design"
+      },
+      {
+        "id": "c",
+        "text": "Deployment"
+      },
+      {
+        "id": "d",
+        "text": "Operation & Maintenance"
+      },
+      {
+        "id": "e",
+        "text": "Optimization"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e"
+    ],
+    "explanation": "plan (เก็บความต้องการ) → design (ออกแบบ) → deploy (ติดตั้ง/ทดสอบ) → O&M (ดูแล) → optimize (ปรับปรุง) แล้ววนกลับไปวางแผนรอบใหม่",
+    "ref": "Book1 Ch15 §15.2"
+  },
+  {
+    "id": "m14-om-013",
+    "module": "M14",
+    "topic": "O&M",
+    "type": "single",
+    "difficulty": 2,
+    "question": "เพื่อให้ log จากอุปกรณ์หลายเครื่องนำมาเรียงเหตุการณ์ได้ถูกต้องในการแก้ปัญหา ควรตั้งค่าใดทุกเครื่อง",
+    "options": [
+      {
+        "id": "a",
+        "text": "NTP ให้เวลาตรงกัน"
+      },
+      {
+        "id": "b",
+        "text": "STP mode เดียวกัน"
+      },
+      {
+        "id": "c",
+        "text": "OSPF area เดียวกัน"
+      },
+      {
+        "id": "d",
+        "text": "MTU 1492"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "ถ้าเวลาแต่ละเครื่องไม่ตรงกัน การไล่เหตุการณ์จาก log จะผิดลำดับ **NTP** จึงเป็นพื้นฐานของ O&M (ดู M15)",
+    "ref": "Book1 Ch15 §15.3.4"
+  },
+  {
+    "id": "m14-plan-005",
+    "module": "M14",
+    "topic": "Network lifecycle",
+    "type": "single",
+    "difficulty": 1,
+    "question": "การสำรวจจำนวนผู้ใช้ ประเภทแอปพลิเคชัน bandwidth ที่ต้องการ และงบประมาณ อยู่ในขั้นตอนใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "Planning"
+      },
+      {
+        "id": "b",
+        "text": "Deployment"
+      },
+      {
+        "id": "c",
+        "text": "O&M"
+      },
+      {
+        "id": "d",
+        "text": "Optimization"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "**Planning** คือการรวบรวมความต้องการและข้อจำกัดเพื่อใช้เป็นข้อมูลออกแบบ",
+    "ref": "Book1 Ch15 §15.2"
+  },
+  {
+    "id": "m14-redund-006",
+    "module": "M14",
+    "topic": "Reliability design",
+    "type": "multiple",
+    "difficulty": 2,
+    "question": "เทคนิคใดช่วยเพิ่มความทนทาน (redundancy) ของ campus network (เลือกทุกข้อที่ถูก)",
+    "options": [
+      {
+        "id": "a",
+        "text": "ให้ access switch ต่อขึ้น aggregation สองตัว (dual-homing)"
+      },
+      {
+        "id": "b",
+        "text": "ใช้ Eth-Trunk ระหว่าง core กับ aggregation"
+      },
+      {
+        "id": "c",
+        "text": "ใช้ VRRP ให้ gateway สำรองกัน"
+      },
+      {
+        "id": "d",
+        "text": "ปิด STP ทุกตัวเพื่อให้ทุกลิงก์ทำงาน"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c"
+    ],
+    "explanation": "dual-homing, Eth-Trunk, VRRP และ stacking ช่วยลด single point of failure · การปิด STP ในโครงสร้างที่มี loop จะทำให้เกิด broadcast storm",
+    "ref": "Book1 Ch15 §15.3.2"
+  },
+  {
+    "id": "m14-route-008",
+    "module": "M14",
+    "topic": "Small campus",
+    "type": "single",
+    "difficulty": 3,
+    "question": "ใน campus ที่ core (L3 switch) เป็น gateway ของ 192.168.10.0/24 และ 192.168.20.0/24 และมี default route ไป egress router (10.0.0.2) ผู้ใช้ทั้งสอง VLAN ออกอินเทอร์เน็ตไม่ได้ ทั้งที่ router ping อินเทอร์เน็ตได้ และ NAT ACL ถูกต้อง สาเหตุที่น่าจะเป็นที่สุดคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "egress router ไม่มี route กลับไปยัง 192.168.10.0/24 และ 192.168.20.0/24 (เช่น 192.168.0.0/16 ชี้ไป 10.0.0.1)"
+      },
+      {
+        "id": "b",
+        "text": "STP ทำงานผิดปกติ"
+      },
+      {
+        "id": "c",
+        "text": "ต้องใช้ DHCP relay"
+      },
+      {
+        "id": "d",
+        "text": "ต้องใช้ IPv6"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "router รู้จักแค่ subnet ที่ต่อตรง (10.0.0.0/30) — packet ตอบกลับไปยัง VLAN ผู้ใช้จึงไม่มีทาง ต้องเพิ่ม static route (หรือ OSPF) ไปยัง subnet ภายในผ่าน core",
+    "ref": "Book1 Ch15 §15.3.3"
+  },
+  {
+    "id": "m14-stack-007",
+    "module": "M14",
+    "topic": "Reliability design",
+    "type": "single",
+    "difficulty": 2,
+    "question": "ข้อดีของการทำ **stacking (iStack/CSS)** สวิตช์สองตัวที่ core คือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "สวิตช์สองตัวทำงานเป็นอุปกรณ์เดียวทางตรรกะ จัดการง่ายและสามารถทำ Eth-Trunk ข้ามสมาชิกได้ จึงไม่ต้องพึ่ง STP ตัด loop"
+      },
+      {
+        "id": "b",
+        "text": "เพิ่มจำนวน VLAN ได้เกิน 4094"
+      },
+      {
+        "id": "c",
+        "text": "ไม่ต้องใช้ IP address"
+      },
+      {
+        "id": "d",
+        "text": "ทำให้ไม่ต้องตั้งค่า routing"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "stacking รวมหลายสวิตช์เป็นตัวเดียว (จัดการผ่าน IP เดียว) และลิงก์ลงไปยังอุปกรณ์ชั้นล่างทำเป็น Eth-Trunk ข้ามสมาชิกได้ ทำให้ได้ทั้ง redundancy และ bandwidth โดยไม่มี loop",
+    "ref": "Book1 Ch15 §15.1.3"
+  },
+  {
+    "id": "m14-troubleshoot-014",
+    "module": "M14",
+    "topic": "O&M",
+    "type": "ordering",
+    "difficulty": 2,
+    "question": "ผู้ใช้ VLAN 10 ใช้งานไม่ได้ เรียงลำดับการตรวจสอบแบบไล่ชั้นจากล่างขึ้นบน",
+    "options": [
+      {
+        "id": "a",
+        "text": "`display interface brief` — พอร์ต up หรือไม่"
+      },
+      {
+        "id": "b",
+        "text": "`display vlan` / `display port vlan` — พอร์ตอยู่ VLAN ถูกต้องหรือไม่"
+      },
+      {
+        "id": "c",
+        "text": "`display ip interface brief` — VLANIF ของ gateway up หรือไม่"
+      },
+      {
+        "id": "d",
+        "text": "`display ip routing-table` — มี route ออกไปปลายทางหรือไม่"
+      }
+    ],
+    "answer": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "explanation": "ไล่จาก physical → data link (VLAN) → gateway ชั้น 3 → routing ช่วยไม่ให้มองข้ามสาเหตุพื้นฐาน",
+    "ref": "Book1 Ch15 §15.3.4"
+  },
+  {
+    "id": "m14-twotier-015",
+    "module": "M14",
+    "topic": "Campus architecture",
+    "type": "truefalse",
+    "difficulty": 1,
+    "question": "campus ขนาดเล็กสามารถรวม core กับ aggregation เป็นชั้นเดียว (โครงสร้าง 2 ชั้น: core + access) ได้",
+    "options": [
+      {
+        "id": "T",
+        "text": "ถูก"
+      },
+      {
+        "id": "F",
+        "text": "ผิด"
+      }
+    ],
+    "answer": [
+      "T"
+    ],
+    "explanation": "เครือข่ายเล็กมักใช้ L3 switch ตัวเดียว/คู่เดียวเป็นทั้ง core และ gateway ลดต้นทุนและความซับซ้อน — ขนาดกลาง/ใหญ่จึงแยกเป็น 3 ชั้น",
+    "ref": "Book1 Ch15 §15.1.2"
+  },
+  {
+    "id": "m14-vlan-010",
+    "module": "M14",
+    "topic": "Small campus",
+    "type": "single",
+    "difficulty": 2,
+    "question": "การวาง VLAN และ IP ให้ **ต่อเนื่องกัน** เช่น 192.168.10.0/24 ถึง 192.168.30.0/24 อยู่ภายใต้ 192.168.0.0/16 มีประโยชน์หลักคือข้อใด",
+    "options": [
+      {
+        "id": "a",
+        "text": "ทำให้สรุปเส้นทาง (route summarization) ได้ ตาราง routing สั้นและจัดการง่าย"
+      },
+      {
+        "id": "b",
+        "text": "ทำให้ broadcast ข้าม VLAN ได้"
+      },
+      {
+        "id": "c",
+        "text": "ไม่ต้องใช้ gateway"
+      },
+      {
+        "id": "d",
+        "text": "เพิ่มความเร็วของ Wi-Fi"
+      }
+    ],
+    "answer": [
+      "a"
+    ],
+    "explanation": "address ที่วางเป็นระบบทำให้ใช้ route รวมเพียงเส้นเดียว (เช่น 192.168.0.0/16) บน egress router และเข้าใจโครงสร้างได้ง่าย",
+    "ref": "Book1 Ch15 §15.3.2"
+  }
+]

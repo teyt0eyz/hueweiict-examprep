@@ -1,0 +1,122 @@
+<Objectives items={[
+  "อธิบายองค์ประกอบและสถาปัตยกรรมแบบชั้นของ campus network",
+  "บอกโปรโตคอลที่ใช้ในแต่ละชั้นและเหตุผลในการเลือก",
+  "เข้าใจวงจรชีวิตของโครงการเครือข่าย: plan → design → deploy → O&M → optimize",
+  "วางแผน VLAN, IP และความทนทาน (redundancy) ของ campus ขนาดเล็กได้",
+]} />
+
+## Campus network คืออะไร
+
+**Campus network** คือเครือข่ายภายในขององค์กรในพื้นที่จำกัด เช่น สำนักงาน โรงเรียน โรงงาน หรือโรงพยาบาล ประกอบด้วยเครือข่ายสาย, WLAN, ระบบความปลอดภัย และระบบจัดการ ขนาดมีตั้งแต่ไม่กี่สิบเครื่องจนถึงหลายหมื่นเครื่อง
+
+| ขนาด | จำนวนผู้ใช้โดยประมาณ | โครงสร้างที่นิยม |
+|---|---|---|
+| เล็ก | หลักร้อย | 2 ชั้น (core + access) |
+| กลาง | หลักพัน | 3 ชั้น |
+| ใหญ่ | หลักหมื่นขึ้นไป | 3 ชั้นหรือมากกว่า แยกพื้นที่ชัดเจน |
+
+## สถาปัตยกรรมแบบชั้น
+
+<Topology name="m14-campus" />
+
+| ชั้น | หน้าที่ | อุปกรณ์/เทคโนโลยีที่พบ |
+|---|---|---|
+| **Access** | ต่อผู้ใช้/AP เข้าเครือข่าย, ควบคุมการเข้าถึง | Layer 2 switch (PoE), VLAN, 802.1X/MAC auth, port security, edge port |
+| **Aggregation** | รวม access, เป็น gateway ของ VLAN, บังคับ policy | L3 switch, VLANIF, DHCP relay, ACL, VRRP, STP root |
+| **Core** | ส่งข้อมูลความเร็วสูงระหว่างพื้นที่ — **เรียบง่ายและเร็ว** | L3 switch ประสิทธิภาพสูง, OSPF, Eth-Trunk, CSS/iStack |
+| **Egress** | ออกอินเทอร์เน็ต/WAN | router/firewall, NAT, PPPoE, VPN |
+| Data center / server | ให้บริการภายใน | server, storage |
+| Network management | ดูแลทั้งระบบ | NMS, SNMP, NTP, syslog |
+
+<Callout type="tip">
+แบ่งชั้นทำให้ขยายง่าย (เพิ่ม access ได้โดยไม่กระทบ core), จำกัดผลกระทบของปัญหา และแก้ปัญหาง่ายเพราะแต่ละชั้นมีหน้าที่ชัดเจน
+</Callout>
+
+### การออกแบบให้ทนทาน
+
+- **Dual-homing** — access ต่อขึ้น aggregation 2 ตัว (ใช้ STP/MSTP หรือ Smart Link ตัด loop, ดู M7)
+- **Eth-Trunk** ระหว่าง core/aggregation เพื่อเพิ่ม bandwidth และ redundancy
+- **Stacking** (iStack/CSS) รวมสวิตช์หลายตัวเป็นตัวเดียวทางตรรกะ → ไม่ต้องพึ่ง STP
+- **VRRP** ให้ gateway สำรองกันระหว่าง aggregation สองตัว
+- ทางออกอินเทอร์เน็ตหลายเส้น + floating static route (ดู M4)
+
+## โปรโตคอลที่ใช้บ่อยในแต่ละส่วน
+
+| ส่วน | โปรโตคอล | บทที่เกี่ยวข้อง |
+|---|---|---|
+| Layer 2 | VLAN, STP/RSTP/MSTP, Eth-Trunk, Smart Link | M6, M7 |
+| Layer 3 | static route, OSPF, VRRP | M4, M5 |
+| บริการ | DHCP (+ relay), NAT, DNS | M9, M10 |
+| WLAN | AC + Fit AP, CAPWAP | M11 |
+| ความปลอดภัย | ACL, AAA, 802.1X | M8 |
+| O&M | SNMP, NTP, syslog, LLDP | M15 |
+
+## วงจรชีวิตของโครงการเครือข่าย
+
+```text
+Planning → Design → Deployment → Operation & Maintenance → Optimization
+   ↑                                                              │
+   └──────────────────────────────────────────────────────────────┘
+```
+
+1. **Planning** — สำรวจความต้องการ: จำนวนผู้ใช้, ประเภทบริการ, bandwidth, งบประมาณ, การเติบโตในอนาคต
+2. **Design** — ออกแบบ topology, VLAN/IP, routing, ความปลอดภัย, redundancy และเลือกอุปกรณ์
+3. **Deployment** — ติดตั้ง ตั้งค่า และทดสอบ (เช่น ทดสอบ failover)
+4. **O&M** — เฝ้าระวัง สำรอง config อัปเกรด แก้ไขปัญหา
+5. **Optimization** — ปรับปรุงเมื่อความต้องการเปลี่ยนหรือพบคอขวด
+
+## ตัวอย่าง: วางแผน campus ขนาดเล็ก
+
+ข้อกำหนด: บริษัท 3 แผนก + Wi-Fi ผู้เยี่ยมชม + เซิร์ฟเวอร์ ใช้ L3 switch เป็น core/gateway และ router ทำ PPPoE ออกอินเทอร์เน็ต
+
+| VLAN | ใช้กับ | Subnet | Gateway (VLANIF บน core) |
+|---|---|---|---|
+| 10 | ฝ่ายขาย | 192.168.10.0/24 | .1 |
+| 20 | ฝ่ายบัญชี | 192.168.20.0/24 | .1 |
+| 30 | ฝ่ายผลิต | 192.168.30.0/24 | .1 |
+| 100 | AP management | 192.168.100.0/24 | .1 |
+| 101 | Wi-Fi guest | 192.168.101.0/24 | .1 |
+| 200 | server | 192.168.200.0/24 | .1 |
+| 999 | ลิงก์ core–router | 10.0.0.0/30 | — |
+
+<CliWalk device="CORE (L3 switch)" title="จุดสำคัญของ config" lines={[
+  ["[CORE]vlan batch 10 20 30 100 101 200 999", "สร้าง VLAN ทั้งหมด"],
+  ["[CORE]interface Vlanif 10", "gateway ของฝ่ายขาย"],
+  ["[CORE-Vlanif10]ip address 192.168.10.1 24", ""],
+  ["[CORE-Vlanif10]dhcp select global", "แจก IP จาก global pool (ต้องมี dhcp enable และ ip pool)"],
+  ["[CORE]interface GigabitEthernet 0/0/1", "ลิงก์ลง access switch"],
+  ["[CORE-GigabitEthernet0/0/1]port link-type trunk", ""],
+  ["[CORE-GigabitEthernet0/0/1]port trunk allow-pass vlan 10 20 30 100 101", "ห้ามใช้ all โดยไม่จำเป็น"],
+  ["[CORE]ip route-static 0.0.0.0 0 10.0.0.2", "default route ไป egress router"],
+  ["[CORE]acl 3001", "แยก guest ออกจากเครือข่ายภายใน"],
+  ["[CORE-acl-adv-3001]rule deny ip source 192.168.101.0 0.0.0.255 destination 192.168.0.0 0.0.255.255", ""],
+  ["[CORE]interface Vlanif 101", ""],
+  ["[CORE-Vlanif101]traffic-filter inbound acl 3001", "guest ออกอินเทอร์เน็ตได้แต่เข้าภายในไม่ได้"],
+]} />
+
+<CliWalk device="Egress router" lines={[
+  ["[R1]ip route-static 192.168.0.0 16 10.0.0.1", "route กลับไปยังทุก VLAN ภายใน (สรุปเส้นทาง)"],
+  ["[R1]acl 2000", ""],
+  ["[R1-acl-basic-2000]rule permit source 192.168.0.0 0.0.255.255", ""],
+  ["[R1-Dialer1]nat outbound 2000", "Easy IP บน PPPoE (ดู M13)"],
+  ["[R1-Dialer1]nat server protocol tcp global current-interface 80 inside 192.168.200.10 80", "เปิด web server ภายในให้ภายนอก"],
+]} />
+
+<Callout type="exam">
+- core: เร็วและเรียบง่าย ไม่ใส่ policy หนัก ๆ · aggregation: gateway + policy · access: ต่อผู้ใช้ + ความปลอดภัยที่พอร์ต
+- ลืม **route กลับ** บน egress router คือปัญหาที่พบบ่อยที่สุดเมื่อมีหลาย subnet
+- วงจรชีวิต: plan → design → deploy → O&M → optimize
+</Callout>
+
+## O&M และการปรับปรุง
+
+- สำรอง config เป็นระยะ (`save` + ส่งออกไปเก็บนอกอุปกรณ์), ตั้ง NTP ให้ log มีเวลาที่ถูกต้อง (M15)
+- เฝ้าดู CPU, memory, interface error, การใช้ bandwidth ผ่าน SNMP/NMS
+- ปัญหาที่พบบ่อยและคำสั่งตรวจ: `display interface brief`, `display vlan`, `display stp brief`, `display ip routing-table`, `display ip pool`, `display nat session all`
+
+## สรุปท้ายบท
+
+- campus แบ่งเป็น access / aggregation / core / egress (+ DC, management)
+- ทนทานด้วย dual-homing, Eth-Trunk, stacking, VRRP, เส้นทางสำรอง
+- วางแผน VLAN/IP ให้เป็นระบบและสรุปเส้นทางได้
+- วงจรชีวิต: plan → design → deploy → O&M → optimize

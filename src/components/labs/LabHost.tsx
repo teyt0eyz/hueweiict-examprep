@@ -7,6 +7,7 @@ import StpLab from "./StpLab";
 import VlanLab from "./VlanLab";
 import AclLab from "./AclLab";
 import NatLab from "./NatLab";
+import Ipv6Lab from "./Ipv6Lab";
 
 const LAB_COMPONENTS: Record<string, ComponentType> = {
   subnet: SubnetLab,
@@ -15,6 +16,7 @@ const LAB_COMPONENTS: Record<string, ComponentType> = {
   vlan: VlanLab,
   acl: AclLab,
   nat: NatLab,
+  ipv6: Ipv6Lab,
 };
 
 export const labReady = (slug: string) => slug in LAB_COMPONENTS;

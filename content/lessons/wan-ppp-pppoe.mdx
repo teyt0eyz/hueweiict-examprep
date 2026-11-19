@@ -1,0 +1,141 @@
+<Objectives items={[
+  "บอกความแตกต่างของ LAN กับ WAN และเทคโนโลยี WAN ที่พบบ่อย",
+  "อธิบายสามขั้นตอนการสร้างลิงก์ PPP: LCP → authentication → NCP",
+  "เปรียบเทียบ PAP กับ CHAP และตั้งค่าทั้งสองแบบบน VRP",
+  "อธิบายกระบวนการ PPPoE (discovery / session) และตั้งค่า PPPoE client บน AR router",
+]} />
+
+## WAN คืออะไร
+
+**WAN (Wide Area Network)** เชื่อมเครือข่ายที่อยู่ห่างกันทางภูมิศาสตร์ เช่น สำนักงานใหญ่กับสาขา หรือบ้านกับ ISP โดยมักใช้บริการของผู้ให้บริการ
+
+| ยุค / เทคโนโลยี | ลักษณะ |
+|---|---|
+| Leased line (E1/T1, SDH) + **PPP/HDLC** | ลิงก์ serial แบบ point-to-point เช่าเฉพาะ |
+| Frame Relay, ATM | packet/cell switching แบบเก่า |
+| **Ethernet + PPPoE** | broadband ตามบ้าน/สาขา (FTTx, DSL) |
+| MPLS VPN, SD-WAN | WAN ขององค์กรในปัจจุบัน |
+
+ชั้น data link ของ WAN ต่างจาก Ethernet: ลิงก์ point-to-point **ไม่ต้องใช้ MAC address** เพราะปลายทางมีแค่ตัวเดียว
+
+## PPP — Point-to-Point Protocol
+
+PPP เป็นโปรโตคอล data link สำหรับลิงก์ point-to-point (full-duplex, synchronous/asynchronous) มีความสามารถที่ HDLC ไม่มี:
+
+- **Authentication** (PAP / CHAP)
+- เจรจาพารามิเตอร์ของลิงก์ (MRU, magic number สำหรับตรวจ loop)
+- แจก IP address ให้ปลายอีกฝั่งได้ (ผ่าน IPCP)
+- รองรับหลาย network protocol ผ่าน NCP
+
+### สามขั้นตอนการสร้างลิงก์
+
+<Topology name="m13-ppp" />
+
+```text
+Dead → Establish (LCP) → Authenticate (PAP/CHAP) → Network (NCP เช่น IPCP) → Open
+                ↑                       │ ล้มเหลว
+                └──────── Terminate ←───┘
+```
+
+1. **LCP (Link Control Protocol)** — เจรจา MRU, วิธี authentication, magic number ถ้าทั้งสองฝั่งตอบ Configure-Ack กัน LCP จะ **Opened**
+2. **Authentication** — ถ้ากำหนดไว้ (ไม่บังคับ) ผ่านแล้วจึงไปต่อ ล้มเหลว → ปิดลิงก์
+3. **NCP** — เช่น **IPCP** เจรจา IP address แล้วจึงส่ง IP packet ได้
+
+<Callout type="tip">
+magic number ที่สุ่มขึ้นใช้ตรวจ **loopback**: ถ้าได้รับ Configure-Request ที่มี magic number เดียวกับของตัวเอง แปลว่าลิงก์วนกลับมาหาตัวเอง
+</Callout>
+
+### PAP vs CHAP
+
+| | **PAP** | **CHAP** |
+|---|---|---|
+| การจับมือ | 2-way: ส่ง username + password | 3-way: Challenge → Response → Success/Failure |
+| password บนสาย | **plaintext** | ไม่ส่ง password — ส่งค่า **MD5 hash** ของ (ID + password + challenge) |
+| ผู้เริ่ม | ผู้ถูกตรวจสอบ ส่งข้อมูลเอง | ผู้ตรวจสอบ ส่ง challenge (ค่าสุ่ม) |
+| ความปลอดภัย | ต่ำ | สูงกว่า กัน replay ด้วย challenge ใหม่ทุกครั้ง |
+
+## ตั้งค่า PPP บน VRP
+
+### PAP — R2 ตรวจสอบ R1
+
+<CliWalk device="R2 (authenticator)" lines={[
+  ["[R2]aaa", ""],
+  ["[R2-aaa]local-user r1user password cipher Huawei@123", "บัญชีที่ใช้ตรวจสอบปลายทาง"],
+  ["[R2-aaa]local-user r1user service-type ppp", "อนุญาตให้ใช้กับ PPP"],
+  ["[R2]interface Serial 1/0/0", ""],
+  ["[R2-Serial1/0/0]link-protocol ppp", "ใช้ PPP (ค่า default ของ serial บน AR อยู่แล้ว)"],
+  ["[R2-Serial1/0/0]ppp authentication-mode pap", "บังคับให้ปลายทางยืนยันตัวด้วย PAP"],
+  ["[R2-Serial1/0/0]ip address 10.0.12.2 24", ""],
+]} />
+
+<CliWalk device="R1 (authenticatee)" lines={[
+  ["[R1-Serial1/0/0]link-protocol ppp", ""],
+  ["[R1-Serial1/0/0]ppp pap local-user r1user password cipher Huawei@123", "ข้อมูลที่จะส่งให้ R2 ตรวจ"],
+  ["[R1-Serial1/0/0]ip address 10.0.12.1 24", ""],
+]} />
+
+### CHAP
+
+<CliWalk device="R2 / R1" lines={[
+  ["[R2-Serial1/0/0]ppp authentication-mode chap", "R2 ส่ง challenge ให้ R1 (user อยู่ใน aaa ของ R2 เหมือนตัวอย่าง PAP)"],
+  ["[R1-Serial1/0/0]ppp chap user r1user", "ชื่อที่ R1 ใช้ตอบ challenge"],
+  ["[R1-Serial1/0/0]ppp chap password cipher Huawei@123", "password ใช้คำนวณ hash ไม่ได้ส่งบนสาย"],
+  ["<R1>display interface Serial 1/0/0", "ดู LCP opened, IPCP opened"],
+]} />
+
+<Callout type="trap">
+- PPP บน serial **ไม่ต้องอยู่ subnet เดียวกัน** ก็ ping กันได้ เพราะ IPCP ประกาศ host route /32 ของปลายทางให้ — ต่างจาก Ethernet
+- authentication ต้องตั้งที่ฝั่ง **ผู้ตรวจสอบ** (`ppp authentication-mode`) ส่วนฝั่งที่ถูกตรวจตั้งแค่ข้อมูลประจำตัว
+- ถ้าลิงก์ค้างแบบ "LCP opened แต่ IPCP ไม่ขึ้น" มักเป็นปัญหา authentication/IP
+</Callout>
+
+## PPPoE — PPP over Ethernet
+
+broadband ใช้ Ethernet ซึ่งไม่มี authentication และการคิดค่าบริการรายผู้ใช้ **PPPoE** จึงห่อ PPP ไว้ใน Ethernet frame เพื่อนำความสามารถของ PPP (authentication, แจก IP, accounting) มาใช้กับผู้ใช้จำนวนมากบนเครือข่าย Ethernet
+
+<Topology name="m13-pppoe" />
+
+### สองขั้นตอนของ PPPoE
+
+**1. Discovery** (EtherType 0x8863) — หา server และสร้าง session ID
+
+| Packet | ทิศทาง | หน้าที่ |
+|---|---|---|
+| **PADI** (Initiation) | client → broadcast | หา PPPoE server |
+| **PADO** (Offer) | server → client | ตอบว่าพร้อมให้บริการ |
+| **PADR** (Request) | client → server ที่เลือก | ขอเริ่ม session |
+| **PADS** (Session-confirmation) | server → client | ยืนยัน + กำหนด **Session ID** |
+| PADT (Terminate) | ฝั่งใดก็ได้ | ปิด session |
+
+**2. Session** (EtherType 0x8864) — ทำ PPP ตามปกติ: LCP → PAP/CHAP → IPCP (ได้ IP จาก server) แล้วรับส่งข้อมูล
+
+<Callout type="exam">
+MTU ของ PPPoE คือ **1492** (1500 − 6 byte PPPoE header − 2 byte PPP protocol) — packet ใหญ่เกินอาจมีปัญหา จึงมักตั้ง TCP MSS/MTU ให้ต่ำลง
+</Callout>
+
+### ตั้งค่า PPPoE client บน AR router
+
+<CliWalk device="R1 (PPPoE client)" lines={[
+  ["[R1]dialer-rule", ""],
+  ["[R1-dialer-rule]dialer-rule 1 ip permit", "traffic IP ทั้งหมดทำให้ dial ได้"],
+  ["[R1]interface Dialer 1", "interface เสมือนสำหรับ dial"],
+  ["[R1-Dialer1]link-protocol ppp", ""],
+  ["[R1-Dialer1]ppp chap user user@isp", "บัญชีที่ ISP ให้มา"],
+  ["[R1-Dialer1]ppp chap password cipher Huawei@123", ""],
+  ["[R1-Dialer1]ip address ppp-negotiate", "รับ IP จาก ISP ผ่าน IPCP"],
+  ["[R1-Dialer1]dialer user user@isp", ""],
+  ["[R1-Dialer1]dialer bundle 1", "ผูกกับ physical interface ที่ใช้ bundle 1"],
+  ["[R1-Dialer1]dialer-group 1", "ใช้ dialer-rule 1"],
+  ["[R1]interface GigabitEthernet 0/0/1", "พอร์ตที่ต่อกับ modem/ONT"],
+  ["[R1-GigabitEthernet0/0/1]pppoe-client dial-bundle-number 1", "ทำ PPPoE ผ่านพอร์ตนี้"],
+  ["[R1]ip route-static 0.0.0.0 0 Dialer 1", "default route ออกทาง Dialer"],
+  ["[R1-Dialer1]nat outbound 2000", "Easy IP เพราะ IP ได้มาแบบ dynamic (ดู M9)"],
+  ["<R1>display pppoe-client session summary", "ตรวจสถานะ session (UP)"],
+]} />
+
+## สรุปท้ายบท
+
+- PPP: LCP → authentication (เลือกได้) → NCP/IPCP
+- PAP ส่ง password ตรง ๆ, CHAP ใช้ challenge + hash (MD5)
+- PPPoE: Discovery (PADI → PADO → PADR → PADS) แล้วจึง PPP session · MTU 1492
+- AR client: `interface Dialer` + `pppoe-client dial-bundle-number` + default route ไป Dialer + Easy IP

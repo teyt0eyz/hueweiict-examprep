@@ -1,0 +1,149 @@
+<Objectives items={[
+  "อธิบายเหตุผลที่ต้องทำ network automation และ network programmability",
+  "แยกประเภทภาษาโปรแกรม: compiled vs interpreted, high-level vs low-level",
+  "เข้าใจพื้นฐาน Python ที่ใช้ในงานเครือข่าย: ตัวแปร, ชนิดข้อมูล, เงื่อนไข, loop, function, module",
+  "เขียนสคริปต์ Python ด้วย telnetlib เพื่อ login และสั่งคำสั่งบน Huawei router",
+]} />
+
+## ทำไมต้อง automation
+
+งานแบบเดิมคือ login ทีละเครื่องแล้วพิมพ์คำสั่ง ซึ่ง:
+
+- ช้า เมื่ออุปกรณ์มีหลายร้อยตัว
+- ผิดพลาดง่าย (พิมพ์ผิด, ลืมขั้นตอน, config ไม่เหมือนกัน)
+- ตรวจสอบย้อนหลังยาก
+
+**Network automation** ใช้เครื่องมือหรือโปรแกรมทำงานซ้ำ ๆ แทน เช่น ตั้งค่าหลายเครื่องพร้อมกัน, สำรอง config ทุกคืน, ตรวจสถานะและสร้างรายงาน
+
+| แนวทาง | ตัวอย่าง |
+|---|---|
+| เครื่องมือสำเร็จรูป | Ansible, NMS/controller (iMaster NCE) |
+| เขียนโปรแกรมเอง | **Python** + telnetlib / paramiko / netmiko / ncclient (NETCONF) |
+
+## ภาษาโปรแกรม
+
+| ระดับ | ลักษณะ | ตัวอย่าง |
+|---|---|---|
+| Machine language | เลข 0/1 ที่ CPU เข้าใจ | — |
+| Assembly | สัญลักษณ์แทนคำสั่งเครื่อง | — |
+| **High-level** | อ่านง่าย ไม่ผูกกับ CPU | C, Java, Python |
+
+| วิธีทำงาน | ลักษณะ | ตัวอย่าง |
+|---|---|---|
+| **Compiled** | แปลทั้งโปรแกรมเป็น machine code ก่อนรัน — เร็ว | C, C++, Go |
+| **Interpreted** | interpreter อ่านและรันทีละคำสั่ง — พัฒนาเร็ว ข้ามแพลตฟอร์ม | **Python**, JavaScript |
+
+<Callout type="note">
+Python (CPython) แปลง source เป็น **bytecode** (`.pyc`) ก่อน แล้ว **Python Virtual Machine** รัน bytecode นั้น — จึงนับเป็นภาษาแบบ interpreted
+</Callout>
+
+## พื้นฐาน Python
+
+```python
+# ตัวแปรไม่ต้องประกาศชนิด (dynamic typing)
+hostname = "R1"            # str
+vlan_id = 10               # int
+uptime = 12.5              # float
+enabled = True             # bool
+vlans = [10, 20, 30]       # list   (แก้ไขได้)
+mgmt = ("10.0.0.1", 22)    # tuple  (แก้ไขไม่ได้)
+device = {"name": "R1", "ip": "10.0.0.1"}   # dict (key: value)
+ports = {"G0/0/1", "G0/0/2"}                # set  (ไม่ซ้ำ)
+
+# เงื่อนไขและ loop — ใช้ "การย่อหน้า" แบ่ง block (มาตรฐาน 4 ช่องว่าง)
+for v in vlans:
+    if v == 20:
+        print(f"vlan {v} = accounting")
+    else:
+        print(f"vlan {v}")
+
+# function
+def make_vlan_cmds(ids):
+    return [f"vlan {i}" for i in ids]
+
+print(make_vlan_cmds(vlans))   # ['vlan 10', 'vlan 20', 'vlan 30']
+```
+
+ข้อกำหนดการเขียน (PEP 8) ที่ควรรู้: ใช้ **ย่อหน้า 4 ช่องว่าง**, ชื่อตัวแปร/ฟังก์ชันใช้ `snake_case`, comment ขึ้นต้นด้วย `#`, `import` ไว้ต้นไฟล์
+
+<Callout type="trap">
+Python ใช้ **การย่อหน้า** แทนวงเล็บปีกกา — ย่อหน้าไม่ตรงกันจะเกิด `IndentationError` ทันที
+</Callout>
+
+## จัดการ Huawei router ด้วย Python + Telnet
+
+<Topology name="m17-auto" />
+
+เตรียม router ให้รับ Telnet (ดู M2):
+
+<CliWalk device="R1" lines={[
+  ["[R1]telnet server enable", "เปิด Telnet server"],
+  ["[R1]user-interface vty 0 4", ""],
+  ["[R1-ui-vty0-4]authentication-mode aaa", ""],
+  ["[R1-ui-vty0-4]protocol inbound telnet", ""],
+  ["[R1]aaa", ""],
+  ["[R1-aaa]local-user python password irreversible-cipher Huawei@123", ""],
+  ["[R1-aaa]local-user python service-type telnet", ""],
+  ["[R1-aaa]local-user python privilege level 15", "ต้องมีสิทธิ์พอสำหรับคำสั่งที่จะใช้"],
+]} />
+
+สคริปต์ Python:
+
+```python
+import telnetlib
+import time
+
+host = "192.168.56.100"
+user = b"python"
+password = b"Huawei@123"
+
+tn = telnetlib.Telnet(host, port=23, timeout=10)   # เปิดการเชื่อมต่อ
+
+tn.read_until(b"Username:")          # รอ prompt
+tn.write(user + b"\n")               # ข้อมูลต้องเป็น bytes และจบด้วย newline
+tn.read_until(b"Password:")
+tn.write(password + b"\n")
+
+cmds = [
+    "screen-length 0 temporary",     # ปิดการแบ่งหน้า (---- More ----)
+    "system-view",
+    "interface LoopBack 0",
+    "ip address 1.1.1.1 32",
+    "return",
+    "display ip interface brief",
+]
+for c in cmds:
+    tn.write(c.encode() + b"\n")     # str → bytes
+    time.sleep(1)                    # รอให้อุปกรณ์ประมวลผล
+
+output = tn.read_very_eager().decode()   # bytes → str
+print(output)
+tn.close()
+```
+
+| ฟังก์ชัน | หน้าที่ |
+|---|---|
+| `telnetlib.Telnet(host, port, timeout)` | สร้างการเชื่อมต่อ |
+| `read_until(expected, timeout)` | อ่านจนกว่าจะเจอข้อความที่ระบุ |
+| `write(bytes)` | ส่งข้อมูล (ต้องเป็น **bytes**) |
+| `read_very_eager()` | อ่านทุกอย่างที่มีใน buffer ตอนนี้โดยไม่รอ |
+| `close()` | ปิดการเชื่อมต่อ |
+
+<Callout type="exam">
+- `write()` ต้องส่ง **bytes** → ใช้ `b"..."` หรือ `"...".encode()` และใส่ `\n` แทนการกด Enter
+- Telnet ส่งทุกอย่าง **ไม่เข้ารหัส** ใช้ได้ในห้อง lab — งานจริงควรใช้ **SSH** (เช่น paramiko/netmiko) หรือ **NETCONF**
+- `telnetlib` ถูกถอดออกจาก Python 3.13 แล้ว (ใช้ได้ถึง 3.12) — ในโปรเจกต์ใหม่จึงนิยม netmiko/paramiko
+</Callout>
+
+## ต่อยอด
+
+- อ่านรายชื่ออุปกรณ์จากไฟล์ (CSV/YAML) แล้ววน loop ตั้งค่าทุกเครื่อง
+- ใช้ template (เช่น Jinja2) สร้าง config จากตัวแปร
+- ใช้ NETCONF/RESTCONF ซึ่งส่งข้อมูลแบบมีโครงสร้าง (XML/JSON) แทนการ parse ข้อความจาก CLI
+
+## สรุปท้ายบท
+
+- automation ลดเวลาและความผิดพลาดของงานซ้ำ ๆ
+- Python เป็นภาษา high-level แบบ interpreted (source → bytecode → PVM)
+- ชนิดข้อมูลหลัก: int, float, str, bool, list, tuple, dict, set · block ใช้การย่อหน้า
+- telnetlib: `Telnet()` → `read_until()` / `write(b"...\n")` → `read_very_eager()` → `close()`
